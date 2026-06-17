@@ -6,6 +6,8 @@ A Codex skill for auditing whether a Codex thread, project, worktree, pull reque
 
 It helps evaluate planning quality, multi-agent readiness, worktree isolation, CodeGraph usage, GitHub/PR flow, validation depth, reporting quality, and concrete upgrade opportunities.
 
+The skill can be used after a run, but it is most useful as part of a Codex engineering loop: preflight split check, worker guardrails, read-only review, efficiency audit, paste-back prompt, and finalizer handoff.
+
 ## Use Cases
 
 - Audit a Codex thread id for capability utilization.
@@ -13,6 +15,7 @@ It helps evaluate planning quality, multi-agent readiness, worktree isolation, C
 - Produce a final reviewer prompt for an in-progress Codex run.
 - Score whether a task should have used subagents, CodeGraph, Browser, GitHub, Cloud, or stronger validation.
 - Standardize Codex run handoffs across projects.
+- Generate task cards, multi-worktree orchestration prompts, and paste-back prompts for improving future runs.
 
 ## Install
 
@@ -85,6 +88,9 @@ Recommended paste-back prompt:
 - `SKILL.md`: core skill instructions
 - `references/audit-rubric.md`: scoring rubric
 - `references/report-templates.md`: output templates and final reviewer prompts
+- `references/task-card-template.md`: bounded worker task card template
+- `references/multi-worktree-orchestration-template.md`: preflight split and worktree orchestration template
+- `references/paste-back-prompts.md`: prompts for worker, reviewer, auditor, and finalizer handoffs
 - `scripts/score_audit.py`: helper for totaling category scores
 - `agents/openai.yaml`: Codex UI metadata
 
@@ -102,6 +108,8 @@ This skill is intentionally lightweight. It does not call external services by i
 
 它关注的不是单次回答是否好看，而是整个执行过程是否具备清晰规划、合理并行、风险隔离、验证闭环、可审计报告和可升级空间。
 
+它可以在任务结束后复盘，也可以放进 Codex 多线工程闭环中：开工前判断是否值得拆分、执行中检查 worker 是否跑偏、完成后生成审计报告和可回填到原线程的升级 prompt。
+
 ## 适用场景
 
 - 审计一个 Codex thread id 的能力利用率。
@@ -109,6 +117,7 @@ This skill is intentionally lightweight. It does not call external services by i
 - 为进行中的 Codex 任务生成最终只读审查 prompt。
 - 判断任务是否应该使用 subagents、CodeGraph、Browser、GitHub、Cloud 或更强验证链路。
 - 为多个项目沉淀统一的 Codex 执行复盘与交接标准。
+- 生成 Task Card、多 worktree 编排 prompt、worker/reviewer/auditor/finalizer 回填 prompt。
 
 ## 安装
 
@@ -187,6 +196,9 @@ Recommended paste-back prompt:
 - `SKILL.md`：核心 skill 指令
 - `references/audit-rubric.md`：评分标准
 - `references/report-templates.md`：报告模板与最终审查 prompt
+- `references/task-card-template.md`：受限 worker 任务卡模板
+- `references/multi-worktree-orchestration-template.md`：开工前任务拆分与多 worktree 编排模板
+- `references/paste-back-prompts.md`：worker、reviewer、auditor、finalizer 回填 prompt
 - `scripts/score_audit.py`：评分汇总辅助脚本
 - `agents/openai.yaml`：Codex UI 元数据
 

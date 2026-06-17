@@ -55,6 +55,8 @@ If a thread id is provided and thread tools are available, read the thread direc
    - Recommend subagents only when tasks are independent enough to benefit.
    - Recommend worktrees when write scopes can be separated.
    - Recommend CodeGraph initialization when structural code navigation matters and the repo lacks `.codegraph/`.
+   - For orchestration upgrades, use `references/task-card-template.md` and `references/multi-worktree-orchestration-template.md`.
+   - For prompt handoff, use `references/paste-back-prompts.md`.
 
 6. **Report**
    - Use `references/report-templates.md`.
@@ -88,6 +90,14 @@ Do not recommend more parallelism when:
 
 Do not mark a run `READY_FOR_HUMAN_REVIEW` unless final validation evidence is present or the user explicitly asked for an interim review.
 
+## Templates
+
+Load these references only when they fit the user's request:
+
+- `references/task-card-template.md`: Use when creating or auditing worker task cards, owned paths, shared locks, done criteria, or validation commands.
+- `references/multi-worktree-orchestration-template.md`: Use when deciding whether a task should become a multi-agent/multi-worktree workflow.
+- `references/paste-back-prompts.md`: Use when producing prompts that should be pasted into an original thread, worker thread, reviewer thread, or finalizer thread.
+
 ## Paste-Ready Upgrade Prompt Pattern
 
 When a run is missing a final audit, provide a prompt like:
@@ -105,4 +115,3 @@ Report:
 - Missing Codex leverage: subagents, worktree, CodeGraph, Browser, GitHub/PR, Cloud
 - Verdict: READY_FOR_HUMAN_REVIEW / NEEDS_FIX / BLOCKED
 ```
-
