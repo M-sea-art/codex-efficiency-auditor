@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Efficiency Auditor"
+  short_description: "Audit Codex thread and project capability use"
+  default_prompt: "Use $codex-efficiency-auditor to audit this Codex thread or project for capability utilization and upgrade opportunities."
