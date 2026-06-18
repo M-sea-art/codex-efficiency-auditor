@@ -1,15 +1,27 @@
 ---
 name: codex-efficiency-auditor
-description: Audit Codex threads, projects, worktrees, pull requests, and agent runs for capability utilization, orchestration quality, risk isolation, validation coverage, and upgrade opportunities. Use when the user asks to evaluate whether a Codex conversation or project used Codex well, review a thread id, score a project workflow, improve multi-agent/worktree/cloud usage, create a final reviewer prompt, or turn an ordinary Codex run into a more efficient auditable execution pattern.
+description: Audit Codex threads, projects, worktrees, pull requests, and agent runs for capability utilization, orchestration quality, risk isolation, validation coverage, and upgrade opportunities. Use when the user asks to evaluate whether a Codex conversation or project used Codex well, review a thread id, score a project workflow, improve multi-agent/worktree/cloud usage, create a final reviewer prompt, convert a vague request into a bounded Codex /goal, supervise an authorized goal-mode run, or turn an ordinary Codex run into a more efficient auditable execution pattern.
 ---
 
 # Codex Efficiency Auditor
 
 ## Purpose
 
-Assess whether a Codex run used the available Codex capability boundary well: planning, subagents, worktrees, CodeGraph, GitHub/PRs, Browser, Cloud, tests, audits, reports, and durable project memory.
+Assess whether a Codex run used the available Codex capability boundary well: planning, subagents, worktrees, CodeGraph, GitHub/PRs, Browser, Cloud, tests, audits, reports, durable project memory, and goal-mode contracts.
 
 Be an evaluator and upgrader, not a second implementer. Prefer read-only inspection unless the user explicitly asks to apply changes.
+
+## Operating Modes
+
+This skill has three layers:
+
+1. **Goal Compiler**: turn a vague or complex request into a paste-ready `/goal` contract with outcome, verification, constraints, boundaries, iteration policy, completion conditions, pause conditions, polling audit, human intervention triggers, and final report format.
+2. **Goal Supervisor**: after the user authorizes a goal, supervise the run with preflight audit, Task Cards, worktree or agent split decisions, periodic audit, drift stops, and final closure.
+3. **Efficiency Auditor**: audit a running or completed thread, repo, worktree, PR, transcript, or final report for Codex capability utilization and upgrade opportunities.
+
+Default goal autonomy is `supervised-autonomous`: Codex may inspect, plan, implement inside the authorized boundary, test, and report, but must pause before scope expansion, destructive changes, public release, credentials, billing, external account changes, or irreversible operations.
+
+Do not create daily or global automations. Automation prompts may be suggested only after a user authorizes a specific goal, and they must be scoped to auditing, summarizing, drift detection, blocker detection, and next-prompt generation.
 
 ## Inputs
 
@@ -63,6 +75,29 @@ If a thread id is provided and thread tools are available, read the thread direc
    - Lead with verdict, score, and whether the run is still active.
    - Include evidence-backed strengths, gaps, and one paste-ready upgrade prompt.
 
+## Goal Mode Workflow
+
+Use this workflow when the user asks for goal mode, autonomous progress, task automation, multi-agent execution, or a bounded `/goal` prompt:
+
+1. **Compile the goal**
+   - Load `references/goal-mode-contract-template.md`.
+   - If the request is vague and low risk, choose conservative defaults and output the recommended `/goal` first.
+   - Ask only when a decision changes cost, risk, ownership, or product direction.
+
+2. **Choose defaults and risk stance**
+   - Load `references/goal-mode-default-strategy.md`.
+   - For unfamiliar or specialized domains, create a discovery-first goal instead of inventing domain rules.
+   - Put credentials, payments, production data, destructive operations, public release, external account changes, legal/medical/financial judgment, copyright, and unclear ownership into pause conditions.
+
+3. **Supervise execution**
+   - Use Goal Contract -> Preflight Audit -> Task Card -> Worktree/Agent Split -> Periodic Audit -> Final Closure.
+   - Use `references/task-card-template.md` and `references/multi-worktree-orchestration-template.md` only after the Goal Contract is concrete enough.
+   - Use `references/goal-mode-audit-prompts.md` for goal-specific start, preflight, periodic audit, drift stop, human-decision, and closure prompts.
+
+4. **Validate the contract**
+   - For file deliverables containing goal contracts, run `scripts/lint_goal_mode_contract.py` when useful.
+   - Revise goals that lack verification, boundaries, iteration policy, stop conditions, pause conditions, polling audit, human intervention triggers, or final report format.
+
 ## Standard Categories
 
 Audit these eight categories:
@@ -94,6 +129,9 @@ Do not mark a run `READY_FOR_HUMAN_REVIEW` unless final validation evidence is p
 
 Load these references only when they fit the user's request:
 
+- `references/goal-mode-contract-template.md`: Use when compiling or auditing a bounded `/goal` contract for goal mode.
+- `references/goal-mode-default-strategy.md`: Use when choosing conservative defaults, risk stance, discovery-first goals, or automation boundaries.
+- `references/goal-mode-audit-prompts.md`: Use when producing goal-mode start, preflight, periodic audit, drift stop, human-decision, or final closure prompts.
 - `references/task-card-template.md`: Use when creating or auditing worker task cards, owned paths, shared locks, done criteria, or validation commands.
 - `references/multi-worktree-orchestration-template.md`: Use when deciding whether a task should become a multi-agent/multi-worktree workflow.
 - `references/paste-back-prompts.md`: Use when producing prompts that should be pasted into an original thread, worker thread, reviewer thread, or finalizer thread.

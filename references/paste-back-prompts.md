@@ -2,12 +2,39 @@
 
 Use these prompts when returning an actionable next message for the original Codex thread, a worker thread, a reviewer thread, or a finalizer thread.
 
+For goal-mode work, start with `references/goal-mode-audit-prompts.md`. The Goal Contract is the source of truth; Task Cards, worker prompts, reviewer prompts, and finalizer prompts should inherit its verification, constraints, boundaries, iteration policy, completion conditions, pause conditions, polling audit, human intervention triggers, and final report format.
+
+## Goal Mode Contract First
+
+```text
+Use $codex-efficiency-auditor as a Goal Compiler and Supervisor.
+
+Before planning implementation, convert this request into a bounded /goal contract or audit the existing goal contract.
+
+The contract must include:
+- /goal outcome
+- verification
+- constraints
+- boundaries
+- iteration policy
+- completion conditions
+- pause conditions
+- polling audit
+- human intervention triggers
+- final report format
+
+After the contract is clear, decide whether execution should be single-threaded, Task Card based, or split across agents/worktrees.
+
+Do not implement until the contract is concrete enough to supervise.
+```
+
 ## Preflight Split Check
 
 ```text
 Before implementing, decide whether this task should be single-threaded or split across multiple Codex agents/worktrees.
 
 Evaluate:
+- authorized /goal contract
 - goal clarity
 - affected modules
 - shared files
@@ -23,15 +50,17 @@ Do not edit files yet.
 ## Worker Guardrail
 
 ```text
-Execute only this Task Card.
+Execute only this Task Card and its authorized /goal contract.
 
 Rules:
+- Treat the Goal Contract as the source of truth.
 - Modify only owned paths.
 - Do not modify forbidden paths or shared locks unless explicitly assigned.
 - Run the listed validation commands.
-- Stop and report if the task requires expanding scope.
+- Stop and report if the task requires expanding scope, credentials, payments, production data, destructive operations, public release, external account changes, or other pause-condition work.
 
 End with:
+- goal state machine stage
 - files changed
 - commands run
 - tests passed/failed
@@ -45,7 +74,8 @@ End with:
 Pause implementation and perform a scope drift check.
 
 Report:
-- current objective
+- authorized /goal objective
+- current objective being attempted
 - files changed so far
 - whether any changes are outside owned paths
 - validation already run
@@ -86,6 +116,8 @@ Context:
 - original objective:
 
 Focus:
+- Did the run start from a concrete /goal contract?
+- Did it stay inside verification, constraints, boundaries, iteration policy, completion conditions, and pause conditions?
 - Was the run scoped and isolated?
 - Did it use the right Codex capabilities?
 - Was validation deep enough?
@@ -99,16 +131,18 @@ Focus:
 Act as the finalizer for these Codex worker outputs.
 
 Do not expand feature scope.
+Use the authorized /goal contract as the source of truth.
 
 Tasks:
-1. Compare worker reports and changed files.
-2. Identify conflicts, shared-lock changes, and generated files.
+1. Compare worker reports and changed files against the Goal Contract.
+2. Identify conflicts, shared-lock changes, generated files, and pause-condition triggers.
 3. Integrate in dependency order.
 4. Run targeted validation after each integration step.
 5. Run final validation.
-6. Prepare a final report or PR description.
+6. Prepare a final closure report or PR description.
 
 Output:
+- final state machine stage
 - integrated branches/worktrees
 - final changed files
 - validation results
@@ -125,4 +159,3 @@ Please check whether `.codegraph/` exists.
 If it does not exist, ask before running `codegraph init -i`.
 After initialization, use CodeGraph for symbol, caller/callee, and impact questions before grep.
 ```
-
