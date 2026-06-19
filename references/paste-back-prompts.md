@@ -28,6 +28,189 @@ After the contract is clear, decide whether execution should be single-threaded,
 Do not implement until the contract is concrete enough to supervise.
 ```
 
+## Task State Pack Init
+
+```text
+Use $codex-efficiency-auditor and load references/task-state-pack-template.md plus references/stall-and-pivot-rules.md.
+
+Create or audit a Task State Pack proposal for this authorized /goal.
+
+Do not implement feature work yet.
+
+Report:
+- proposed state pack path
+- required files
+- task_spec summary
+- progress.json initial state
+- gates.json summary
+- stale_count policy
+- rollback readiness
+- whether scripts/lint_task_state_pack.py should be run after files exist
+- next copy-ready prompt
+```
+
+## Experiment Lane Preflight
+
+```text
+Use $codex-efficiency-auditor and load references/evo-style-experiment-lane.md.
+
+Run a read-only Experiment Lane Preflight.
+
+Do not install evo, modify hooks, create telemetry, or run optimization.
+
+Report:
+- objective
+- metric and direction
+- baseline evidence
+- candidate directions
+- required gates
+- allowed paths / forbidden paths / shared locks
+- human gates
+- rollback
+- missing criteria
+- suitability: EXPERIMENT_LANE_READY / NEEDS_FIX / NOT_SUITABLE / NEEDS_HUMAN_DECISION
+- next copy-ready prompt
+```
+
+## Ideator Brief
+
+```text
+Use $codex-efficiency-auditor and load references/ideator-verifier-loop.md.
+
+Act as Ideator only. Do not edit files or run experiments.
+
+Produce candidate directions for:
+- failure_analysis
+- literature_or_repo_scan
+- frontier_extrapolation
+
+For each candidate include:
+- hypothesis
+- based_on_evidence
+- differentiation_from_existing
+- expected_effect
+- cost
+- risk
+- human_gate_needed
+
+End with the one candidate recommended for verifier review.
+```
+
+## Verifier Audit
+
+```text
+Use $codex-efficiency-auditor and load references/ideator-verifier-loop.md plus references/read-only-audit-guard.md.
+
+Act as Verifier only. Do not edit files, run implementation, or expand scope.
+
+Audit the selected candidate for:
+- scope and forbidden-path risk
+- metric/gate completeness
+- validation evidence
+- false progress
+- stale evidence or cache risk
+- human gate needs
+
+Return:
+- Audit mutation status
+- JSON-style verifier result with pass/warn/fail
+- blocking findings
+- whether implementation may begin
+```
+
+## Read-Only Audit Guard
+
+```text
+Use $codex-efficiency-auditor and load references/read-only-audit-guard.md.
+
+Perform a read-only audit only. Do not modify files, stage changes, commit, push, publish, deploy, delete, reset, or continue implementation.
+
+Collect and report:
+- git status --short --branch
+- git diff --name-status
+- git diff --cached --name-status
+- whether any displayed Codex UI file cards belong to the audited commit/diff or current working-tree changes
+- Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT / MUTATION_DETECTED / UNKNOWN
+- Validation evidence
+- Residual risks
+- Verdict: READY_FOR_HUMAN_REVIEW / NEEDS_FIX / BLOCKED
+```
+
+## Human Gate Check
+
+```text
+Use $codex-efficiency-auditor and load references/goal-mode-human-gates.md.
+
+Stop before any push, publish, deploy, destructive action, external account change, credential use, paid service, or outbound public comment.
+
+Report:
+- Gate ID
+- Blocked action
+- Evidence the user must review
+- Exact APPROVED:Gx token needed
+- Exact REJECTED:Gx token option
+- What read-only or local validation can continue while waiting
+```
+
+## Done Gate Check
+
+```text
+Use $codex-efficiency-auditor and load references/goal-mode-done-gate.md plus references/read-only-audit-guard.md.
+
+Run a read-only Done Gate for the authorized /goal.
+
+Report:
+- Audit mutation status
+- Contract audit
+- Scope check
+- Verification evidence
+- Stop condition proof
+- Pause scan
+- Next-task check
+- Verdict: DONE_GATE_PASS / READY_FOR_FINAL_AUDIT / NEEDS_FIX / NEEDS_HUMAN_DECISION / BLOCKED
+```
+
+## Evidence Bundle Request
+
+```text
+Use $codex-efficiency-auditor and load references/goal-mode-evidence-bundle.md.
+
+Create an Evidence Bundle Index for this goal-mode run.
+
+Include:
+- goal contract source
+- branch/worktree and changed files
+- commands and results
+- tests/CI/manual evidence
+- screenshots or artifacts
+- diff/security/privacy scans
+- human gate tokens
+- unverified claims
+- known risks
+- next copy-ready prompt
+```
+
+## Recovery Snapshot
+
+```text
+Use $codex-efficiency-auditor and load references/goal-mode-recovery-stale-work.md.
+
+Create a Recovery Snapshot before continuing this goal.
+
+Report:
+- authorized /goal
+- current state machine stage
+- last known good evidence
+- branch/worktree
+- changed files
+- commands already run
+- last failure signature
+- repeated failures
+- missing context
+- forbidden paths/shared locks
+- next safe action
+```
+
 ## Preflight Split Check
 
 ```text
@@ -64,6 +247,8 @@ End with:
 - files changed
 - commands run
 - tests passed/failed
+- evidence bundle entries, if finalizing
+- human gate needs, if any
 - git status
 - remaining risks
 ```
@@ -72,6 +257,7 @@ End with:
 
 ```text
 Pause implementation and perform a scope drift check.
+Load references/read-only-audit-guard.md if this check is meant to be read-only.
 
 Report:
 - authorized /goal objective
@@ -80,6 +266,7 @@ Report:
 - whether any changes are outside owned paths
 - validation already run
 - risks introduced
+- recovery/stale-work status
 - whether to continue, narrow scope, or stop for human review
 
 Do not add new feature work during this check.
@@ -90,6 +277,7 @@ Do not add new feature work during this check.
 ```text
 Act as a read-only reviewer for this branch/worktree.
 Do not modify files.
+Load references/read-only-audit-guard.md.
 
 Check:
 - correctness
@@ -101,12 +289,14 @@ Check:
 
 Return blocking issues first, with file paths and evidence.
 If no blocking issues are found, say so and list residual risks.
+Include Audit mutation status and Git evidence before the verdict.
 ```
 
 ## Efficiency Auditor
 
 ```text
 Use $codex-efficiency-auditor to audit this Codex run.
+If this is a final, commit, PR, or read-only audit, load references/read-only-audit-guard.md.
 
 Context:
 - thread/session id:
@@ -118,11 +308,20 @@ Context:
 Focus:
 - Did the run start from a concrete /goal contract?
 - Did it stay inside verification, constraints, boundaries, iteration policy, completion conditions, and pause conditions?
+- Did it stop at required Human Gates?
+- Does it have a Done Gate verdict and Evidence Bundle?
+- Is recovery/stale-work status clear for long or interrupted runs?
 - Was the run scoped and isolated?
 - Did it use the right Codex capabilities?
 - Was validation deep enough?
 - Is the final report handoff-ready?
+- Did the audit itself avoid modifying files?
 - What paste-back prompt should improve the original run?
+
+For read-only audits, include:
+- Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT / MUTATION_DETECTED / UNKNOWN
+- Git evidence
+- UI file card provenance, if file cards appear
 ```
 
 ## Finalizer
@@ -146,6 +345,9 @@ Output:
 - integrated branches/worktrees
 - final changed files
 - validation results
+- Done Gate verdict
+- Evidence Bundle Index
+- Human Gate tokens
 - unresolved risks
 - READY_FOR_HUMAN_REVIEW / NEEDS_FIX / BLOCKED
 ```

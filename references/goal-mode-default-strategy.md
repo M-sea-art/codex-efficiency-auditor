@@ -29,6 +29,8 @@ Recommended defaults:
 - No test command known: discover scripts, Makefile targets, CI config, or project docs before inventing checks.
 - No advanced feature request: implement the smallest complete user-visible workflow.
 - No automation request beyond the current goal: do not create daily or global automation.
+- Long-running or resumed goal: propose a Task State Pack before relying on chat memory.
+- Metric-driven optimization: require Experiment Lane preflight before trying variants.
 
 Always add one short reason:
 
@@ -75,7 +77,22 @@ Behavior:
 
 - Low risk: output the best copy-ready goal with conservative defaults.
 - Medium risk: output defaults plus explicit boundaries, shared locks, verification, and pause conditions.
-- High risk: generate a discovery-first goal or ask for a human decision before the risky action.
+- High risk: generate a discovery-first goal or create a Human Gate wait-state before the risky action.
+
+## Human Gate Defaults
+
+Use `goal-mode-human-gates.md` when a goal may reach push, publish, deploy, destructive work, external account changes, credentials, paid services, or outbound comments.
+
+Default gates:
+
+- `G1_PUSH`: before pushing commits or branches.
+- `G2_PUBLISH`: before public release, repo visibility changes, package publish, public page publish, or public artifact sharing.
+- `G3_DEPLOY`: before deployment or external runtime changes.
+- `G4_ACCOUNT`: before external account, billing, credential, permission, or ownership changes.
+- `G5_DESTRUCTIVE`: before delete, reset, overwrite, migration, or data mutation.
+- `G6_EXTERNAL_COMMENT`: before posting to issues, PRs, tickets, email, chat, or social channels.
+
+The user must approve with an exact `APPROVED:Gx` token or reject with `REJECTED:Gx`. A green local check is not approval.
 
 ## Discovery-First Goals
 
@@ -116,6 +133,19 @@ Not allowed unless the goal explicitly grants it:
 - publish, deploy, push, delete, reset, or change account state
 - use credentials or paid services
 - change forbidden paths or shared locks
+- satisfy Human Gates without explicit approval tokens
+
+## AutoResearch Loop Defaults
+
+Use lightweight protocol first:
+
+- Do not install evo or modify hooks by default.
+- Use Task State Pack for long, resumed, context-heavy, or multi-agent goals.
+- Use Stall/Pivot rules when the same failure repeats or evidence stops improving.
+- Use Experiment Lane only when metric, direction, baseline, gates, boundaries, rollback, and human gates are explicit.
+- Use Ideator/Verifier split when multiple candidate directions are useful or false progress is likely.
+
+Do not treat subjective quality, visual taste, product direction, public release, account changes, credentials, paid services, legal/medical/financial judgment, or ownership decisions as Experiment Lane tasks.
 
 ## Polling Cadence Defaults
 

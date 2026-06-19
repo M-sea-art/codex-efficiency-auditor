@@ -1,4 +1,5 @@
 __pycache__/
 *.pyc
+.codegraph/
 .DS_Store
 Thumbs.db

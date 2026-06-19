@@ -42,6 +42,20 @@ Human intervention triggers: <events requiring user decisions, such as forbidden
 Final report format: <state machine stage, completion evidence, changed files, command results, validation gaps, risks, READY_FOR_FINAL_AUDIT / NEEDS_HUMAN_DECISION / BLOCKED, and the next copy-ready prompt>.
 ```
 
+## Advanced Control References
+
+Load these only when the goal needs them:
+
+- `goal-mode-human-gates.md`: use before push, publish, deploy, destructive work, account changes, paid services, credentials, or outbound public comments.
+- `goal-mode-done-gate.md`: use before marking a goal complete or ready for final review.
+- `goal-mode-evidence-bundle.md`: use when the final report needs traceable command, artifact, screenshot, CI, PR, scan, or risk evidence.
+- `goal-mode-handoff-matrix.md`: use when workers, reviewers, auditors, finalizers, threads, or worktrees exchange work.
+- `goal-mode-recovery-stale-work.md`: use when the run is long, resumed, compacted, stale, drifting, or repeatedly failing.
+- `task-state-pack-template.md`: use when the goal needs durable state, recovery, or cross-thread handoff.
+- `stall-and-pivot-rules.md`: use when retries repeat, evidence is stale, or the run needs a structural pivot.
+- `evo-style-experiment-lane.md`: use only when the goal has a metric, direction, gates, boundaries, rollback, and human gates.
+- `ideator-verifier-loop.md`: use when candidate generation and false-progress verification should be split.
+
 ## State Machine
 
 ```text

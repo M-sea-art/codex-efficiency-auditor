@@ -11,6 +11,10 @@ Assess whether a Codex run used the available Codex capability boundary well: pl
 
 Be an evaluator and upgrader, not a second implementer. Prefer read-only inspection unless the user explicitly asks to apply changes.
 
+For any read-only review, final audit, commit audit, PR audit, goal-mode periodic audit, or Done Gate, load `references/read-only-audit-guard.md` and report whether the audit itself modified files.
+
+For long-running, self-improving, multi-candidate, or repeated-failure goals, route through Task State Pack, Stall/Pivot, Experiment Lane, and Ideator/Verifier references before recommending more execution.
+
 ## Operating Modes
 
 This skill has three layers:
@@ -18,6 +22,24 @@ This skill has three layers:
 1. **Goal Compiler**: turn a vague or complex request into a paste-ready `/goal` contract with outcome, verification, constraints, boundaries, iteration policy, completion conditions, pause conditions, polling audit, human intervention triggers, and final report format.
 2. **Goal Supervisor**: after the user authorizes a goal, supervise the run with preflight audit, Task Cards, worktree or agent split decisions, periodic audit, drift stops, and final closure.
 3. **Efficiency Auditor**: audit a running or completed thread, repo, worktree, PR, transcript, or final report for Codex capability utilization and upgrade opportunities.
+
+Cross-cutting controls:
+
+- **Task State Pack**: use durable state files for long tasks instead of relying on chat memory.
+- **Stall/Pivot Rules**: stop repeated low-evidence retries and force structural pivots.
+- **Experiment Lane**: allow metric-driven variants only when required gates protect correctness and scope.
+- **Ideator/Verifier Loop**: separate proposal generation from implementation and read-only verification.
+
+Routing matrix:
+
+| User intent | Primary route | References to load |
+|---|---|---|
+| vague idea, autonomous goal, or `/goal` request | Goal Compiler | `goal-mode-contract-template.md`, `goal-mode-default-strategy.md` |
+| authorized goal needs execution supervision | Goal Supervisor | `task-card-template.md`, `goal-mode-audit-prompts.md`, then handoff/human-gate refs as needed |
+| long-running, resumed, multi-thread, or context-heavy goal | Task State Pack | `task-state-pack-template.md`, `stall-and-pivot-rules.md` |
+| measurable optimization or candidate comparison | Experiment Lane | `evo-style-experiment-lane.md`, then `ideator-verifier-loop.md` when multiple directions exist |
+| repeated failure, stale progress, or scope drift | Recovery audit | `goal-mode-recovery-stale-work.md`, `stall-and-pivot-rules.md`, `read-only-audit-guard.md` |
+| completed run, commit, PR, or final claim | Efficiency Auditor | `read-only-audit-guard.md`, `audit-rubric.md`, `report-templates.md` |
 
 Default goal autonomy is `supervised-autonomous`: Codex may inspect, plan, implement inside the authorized boundary, test, and report, but must pause before scope expansion, destructive changes, public release, credentials, billing, external account changes, or irreversible operations.
 
@@ -45,6 +67,7 @@ If a thread id is provided and thread tools are available, read the thread direc
 2. **Gather evidence**
    - For threads: read recent turns and older context until the goal, plan, implementation, validation, and final report are visible.
    - For repos: inspect `AGENTS.md`, Git branch/status, recent commits, changed files, CI/PR state, test commands, and build reports.
+   - For read-only audits: use `references/read-only-audit-guard.md`, collect `git status --short --branch`, `git diff --name-status`, and `git diff --cached --name-status` when available, and distinguish audited commit/diff file cards from audit-time mutations.
    - For codebases with CodeGraph available and initialized: use it for structural questions before grep.
    - For UI work: check whether Browser or visual validation was used.
    - For GitHub work: check branch, PR, checks, review comments, and diff scope.
@@ -73,6 +96,7 @@ If a thread id is provided and thread tools are available, read the thread direc
 6. **Report**
    - Use `references/report-templates.md`.
    - Lead with verdict, score, and whether the run is still active.
+   - For read-only audits, include `Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT / MUTATION_DETECTED / UNKNOWN`.
    - Include evidence-backed strengths, gaps, and one paste-ready upgrade prompt.
 
 ## Goal Mode Workflow
@@ -93,10 +117,33 @@ Use this workflow when the user asks for goal mode, autonomous progress, task au
    - Use Goal Contract -> Preflight Audit -> Task Card -> Worktree/Agent Split -> Periodic Audit -> Final Closure.
    - Use `references/task-card-template.md` and `references/multi-worktree-orchestration-template.md` only after the Goal Contract is concrete enough.
    - Use `references/goal-mode-audit-prompts.md` for goal-specific start, preflight, periodic audit, drift stop, human-decision, and closure prompts.
+   - Use `references/task-state-pack-template.md` for long-running, resumed, context-heavy, or multi-thread goals.
+   - Use `references/stall-and-pivot-rules.md` when progress is stale, failures repeat, or the run loops over similar attempts.
+   - Use `references/evo-style-experiment-lane.md` only for measurable optimization with concrete metric, direction, gates, boundaries, rollback, and human gates.
+   - Use `references/ideator-verifier-loop.md` when multiple candidate directions, frontier-style exploration, literature/repo scan, or false-progress verification is needed.
+   - Use `references/goal-mode-human-gates.md` before push, publish, deploy, destructive work, external account changes, or outbound comments.
+   - Use `references/goal-mode-done-gate.md` and `references/goal-mode-evidence-bundle.md` before final completion claims.
+   - Use `references/goal-mode-handoff-matrix.md` when multiple agents, worktrees, reviewers, auditors, or finalizers exchange work.
+   - Use `references/goal-mode-recovery-stale-work.md` when a goal is long-running, resumed, compacted, repeatedly failing, stale, or drifting.
 
 4. **Validate the contract**
    - For file deliverables containing goal contracts, run `scripts/lint_goal_mode_contract.py` when useful.
+   - For Task State Pack directories, run `scripts/lint_task_state_pack.py` when useful.
+   - For Experiment Lane contracts, run `scripts/lint_experiment_lane.py` when useful.
    - Revise goals that lack verification, boundaries, iteration policy, stop conditions, pause conditions, polling audit, human intervention triggers, or final report format.
+
+## AutoResearch Loop Workflow
+
+Use this workflow when the user asks for automated task advancement, self-optimization, long-running research, multiple candidate approaches, or deeper reuse of AutoResearch/evo-style ideas:
+
+1. Start from a bounded `/goal` contract.
+2. Decide whether the goal needs a Task State Pack. Use it when the task is long-running, resumed, context-heavy, multi-agent, or needs periodic audit.
+3. Decide whether Experiment Lane is allowed. It is allowed only when metric, direction, gates, boundaries, rollback, and human gates are explicit.
+4. Use Ideator/Verifier split for multi-direction exploration. Ideators propose; workers implement; verifiers audit; finalizers close.
+5. Apply Stall/Pivot rules during periodic audit. Do not keep retrying without fresh evidence.
+6. Close with Done Gate, Evidence Bundle, Read-Only Audit Guard, and Human Gates as applicable.
+
+Do not install evo, modify hooks, add telemetry, create remote backends, or turn this skill into an execution runtime unless the user creates a separate explicit goal for that work.
 
 ## Standard Categories
 
@@ -125,13 +172,26 @@ Do not recommend more parallelism when:
 
 Do not mark a run `READY_FOR_HUMAN_REVIEW` unless final validation evidence is present or the user explicitly asked for an interim review.
 
+Do not output a bare final verdict for a read-only audit unless the user explicitly asks for verdict-only output. Include mutation status, Git evidence, validation evidence, residual risks, and verdict.
+
 ## Templates
 
 Load these references only when they fit the user's request:
 
+- `references/read-only-audit-guard.md`: Use for any read-only review, final audit, commit audit, PR audit, periodic audit, Done Gate, or user prompt that says not to edit files.
+- `references/autoresearch-adoption-notes.md`: Use when explaining what this project adopts or rejects from AutoResearch, paper-writing skill groups, and evo.
+- `references/task-state-pack-template.md`: Use when a goal needs durable state files, recovery, handoff, or long-running audit.
+- `references/stall-and-pivot-rules.md`: Use when progress is stale, repeated failures appear, or the run needs a structural pivot.
+- `references/evo-style-experiment-lane.md`: Use when a task is metric-driven and may benefit from experiment-style candidate comparison.
+- `references/ideator-verifier-loop.md`: Use when candidate proposal and false-progress verification should be separated.
 - `references/goal-mode-contract-template.md`: Use when compiling or auditing a bounded `/goal` contract for goal mode.
 - `references/goal-mode-default-strategy.md`: Use when choosing conservative defaults, risk stance, discovery-first goals, or automation boundaries.
 - `references/goal-mode-audit-prompts.md`: Use when producing goal-mode start, preflight, periodic audit, drift stop, human-decision, or final closure prompts.
+- `references/goal-mode-human-gates.md`: Use when high-risk actions require explicit approval or rejection tokens.
+- `references/goal-mode-done-gate.md`: Use when deciding whether a run can be marked complete, ready for review, blocked, or needing fixes.
+- `references/goal-mode-evidence-bundle.md`: Use when final reports need traceable proof across commands, artifacts, screenshots, CI, PRs, scans, and risks.
+- `references/goal-mode-handoff-matrix.md`: Use when a goal involves worker, reviewer, auditor, finalizer, thread, or worktree handoffs.
+- `references/goal-mode-recovery-stale-work.md`: Use when a run is stale, resumed, compacted, repeatedly failing, blocked, or drifting.
 - `references/task-card-template.md`: Use when creating or auditing worker task cards, owned paths, shared locks, done criteria, or validation commands.
 - `references/multi-worktree-orchestration-template.md`: Use when deciding whether a task should become a multi-agent/multi-worktree workflow.
 - `references/paste-back-prompts.md`: Use when producing prompts that should be pasted into an original thread, worker thread, reviewer thread, or finalizer thread.
@@ -142,7 +202,14 @@ When a run is missing a final audit, provide a prompt like:
 
 ```text
 Please perform a read-only Codex efficiency final audit for this run.
-Do not expand scope or continue feature work unless you find a blocker.
+Load references/read-only-audit-guard.md.
+Do not modify files, expand scope, or continue feature work.
+
+Before the verdict, collect and report:
+- git status --short --branch
+- git diff --name-status
+- git diff --cached --name-status
+- Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT / MUTATION_DETECTED / UNKNOWN
 
 Report:
 - Codex capability utilization score out of 100
