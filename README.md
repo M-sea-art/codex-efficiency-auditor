@@ -1,5 +1,6 @@
 # Codexcavator / Codex 挖掘机
-![Uploading image.png…]()
+
+<img width="1280" height="640" alt="codexcavator_cn_social_preview_1280x640 (1)" src="https://github.com/user-attachments/assets/38c0a4c0-b754-4929-84d2-ce09043cc984" />
 
 
 > Stop judging AI coding by the final diff. Audit the run.
