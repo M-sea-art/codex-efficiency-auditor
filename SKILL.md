@@ -1,6 +1,6 @@
 ---
 name: codex-efficiency-auditor
-description: Audit Codex threads, projects, worktrees, pull requests, and agent runs for capability utilization, orchestration quality, risk isolation, validation coverage, and upgrade opportunities. Use when the user asks to evaluate whether a Codex conversation or project used Codex well, review a thread id, score a project workflow, improve multi-agent/worktree/cloud usage, create a final reviewer prompt, convert a vague request into a bounded Codex /goal, supervise an authorized goal-mode run, or turn an ordinary Codex run into a more efficient auditable execution pattern.
+description: "Codex efficiency expert / Codex \u6548\u7387\u4e13\u5bb6 for auditing and upgrading Codex threads, projects, PRs, worktrees, agent runs, and goal-mode workflows. Use when the user says \u6548\u7387\u5ba1\u8ba1, \u5ba1\u8ba1\u5f53\u524d\u4f1a\u8bdd, \u8bc4\u6d4b\u8fd9\u4e2a\u9879\u76ee, Codex \u7528\u5f97\u597d\u4e0d\u597d, \u80fd\u529b\u8fb9\u754c, \u591a\u667a\u80fd\u4f53\u7f16\u6392, \u591a agent, worktree, \u76ee\u6807\u6a21\u5f0f, /goal, \u76ee\u6807\u5408\u540c, \u81ea\u52a8\u5316\u95ed\u73af, \u5468\u671f\u5ba1\u8ba1, \u6700\u7ec8\u5ba1\u8ba1, READY_FOR_HUMAN_REVIEW, NEEDS_FIX, or asks to convert an idea into a bounded Codex goal, supervise progress, detect scope drift or stale work, and produce paste-back prompts or reports."
 ---
 
 # Codex Efficiency Auditor

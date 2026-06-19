@@ -1,4 +1,4 @@
 interface:
-  display_name: "Codex Efficiency Auditor"
-  short_description: "Audit Codex thread and project capability use"
-  default_prompt: "Use $codex-efficiency-auditor to audit this Codex thread or project for capability utilization and upgrade opportunities."
+  display_name: "Codex \u6548\u7387\u4e13\u5bb6"
+  short_description: "\u5ba1\u8ba1 Codex \u4f1a\u8bdd\u3001\u9879\u76ee\u548c\u76ee\u6807\u6a21\u5f0f\u6548\u7387"
+  default_prompt: "\u4f7f\u7528 $codex-efficiency-auditor \u5ba1\u8ba1\u5f53\u524d Codex \u4f1a\u8bdd\u6216\u9879\u76ee\uff1a\u68c0\u67e5\u80fd\u529b\u8fb9\u754c\u5229\u7528\u3001\u76ee\u6807\u5408\u540c\u3001\u591a\u667a\u80fd\u4f53\u7f16\u6392\u3001\u9a8c\u8bc1\u8bc1\u636e\u3001\u98ce\u9669\u95e8\u7981\uff0c\u5e76\u7ed9\u51fa\u4e0b\u4e00\u6b65\u5347\u7ea7 prompt\u3002"
