@@ -55,6 +55,38 @@ Upgrade plan:
 3. ...
 ```
 
+## Project Capability Scan
+
+```markdown
+Project Capability Scan: COMPACT | FULL_INVENTORY
+Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | UNKNOWN
+Scope: one-time read-only recommendation
+Scan basis: script-run | manual-only | transcript-only
+Status note: `installed-not-exposed` means detected locally, but current-session callable exposure is not confirmed.
+
+Best capabilities for this project:
+| Rank | Capability | Status | Best for | Useful mention | Risk | Notes |
+|---:|---|---|---|---|---|---|
+| 1 |  | enabled / available-in-session / installed-not-exposed / missing-or-unknown |  | `$skill` or @mention | low / medium / high-human-gate |  |
+
+Suggested usage order:
+1. ...
+2. ...
+3. ...
+
+Risk boundaries:
+| Capability | Human Gate needed before | Safe read-only use |
+|---|---|---|
+|  |  |  |
+
+Missing or recommended:
+- ...
+
+Inventory note:
+- Compact mode only unless `full inventory` or `完整清单` was requested.
+- Marketplace-wide not-installed plugins are `missing-or-unknown` unless a reliable catalog was checked.
+```
+
 ## Final Reviewer Prompt
 
 ```text

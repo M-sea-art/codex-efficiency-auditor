@@ -25,6 +25,7 @@ Cross-cutting controls:
 - **Experiment Lane**: metric-driven variants only when required gates pass.
 - **Ideator/Verifier Loop**: separate proposal generation, implementation, and read-only verification.
 - **Project Supervisor Bridge**: optionally coordinate with `$project-supervisor` for acceptance gates, Definition of Done, completion reports, and fake/placeholder completion checks.
+- **Capability Scan**: one-time read-only plugin/app/skill/MCP recommendations for the current project.
 
 ## Use Cases
 
@@ -40,6 +41,7 @@ Cross-cutting controls:
 - Score whether a task should have used subagents, CodeGraph, Browser, GitHub, Cloud, or stronger validation.
 - Standardize Codex run handoffs across projects.
 - Generate task cards, multi-worktree orchestration prompts, and paste-back prompts for improving future runs.
+- Run a one-time project capability scan to recommend useful Codex plugins, skills, apps, MCP tools, and risk boundaries.
 
 ## Install
 
@@ -111,6 +113,22 @@ Use $codex-efficiency-auditor as Goal Compiler + Goal Supervisor, and use $proje
 If $project-supervisor is unavailable, stop at NEEDS_HUMAN_DECISION and ask whether to install it or use a fallback acceptance checklist.
 ```
 
+Run a one-time project capability scan:
+
+```text
+Use $codex-efficiency-auditor to run a one-time read-only Project Capability Scan.
+
+Project context:
+- GitHub repo
+- local development
+- UI/browser testing
+- release gate
+- game development
+
+Do not modify files, install plugins, authenticate, push, publish, deploy, or create automations.
+Output compact report only.
+```
+
 ## What It Scores
 
 The audit is scored out of 100:
@@ -156,6 +174,7 @@ Recommended paste-back prompt:
 - `SKILL.md`: core skill instructions
 - `references/audit-rubric.md`: scoring rubric
 - `references/autoresearch-adoption-notes.md`: what is adopted or rejected from AutoResearch, paper-writing skill groups, and evo
+- `references/capability-audit-template.md`: one-time read-only plugin/app/skill/MCP scan template
 - `references/read-only-audit-guard.md`: protected read-only audit rules, mutation status, Git evidence, and UI file card disambiguation
 - `references/task-state-pack-template.md`: durable state pack protocol for long-running Codex goals
 - `references/stall-and-pivot-rules.md`: stale-count and structural pivot rules
@@ -177,11 +196,15 @@ Recommended paste-back prompt:
 - `scripts/lint_goal_mode_contract.py`: helper for validating goal-mode contracts
 - `scripts/lint_task_state_pack.py`: helper for validating Task State Pack directories
 - `scripts/lint_experiment_lane.py`: helper for validating Experiment Lane contracts
+- `scripts/audit_codex_capabilities.py`: read-only capability scanner with Markdown and `--json` output
+- `scripts/test_capability_scan.py`: lightweight regression checks for capability scan ranking and JSON shape
 - `agents/openai.yaml`: Codex UI metadata
 
 ## Notes
 
 This skill is intentionally lightweight. It does not call external services by itself and does not require runtime dependencies beyond Python for the optional scoring helper.
+
+The capability scanner reads local Codex config/cache/skill metadata only. It avoids auth files and credential stores, does not authenticate, and does not upload scan data. Treat `--full` inventory output as local-environment metadata and avoid pasting it into public issues unless reviewed.
 
 `$project-supervisor` is an optional companion skill for acceptance gates and completion reports. The bridge prompts work best when that skill is installed; otherwise, the auditor should stop and ask whether to install it or use a fallback acceptance checklist.
 
@@ -214,6 +237,7 @@ This skill is intentionally lightweight. It does not call external services by i
 - **Experiment Lane**：只有 metric 和 gate 都明确时，才允许多方案实验。
 - **Ideator/Verifier Loop**：把候选方向、实现和只读验证分开。
 - **Project Supervisor Bridge**：可选联动 `$project-supervisor`，用于验收门禁、Definition of Done、completion report 和防虚假完成检查。
+- **Capability Scan**：一次性只读盘点当前项目可用的插件、app、skill、MCP 和风险边界。
 
 ## 适用场景
 
@@ -229,6 +253,7 @@ This skill is intentionally lightweight. It does not call external services by i
 - 判断任务是否应该使用 subagents、CodeGraph、Browser、GitHub、Cloud 或更强验证链路。
 - 为多个项目沉淀统一的 Codex 执行复盘与交接标准。
 - 生成 Task Card、多 worktree 编排 prompt、worker/reviewer/auditor/finalizer 回填 prompt。
+- 做一次性项目能力盘点，推荐当前项目最值得使用的 Codex 插件、skill、app、MCP 和权限边界。
 
 ## 安装
 
@@ -306,6 +331,22 @@ Use $codex-efficiency-auditor as Goal Compiler + Goal Supervisor, and use $proje
 如果 $project-supervisor 不可用，停在 NEEDS_HUMAN_DECISION，并询问是安装它还是使用 fallback acceptance checklist。
 ```
 
+也可以做一次性项目插件能力审计：
+
+```text
+用 $codex-efficiency-auditor 做一次只读 Project Capability Scan。
+
+Project context:
+- GitHub repo
+- local development
+- UI/browser testing
+- release gate
+- game development
+
+不要修改文件、安装插件、认证、push、publish、deploy 或创建自动化。
+只输出 compact report。
+```
+
 ## 评分维度
 
 审计满分为 100 分：
@@ -351,6 +392,7 @@ Recommended paste-back prompt:
 - `SKILL.md`：核心 skill 指令
 - `references/audit-rubric.md`：评分标准
 - `references/autoresearch-adoption-notes.md`：说明本项目从 AutoResearch、论文写作 skill group 和 evo 采用/拒绝了哪些思想
+- `references/capability-audit-template.md`：一次性只读插件/app/skill/MCP 能力审计模板
 - `references/read-only-audit-guard.md`：受保护只读审计规则、mutation status、Git 证据和 UI 文件卡片来源判断
 - `references/task-state-pack-template.md`：长任务 Codex 目标的持久状态包协议
 - `references/stall-and-pivot-rules.md`：stale_count 和结构性转向规则
@@ -372,10 +414,14 @@ Recommended paste-back prompt:
 - `scripts/lint_goal_mode_contract.py`：目标模式合同校验脚本
 - `scripts/lint_task_state_pack.py`：Task State Pack 目录校验脚本
 - `scripts/lint_experiment_lane.py`：Experiment Lane 合同校验脚本
+- `scripts/audit_codex_capabilities.py`：只读能力扫描脚本，支持 Markdown 和 `--json` 输出
+- `scripts/test_capability_scan.py`：能力扫描排序和 JSON 结构的轻量回归测试
 - `agents/openai.yaml`：Codex UI 元数据
 
 ## 说明
 
 这个 skill 保持轻量设计。它本身不会调用外部服务，也没有额外运行时依赖；可选评分脚本只需要 Python。
+
+能力扫描脚本只读取本机 Codex config/cache/skill 元数据，避开 auth 文件和凭证存储，不认证、不上传扫描结果。`--full` 输出属于本机环境元数据，贴到公开 issue 前应先人工检查。
 
 `$project-supervisor` 是用于验收门禁和 completion report 的可选伴随 skill。桥接 prompt 在安装该 skill 时效果最好；如果不可用，效率专家应停在 `NEEDS_HUMAN_DECISION`，询问是否安装它或使用 fallback acceptance checklist。

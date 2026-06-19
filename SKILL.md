@@ -1,6 +1,6 @@
 ---
 name: codex-efficiency-auditor
-description: "Codex efficiency expert / Codex \u6548\u7387\u4e13\u5bb6 for auditing and upgrading Codex threads, projects, PRs, worktrees, agent runs, goal-mode workflows, acceptance gates, completion reports, and Definition of Done. Use when the user says \u6548\u7387\u5ba1\u8ba1, \u9a8c\u6536\u95e8\u7981, \u9632\u865a\u5047\u5b8c\u6210, completion report, \u5ba1\u8ba1\u5f53\u524d\u4f1a\u8bdd, \u8bc4\u6d4b\u8fd9\u4e2a\u9879\u76ee, Codex \u7528\u5f97\u597d\u4e0d\u597d, \u80fd\u529b\u8fb9\u754c, \u591a\u667a\u80fd\u4f53\u7f16\u6392, \u591a agent, worktree, \u76ee\u6807\u6a21\u5f0f, /goal, \u76ee\u6807\u5408\u540c, \u81ea\u52a8\u5316\u95ed\u73af, \u5468\u671f\u5ba1\u8ba1, \u6700\u7ec8\u5ba1\u8ba1, READY_FOR_HUMAN_REVIEW, NEEDS_FIX, or asks to convert an idea into a bounded Codex goal, supervise progress, detect scope drift or stale work, prevent unsupported completion claims, and produce paste-back prompts or reports."
+description: "Codex efficiency expert / Codex \u6548\u7387\u4e13\u5bb6 for auditing and upgrading Codex threads, projects, PRs, worktrees, agent runs, goal-mode workflows, acceptance gates, completion reports, Definition of Done, and one-time project capability scans. Use when the user says \u6548\u7387\u5ba1\u8ba1, \u9a8c\u6536\u95e8\u7981, \u9632\u865a\u5047\u5b8c\u6210, completion report, \u5ba1\u8ba1\u5f53\u524d\u4f1a\u8bdd, \u8bc4\u6d4b\u8fd9\u4e2a\u9879\u76ee, Codex \u7528\u5f97\u597d\u4e0d\u597d, \u80fd\u529b\u8fb9\u754c, \u9879\u76ee\u63d2\u4ef6\u80fd\u529b\u5ba1\u8ba1, Codex \u80fd\u529b\u76d8\u70b9, \u63a8\u8350\u672c\u9879\u76ee\u53ef\u7528\u63d2\u4ef6, Audit my available Codex plugins and app capabilities, \u591a\u667a\u80fd\u4f53\u7f16\u6392, \u591a agent, worktree, \u76ee\u6807\u6a21\u5f0f, /goal, \u76ee\u6807\u5408\u540c, \u81ea\u52a8\u5316\u95ed\u73af, \u5468\u671f\u5ba1\u8ba1, \u6700\u7ec8\u5ba1\u8ba1, READY_FOR_HUMAN_REVIEW, NEEDS_FIX, or asks to convert an idea into a bounded Codex goal, supervise progress, detect scope drift or stale work, prevent unsupported completion claims, audit available Codex capabilities, and produce paste-back prompts or reports."
 ---
 
 # Codex Efficiency Auditor
@@ -30,6 +30,7 @@ Cross-cutting controls:
 - **Experiment Lane**: allow metric-driven variants only when required gates protect correctness and scope.
 - **Ideator/Verifier Loop**: separate proposal generation from implementation and read-only verification.
 - **Project Supervisor Bridge**: coordinate with `$project-supervisor` for acceptance gates, completion reports, and fake/placeholder completion checks.
+- **Capability Scan**: run an explicit one-time, read-only project capability scan for available plugins, apps, skills, MCP tools, useful mentions, risk boundaries, and project-specific recommendations.
 
 Routing matrix:
 
@@ -40,12 +41,15 @@ Routing matrix:
 | long-running, resumed, multi-thread, or context-heavy goal | Task State Pack | `task-state-pack-template.md`, `stall-and-pivot-rules.md` |
 | measurable optimization or candidate comparison | Experiment Lane | `evo-style-experiment-lane.md`, then `ideator-verifier-loop.md` when multiple directions exist |
 | acceptance gates, fake completion, Definition of Done, or completion report | Supervision bridge | `project-supervisor-bridge.md`, then `$project-supervisor` |
+| project plugin/capability inventory or recommendation | Capability Scan | `capability-audit-template.md`, `read-only-audit-guard.md` |
 | repeated failure, stale progress, or scope drift | Recovery audit | `goal-mode-recovery-stale-work.md`, `stall-and-pivot-rules.md`, `read-only-audit-guard.md` |
 | completed run, commit, PR, or final claim | Efficiency Auditor | `read-only-audit-guard.md`, `audit-rubric.md`, `report-templates.md` |
 
 Default goal autonomy is `supervised-autonomous`: Codex may inspect, plan, implement inside the authorized boundary, test, and report, but must pause before scope expansion, destructive changes, public release, credentials, billing, external account changes, or irreversible operations.
 
 Do not create daily or global automations. Automation prompts may be suggested only after a user authorizes a specific goal, and they must be scoped to auditing, summarizing, drift detection, blocker detection, and next-prompt generation.
+
+Capability Scan is explicit-only and one-time. Do not run it automatically during every Goal Contract, Task Card, periodic audit, or final audit. Use it only when the user asks to audit or recommend available Codex plugins, apps, skills, MCP tools, or project capability mentions.
 
 ## Inputs
 
@@ -148,6 +152,22 @@ Use this workflow when the user asks for automated task advancement, self-optimi
 
 Do not install evo, modify hooks, add telemetry, create remote backends, or turn this skill into an execution runtime unless the user creates a separate explicit goal for that work.
 
+## Capability Scan Workflow
+
+Use this workflow only when the user explicitly asks for a project plugin/capability scan, such as "Audit my available Codex plugins and app capabilities", "project plugin capability audit", "Codex capability inventory", or a Chinese equivalent already listed in the frontmatter trigger description.
+
+1. Load `references/capability-audit-template.md` and `references/read-only-audit-guard.md`.
+2. Treat the scan as read-only reporting. Do not install, enable, disable, authenticate, publish, push, deploy, create automations, submit forms, comment externally, or mutate project files.
+3. Do not read `auth.json`, secrets, tokens, OAuth material, private email lists, or credential stores.
+4. Prefer compact mode unless the user asks for `full inventory` or the Chinese equivalent for a complete inventory.
+5. Distinguish `enabled`, `available-in-session`, `installed-not-exposed`, and `missing-or-unknown`; mark unavailable data as best-effort instead of guessing.
+6. Include detected plugin definitions, plugin capabilities, and cached plugin skills when they are relevant to the project.
+7. Recommend 5-8 project-relevant capability families first, then list high-risk tools and required Human Gates.
+8. Do not claim marketplace-wide not-installed plugins unless a reliable plugin catalog is available; otherwise report missing recommendations as `missing-or-unknown`.
+9. Include `Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT / UNKNOWN` in the report.
+10. When local file access is available and `scripts/audit_codex_capabilities.py` exists, run it before composing the report. Pass project hints with `--context`, for example `--context "game GitHub repo UI/browser testing release gate"`. Use `--json` only when machine-readable output is requested. If the script cannot be run, state why and include `Scan basis: manual-only` or `Scan basis: transcript-only`.
+11. Preserve domain plugins in the compact top recommendations. For game, playable, Godot, Phaser, Three.js, WebGL, sprite, or playtest projects, include detected `@game-studio` / `$game-studio:*` capabilities in the 5-8 recommended items even when they are `installed-not-exposed`.
+
 ## Standard Categories
 
 Audit these eight categories:
@@ -182,6 +202,7 @@ Do not output a bare final verdict for a read-only audit unless the user explici
 Load these references only when they fit the user's request:
 
 - `references/read-only-audit-guard.md`: Use for any read-only review, final audit, commit audit, PR audit, periodic audit, Done Gate, or user prompt that says not to edit files.
+- `references/capability-audit-template.md`: Use for explicit, one-time project plugin/app/skill/MCP scans and compact project-specific capability recommendations.
 - `references/autoresearch-adoption-notes.md`: Use when explaining what this project adopts or rejects from AutoResearch, paper-writing skill groups, and evo.
 - `references/project-supervisor-bridge.md`: Use when combining `$codex-efficiency-auditor` with `$project-supervisor` for acceptance gates, completion reports, Definition of Done, or fake/placeholder completion control.
 - `references/task-state-pack-template.md`: Use when a goal needs durable state files, recovery, handoff, or long-running audit.

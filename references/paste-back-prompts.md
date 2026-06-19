@@ -56,6 +56,41 @@ Output:
 - Final audit verdict: READY_FOR_HUMAN_REVIEW / NEEDS_FIX / NEEDS_HUMAN_DECISION / BLOCKED
 ```
 
+## One-Time Project Capability Scan
+
+```text
+Use $codex-efficiency-auditor to run a one-time read-only Project Capability Scan.
+
+Project context:
+- GitHub repo
+- local development
+- UI/browser testing
+- Figma/design work
+- PR review
+- release gate
+- game development
+
+Do not modify files.
+Do not install, enable, disable, authenticate, publish, push, deploy, or create automations.
+Do not read auth.json, secrets, tokens, OAuth material, credential stores, or payment data.
+
+If scripts/audit_codex_capabilities.py is available, run it first with project context hints, for example:
+python scripts/audit_codex_capabilities.py --context "game GitHub repo UI/browser testing release gate"
+
+Output compact report only:
+- Best capabilities for this project
+- Installed/enabled status
+- Installed plugin definitions and cached plugin skills when relevant
+- Scan basis: script-run / manual-only / transcript-only
+- Useful $skill or @mentions
+- Risky plugins and required Human Gates
+- Missing or recommended capabilities
+- Suggested usage order
+- Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT / UNKNOWN
+
+Only output full inventory if I explicitly ask for `full inventory` or `完整清单`.
+```
+
 ## Acceptance Gate Init
 
 ```text
