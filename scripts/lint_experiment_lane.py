@@ -216,7 +216,9 @@ def lint_text(text: str, source: str) -> list[str]:
     if direction and not re.search(r"\b(max|min)\b", direction, flags=re.IGNORECASE):
         errors.append(f"{source}: Direction must be `max` or `min`")
 
+    objective = _content_for_marker(text, "Objective")
     metric = _content_for_marker(text, "Metric")
+    baseline = _content_for_marker(text, "Baseline")
     candidates = _content_for_marker(text, "Candidate directions")
     if metric:
         if len(metric) < 8:
@@ -243,7 +245,7 @@ def lint_text(text: str, source: str) -> list[str]:
     if decision and not re.search(r"(metric|gate|pass|fail|discard|keep|指标|门禁|通过|失败|丢弃|保留)", decision, flags=re.IGNORECASE):
         errors.append(f"{source}: Decision rule must combine metric and gate outcomes")
 
-    suitability_text = "\n".join(item for item in (metric, candidates, decision) if item)
+    suitability_text = "\n".join(item for item in (objective, metric, baseline, candidates, gates, decision) if item)
     if _has_any(UNSUITABLE_EXPERIMENT_PATTERNS, suitability_text):
         errors.append(f"{source}: legal, medical, financial, compliance, copyright, or ownership judgment is not suitable for Experiment Lane")
 

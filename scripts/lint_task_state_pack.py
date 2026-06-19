@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -85,51 +86,56 @@ DECORATIVE_GATE_PATTERNS = [
     "无需验证",
 ]
 
-HIGH_RISK_TASK_PATTERNS = [
-    "push",
-    "publish",
-    "public",
-    "release",
-    "deploy",
-    "delete",
-    "reset",
-    "credential",
-    "secret",
-    "token",
-    "api_key",
-    "api key",
-    "billing",
-    "paid service",
-    "payment",
-    "account",
-    "permission",
-    "oauth",
-    "comment",
-    "reply",
-    "post",
-    "email",
-    "message",
-    "推送",
-    "公开",
-    "发布",
-    "部署",
-    "删除",
-    "重置",
-    "凭证",
-    "密钥",
-    "令牌",
-    "付费",
-    "付款",
-    "账单",
-    "账号",
-    "账户",
-    "权限",
-    "评论",
-    "回复",
-    "发帖",
-    "邮件",
-    "消息",
+EMPTY_MARKER_VALUES = {
+    "none",
+    "n/a",
+    "not applicable",
+    "无",
+    "没有",
+}
+
+NONE_ALLOWED_MARKERS = {
+    "Metric, if any:",
+}
+
+HIGH_RISK_GATE_PATTERNS = [
+    ("G1_PUSH", ["push", "git push", "推送"]),
+    ("G2_PUBLISH", ["publish", "public", "release", "公开", "发布"]),
+    ("G3_DEPLOY", ["deploy", "deployment", "部署"]),
+    (
+        "G4_ACCOUNT",
+        [
+            "credential",
+            "secret",
+            "token",
+            "api_key",
+            "api key",
+            "billing",
+            "paid service",
+            "payment",
+            "account",
+            "permission",
+            "oauth",
+            "凭证",
+            "密钥",
+            "令牌",
+            "付费",
+            "付款",
+            "账单",
+            "账号",
+            "账户",
+            "权限",
+            "授权",
+        ],
+    ),
+    ("G5_DESTRUCTIVE", ["delete", "reset", "overwrite", "migration", "删除", "重置", "覆盖", "迁移"]),
+    ("G6_EXTERNAL_COMMENT", ["comment", "reply", "post", "email", "message", "评论", "回复", "发帖", "邮件", "消息"]),
 ]
+
+MARKER_PATTERNS = {
+    marker: re.compile(rf"^\s*(?:[-*]\s*)?{re.escape(marker.rstrip(':：'))}\s*[:：]\s*(?P<rest>.*)$", re.IGNORECASE)
+    for marker in TASK_SPEC_MARKERS
+}
 
 
 def _load_json(path: Path, errors: list[str]) -> Any:
@@ -165,17 +171,52 @@ def _contains_any(text: str, needles: list[str]) -> bool:
     return any(needle.casefold() in lowered for needle in needles)
 
 
-def _is_empty_marker_value(text: str, marker: str) -> bool:
+def _is_task_spec_marker(line: str) -> bool:
+    return any(pattern.match(line) for pattern in MARKER_PATTERNS.values())
+
+
+def _marker_value(text: str, marker: str) -> str | None:
     lines = text.splitlines()
+    pattern = MARKER_PATTERNS[marker]
     for index, line in enumerate(lines):
-        stripped = line.strip()
-        if stripped != marker:
+        match = pattern.match(line)
+        if not match:
             continue
-        following = next((item.strip() for item in lines[index + 1 :] if item.strip()), "")
-        if not following or following.endswith(":"):
-            return True
-        return following.casefold() in {"none", "n/a", "not applicable", "无", "没有"}
-    return False
+
+        rest = match.group("rest").strip()
+        if rest:
+            return rest
+
+        following: list[str] = []
+        for next_line in lines[index + 1 :]:
+            if _is_task_spec_marker(next_line):
+                break
+            if next_line.strip():
+                following.append(next_line.strip())
+        return "\n".join(following).strip()
+
+    return None
+
+
+def _is_empty_marker_value(text: str, marker: str) -> bool:
+    value = _marker_value(text, marker)
+    if value is None:
+        return False
+    if not value.strip():
+        return True
+    if marker in NONE_ALLOWED_MARKERS:
+        return False
+    normalized_lines = [line.strip().lstrip("-* ").casefold() for line in value.splitlines() if line.strip()]
+    return all(line in EMPTY_MARKER_VALUES for line in normalized_lines)
+
+
+def _missing_human_gate_ids(text: str, human_gates: list[str]) -> list[str]:
+    human_gate_text = "\n".join(human_gates).casefold()
+    missing: list[str] = []
+    for gate_id, needles in HIGH_RISK_GATE_PATTERNS:
+        if _contains_any(text, needles) and gate_id.casefold() not in human_gate_text:
+            missing.append(gate_id)
+    return missing
 
 
 def lint_pack(path: Path) -> list[str]:
@@ -205,7 +246,16 @@ def lint_pack(path: Path) -> list[str]:
     if progress_path.is_file():
         progress = _load_json(progress_path, errors)
         if isinstance(progress, dict):
-            for key in ("task_id", "status", "iteration", "stale_count", "last_evidence", "next_safe_action"):
+            for key in (
+                "task_id",
+                "status",
+                "iteration",
+                "stale_count",
+                "last_progress_at",
+                "last_evidence",
+                "last_failure_signature",
+                "next_safe_action",
+            ):
                 if key not in progress:
                     errors.append(f"{progress_path}: missing key `{key}`")
             status = progress.get("status")
@@ -217,6 +267,12 @@ def lint_pack(path: Path) -> list[str]:
             iteration = progress.get("iteration")
             if not isinstance(iteration, int) or iteration < 0:
                 errors.append(f"{progress_path}: iteration must be a non-negative integer")
+            last_progress_at = progress.get("last_progress_at")
+            if not isinstance(last_progress_at, str) or not re.match(r"^\d{4}-\d{2}-\d{2}T", last_progress_at):
+                errors.append(f"{progress_path}: last_progress_at must be a non-empty ISO-like timestamp string")
+            last_failure_signature = progress.get("last_failure_signature")
+            if last_failure_signature is not None and not isinstance(last_failure_signature, str):
+                errors.append(f"{progress_path}: last_failure_signature must be null or a string")
         elif progress is not None:
             errors.append(f"{progress_path}: root JSON must be an object")
 
@@ -268,8 +324,8 @@ def lint_pack(path: Path) -> list[str]:
             else:
                 if task_spec.is_file():
                     task_spec_text = task_spec.read_text(encoding="utf-8")
-                    if _contains_any(task_spec_text, HIGH_RISK_TASK_PATTERNS) and not human_gates:
-                        errors.append(f"{gates_path}: high-risk task language requires explicit `human_gates`")
+                    for gate_id in _missing_human_gate_ids(task_spec_text, human_gates):
+                        errors.append(f"{gates_path}: high-risk task language requires `{gate_id}` in `human_gates`")
                 for index, gate in enumerate(human_gates, start=1):
                     if not isinstance(gate, str) or not gate.strip():
                         errors.append(f"{gates_path}: human_gates entry #{index} must be a non-empty string")
