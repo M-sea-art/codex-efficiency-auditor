@@ -1,12 +1,23 @@
-# Codex Efficiency Auditor
+# Codexcavator / Codex 挖掘机
+
+> Stop judging AI coding by the final diff. Audit the run.
 
 English | [中文](#中文)
 
-A Codex skill for auditing whether a Codex thread, project, worktree, pull request, or agent run is using Codex capabilities effectively.
+`codex-efficiency-auditor` is an unofficial Codex Skill that digs out wasted capability in AI coding runs.
 
-It helps evaluate planning quality, multi-agent readiness, worktree isolation, CodeGraph usage, GitHub/PR flow, validation depth, reporting quality, and concrete upgrade opportunities.
+Most AI coding tools help you write code. Codexcavator audits whether your Codex thread, project, worktree, pull request, or agent run actually used Codex like an engineering agent — not just a chat window.
 
-The skill can be used after a run, but it is most useful as part of a Codex engineering loop: goal contract, preflight split check, worker guardrails, read-only review, periodic audit, paste-back prompt, and finalizer handoff.
+It checks:
+- goal clarity and task decomposition
+- worktree isolation and multi-agent readiness
+- CodeGraph / Browser / GitHub usage
+- validation depth and evidence
+- Git hygiene and risk isolation
+- reporting and handoff quality
+- upgrade opportunities
+
+The skill can be used after a run, but it is most useful as part of a Codex engineering loop: goal contract, preflight split check, worker guardrails, periodic audit, paste‑back prompt, and finalizer handoff.
 
 The goal-mode layer is inspired by the strong `/goal` contract principles in [joeseesun/qiaomu-goal-meta-skill](https://github.com/joeseesun/qiaomu-goal-meta-skill): every durable Codex goal should have an outcome, verification, constraints, boundaries, iteration policy, stop conditions, and pause conditions. This project extends that idea into goal supervision, multi-agent/worktree orchestration, polling audit, and version closure.
 
@@ -178,7 +189,7 @@ Recommended paste-back prompt:
 - `references/read-only-audit-guard.md`: protected read-only audit rules, mutation status, Git evidence, and UI file card disambiguation
 - `references/task-state-pack-template.md`: durable state pack protocol for long-running Codex goals
 - `references/stall-and-pivot-rules.md`: stale-count and structural pivot rules
-- `references/evo-style-experiment-lane.md`: metric/gate experiment-lane preflight and audit rules
+- `references/evo-style-experiment-lane.md`: metric-driven experiment-lane preflight and audit rules
 - `references/ideator-verifier-loop.md`: role split for candidate generation and false-progress verification
 - `references/report-templates.md`: output templates and final reviewer prompts
 - `references/goal-mode-contract-template.md`: bounded `/goal` contract template
@@ -212,9 +223,9 @@ The capability scanner reads local Codex config/cache/skill metadata only. It av
 
 # 中文
 
-[English](#codex-efficiency-auditor) | 中文
+[English](#codexcavator--codex-挖掘机) | 中文
 
-`codex-efficiency-auditor` 是一个 Codex Skill，用来审计一个 Codex 线程、项目、worktree、PR 或 agent run 是否充分利用了 Codex 的能力边界。
+**Codex 挖掘机** 不是帮你写代码，而是挖出一次 Codex 执行里没用上的能力。
 
 它关注的不是单次回答是否好看，而是整个执行过程是否具备清晰规划、合理并行、风险隔离、验证闭环、可审计报告和可升级空间。
 
