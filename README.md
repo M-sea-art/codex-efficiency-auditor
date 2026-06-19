@@ -1,4 +1,6 @@
 # Codexcavator / Codex 挖掘机
+![Uploading image.png…]()
+
 
 > Stop judging AI coding by the final diff. Audit the run.
 
