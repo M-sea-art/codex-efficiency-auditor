@@ -190,6 +190,54 @@ Verdict:
 - EXPERIMENT_LANE_READY / NEEDS_FIX / NOT_SUITABLE / NEEDS_HUMAN_DECISION
 ```
 
+## Efficiency + Supervision Combined Report
+
+```markdown
+Combined Supervised Autopilot Report: READY_FOR_HUMAN_REVIEW | NEEDS_FIX | NEEDS_HUMAN_DECISION | BLOCKED
+Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
+
+Goal status:
+- Authorized /goal:
+- State machine stage:
+- Autonomy level:
+- Human gates:
+
+Codex capability utilization:
+- Score:
+- Strengths:
+- Gaps:
+- Multi-agent/worktree/CodeGraph usage:
+- Periodic audit status:
+
+Acceptance supervision:
+- Project supervisor mode:
+- Acceptance Matrix status:
+- Definition of Done status:
+- Completion Report status:
+- Failed or incomplete gates:
+
+Evidence commands:
+```bash
+...
+```
+
+Evidence table:
+| Requirement or gate | Evidence | Status | Notes |
+|---|---|---|---|
+|  |  | PASS / PARTIAL / FAIL / UNKNOWN |  |
+
+Unsupported completion risks:
+- Screenshots without behavior/state proof:
+- Placeholder/static/dummy implementation:
+- TODOs, comments, or unconnected controls:
+- Generated assets counted as behavior:
+
+Next copy-ready prompt:
+```text
+...
+```
+```
+
 ## Goal Mode Closure
 
 ```markdown

@@ -28,6 +28,108 @@ After the contract is clear, decide whether execution should be single-threaded,
 Do not implement until the contract is concrete enough to supervise.
 ```
 
+## Dual Skill Autopilot Start
+
+```text
+Use $codex-efficiency-auditor as Goal Compiler + Goal Supervisor, and use $project-supervisor for acceptance gates and completion evidence.
+
+Goal:
+<describe the project objective or automation feature>
+
+Run the supervised autopilot workflow:
+1. Create or audit a bounded /goal contract.
+2. Create or audit acceptance gates with $project-supervisor.
+3. Create a Task Card with owned paths, forbidden paths, validation commands, and human gates.
+4. Implement only the authorized milestone if the scope is clear.
+5. Run periodic audit for drift, stale progress, missing verification, and human-gate triggers.
+6. Produce a completion report with acceptance IDs and evidence.
+7. Run a final read-only Codex efficiency audit.
+
+Stop before push, publish, deploy, destructive changes, credentials, billing, external account changes, outbound comments, or scope expansion.
+
+Output:
+- Goal Contract
+- Acceptance gate status
+- Task Card
+- Validation commands
+- Completion Report status
+- Final audit verdict: READY_FOR_HUMAN_REVIEW / NEEDS_FIX / NEEDS_HUMAN_DECISION / BLOCKED
+```
+
+## Acceptance Gate Init
+
+```text
+Use $project-supervisor.
+Mode: INIT or PLAN, depending on whether this repository already has supervision files.
+
+Create or audit acceptance gates for this authorized /goal.
+Do not implement product features yet.
+
+Required outputs:
+- project type inferred
+- Definition of Done status
+- Acceptance Matrix status
+- Release gates, if release or deployment is in scope
+- verification commands
+- whether screenshots, generated assets, static UI, TODOs, dummy JSON, or unconnected controls could be mistaken for completion
+- next copy-ready prompt for $codex-efficiency-auditor
+```
+
+## Milestone Implementation Gate
+
+```text
+Use $codex-efficiency-auditor and $project-supervisor together.
+
+Target milestone:
+<milestone name>
+
+Acceptance IDs:
+<ids from docs/ACCEPTANCE_MATRIX.md or the current supervision report>
+
+Before coding:
+1. Restate the authorized /goal and acceptance IDs.
+2. Confirm owned paths, forbidden paths, shared locks, validation commands, and human gates.
+3. Identify tests that should fail first where practical.
+
+Then implement only this milestone.
+
+After implementation:
+- run listed validation commands
+- update or generate the completion report
+- run a read-only periodic audit for drift and missing evidence
+- report PASS / PARTIAL / FAIL
+
+Do not claim the whole project is complete unless the full acceptance matrix passes.
+```
+
+## Final Completion Gate
+
+```text
+Use $project-supervisor for completion evidence and $codex-efficiency-auditor for final read-only efficiency audit.
+
+Do not implement fixes during this review.
+Do not push, publish, deploy, delete, reset, or expand scope.
+
+Review:
+- Goal Contract and authorized scope
+- Acceptance Matrix
+- Definition of Done
+- completion_report.md
+- exact commands run and results
+- behavior/state evidence for screenshots or UI claims
+- fake/placeholder risks
+- Git status and diff
+- Human Gate status
+
+Output:
+- Audit mutation status
+- Acceptance gate verdict: PASS / PARTIAL / FAIL / NOT_COMPLETE
+- Codex efficiency verdict: READY_FOR_HUMAN_REVIEW / NEEDS_FIX / NEEDS_HUMAN_DECISION / BLOCKED
+- failed acceptance IDs
+- unsupported completion claims
+- next copy-ready prompt
+```
+
 ## Task State Pack Init
 
 ```text

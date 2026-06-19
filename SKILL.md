@@ -1,6 +1,6 @@
 ---
 name: codex-efficiency-auditor
-description: "Codex efficiency expert / Codex \u6548\u7387\u4e13\u5bb6 for auditing and upgrading Codex threads, projects, PRs, worktrees, agent runs, and goal-mode workflows. Use when the user says \u6548\u7387\u5ba1\u8ba1, \u5ba1\u8ba1\u5f53\u524d\u4f1a\u8bdd, \u8bc4\u6d4b\u8fd9\u4e2a\u9879\u76ee, Codex \u7528\u5f97\u597d\u4e0d\u597d, \u80fd\u529b\u8fb9\u754c, \u591a\u667a\u80fd\u4f53\u7f16\u6392, \u591a agent, worktree, \u76ee\u6807\u6a21\u5f0f, /goal, \u76ee\u6807\u5408\u540c, \u81ea\u52a8\u5316\u95ed\u73af, \u5468\u671f\u5ba1\u8ba1, \u6700\u7ec8\u5ba1\u8ba1, READY_FOR_HUMAN_REVIEW, NEEDS_FIX, or asks to convert an idea into a bounded Codex goal, supervise progress, detect scope drift or stale work, and produce paste-back prompts or reports."
+description: "Codex efficiency expert / Codex \u6548\u7387\u4e13\u5bb6 for auditing and upgrading Codex threads, projects, PRs, worktrees, agent runs, goal-mode workflows, acceptance gates, completion reports, and Definition of Done. Use when the user says \u6548\u7387\u5ba1\u8ba1, \u9a8c\u6536\u95e8\u7981, \u9632\u865a\u5047\u5b8c\u6210, completion report, \u5ba1\u8ba1\u5f53\u524d\u4f1a\u8bdd, \u8bc4\u6d4b\u8fd9\u4e2a\u9879\u76ee, Codex \u7528\u5f97\u597d\u4e0d\u597d, \u80fd\u529b\u8fb9\u754c, \u591a\u667a\u80fd\u4f53\u7f16\u6392, \u591a agent, worktree, \u76ee\u6807\u6a21\u5f0f, /goal, \u76ee\u6807\u5408\u540c, \u81ea\u52a8\u5316\u95ed\u73af, \u5468\u671f\u5ba1\u8ba1, \u6700\u7ec8\u5ba1\u8ba1, READY_FOR_HUMAN_REVIEW, NEEDS_FIX, or asks to convert an idea into a bounded Codex goal, supervise progress, detect scope drift or stale work, prevent unsupported completion claims, and produce paste-back prompts or reports."
 ---
 
 # Codex Efficiency Auditor
@@ -29,6 +29,7 @@ Cross-cutting controls:
 - **Stall/Pivot Rules**: stop repeated low-evidence retries and force structural pivots.
 - **Experiment Lane**: allow metric-driven variants only when required gates protect correctness and scope.
 - **Ideator/Verifier Loop**: separate proposal generation from implementation and read-only verification.
+- **Project Supervisor Bridge**: coordinate with `$project-supervisor` for acceptance gates, completion reports, and fake/placeholder completion checks.
 
 Routing matrix:
 
@@ -38,6 +39,7 @@ Routing matrix:
 | authorized goal needs execution supervision | Goal Supervisor | `task-card-template.md`, `goal-mode-audit-prompts.md`, then handoff/human-gate refs as needed |
 | long-running, resumed, multi-thread, or context-heavy goal | Task State Pack | `task-state-pack-template.md`, `stall-and-pivot-rules.md` |
 | measurable optimization or candidate comparison | Experiment Lane | `evo-style-experiment-lane.md`, then `ideator-verifier-loop.md` when multiple directions exist |
+| acceptance gates, fake completion, Definition of Done, or completion report | Supervision bridge | `project-supervisor-bridge.md`, then `$project-supervisor` |
 | repeated failure, stale progress, or scope drift | Recovery audit | `goal-mode-recovery-stale-work.md`, `stall-and-pivot-rules.md`, `read-only-audit-guard.md` |
 | completed run, commit, PR, or final claim | Efficiency Auditor | `read-only-audit-guard.md`, `audit-rubric.md`, `report-templates.md` |
 
@@ -121,6 +123,7 @@ Use this workflow when the user asks for goal mode, autonomous progress, task au
    - Use `references/stall-and-pivot-rules.md` when progress is stale, failures repeat, or the run loops over similar attempts.
    - Use `references/evo-style-experiment-lane.md` only for measurable optimization with concrete metric, direction, gates, boundaries, rollback, and human gates.
    - Use `references/ideator-verifier-loop.md` when multiple candidate directions, frontier-style exploration, literature/repo scan, or false-progress verification is needed.
+   - Use `references/project-supervisor-bridge.md` when a goal needs acceptance gates, Definition of Done, a completion report, or protection against fake/placeholder completion.
    - Use `references/goal-mode-human-gates.md` before push, publish, deploy, destructive work, external account changes, or outbound comments.
    - Use `references/goal-mode-done-gate.md` and `references/goal-mode-evidence-bundle.md` before final completion claims.
    - Use `references/goal-mode-handoff-matrix.md` when multiple agents, worktrees, reviewers, auditors, or finalizers exchange work.
@@ -180,6 +183,7 @@ Load these references only when they fit the user's request:
 
 - `references/read-only-audit-guard.md`: Use for any read-only review, final audit, commit audit, PR audit, periodic audit, Done Gate, or user prompt that says not to edit files.
 - `references/autoresearch-adoption-notes.md`: Use when explaining what this project adopts or rejects from AutoResearch, paper-writing skill groups, and evo.
+- `references/project-supervisor-bridge.md`: Use when combining `$codex-efficiency-auditor` with `$project-supervisor` for acceptance gates, completion reports, Definition of Done, or fake/placeholder completion control.
 - `references/task-state-pack-template.md`: Use when a goal needs durable state files, recovery, handoff, or long-running audit.
 - `references/stall-and-pivot-rules.md`: Use when progress is stale, repeated failures appear, or the run needs a structural pivot.
 - `references/evo-style-experiment-lane.md`: Use when a task is metric-driven and may benefit from experiment-style candidate comparison.
