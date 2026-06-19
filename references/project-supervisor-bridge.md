@@ -4,6 +4,8 @@ Use this reference when a Codex goal needs both efficient autonomous progress an
 
 This bridge coordinates `$codex-efficiency-auditor` with `$project-supervisor`. It does not vendor, merge, or replace the `project-supervisor` skill.
 
+`$project-supervisor` is an optional companion skill. If it is not available in the current Codex environment, stop at `NEEDS_HUMAN_DECISION` and ask the user to either install/enable `$project-supervisor` or authorize the built-in fallback: create a minimal acceptance checklist using the acceptance gate prompts in this skill. Do not pretend that `$project-supervisor` ran.
+
 ## Division Of Responsibility
 
 | Need | Primary skill | Responsibility |
@@ -28,6 +30,7 @@ State responsibilities:
 
 - `Goal Contract`: `$codex-efficiency-auditor` creates or audits the bounded `/goal`.
 - `Acceptance Gates`: `$project-supervisor` initializes or audits acceptance criteria and Definition of Done.
+- `Fallback Acceptance Gates`: if `$project-supervisor` is unavailable and the user authorizes fallback, `$codex-efficiency-auditor` may create a minimal acceptance checklist, but must label it as fallback and require human review before completion claims.
 - `Task Card`: `$codex-efficiency-auditor` maps the goal and acceptance IDs to owned paths, forbidden paths, validation commands, and human gates.
 - `Implementation`: worker agents implement only the authorized milestone or task card.
 - `Periodic Audit`: `$codex-efficiency-auditor` checks drift, stale progress, missing validation, and human-gate triggers.
@@ -63,7 +66,7 @@ Goal:
 
 Run the supervised autopilot workflow:
 1. Create or audit a bounded /goal contract.
-2. Create or audit acceptance gates with $project-supervisor.
+2. Create or audit acceptance gates with $project-supervisor. If $project-supervisor is unavailable, stop at NEEDS_HUMAN_DECISION and ask whether to install it or use a fallback acceptance checklist.
 3. Create a Task Card with owned paths, forbidden paths, validation commands, and human gates.
 4. Implement only the authorized milestone if the scope is clear.
 5. Run periodic audit for drift, stale progress, missing verification, and human-gate triggers.

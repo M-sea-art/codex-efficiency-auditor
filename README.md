@@ -24,6 +24,7 @@ Cross-cutting controls:
 - **Stall/Pivot Rules**: stop repeated low-evidence retries and force structural pivots.
 - **Experiment Lane**: metric-driven variants only when required gates pass.
 - **Ideator/Verifier Loop**: separate proposal generation, implementation, and read-only verification.
+- **Project Supervisor Bridge**: optionally coordinate with `$project-supervisor` for acceptance gates, Definition of Done, completion reports, and fake/placeholder completion checks.
 
 ## Use Cases
 
@@ -103,6 +104,13 @@ Use $codex-efficiency-auditor and load references/task-state-pack-template.md.
 Create a Task State Pack proposal for this authorized /goal.
 ```
 
+Coordinate with project supervision gates:
+
+```text
+Use $codex-efficiency-auditor as Goal Compiler + Goal Supervisor, and use $project-supervisor for acceptance gates and completion evidence.
+If $project-supervisor is unavailable, stop at NEEDS_HUMAN_DECISION and ask whether to install it or use a fallback acceptance checklist.
+```
+
 ## What It Scores
 
 The audit is scored out of 100:
@@ -175,6 +183,8 @@ Recommended paste-back prompt:
 
 This skill is intentionally lightweight. It does not call external services by itself and does not require runtime dependencies beyond Python for the optional scoring helper.
 
+`$project-supervisor` is an optional companion skill for acceptance gates and completion reports. The bridge prompts work best when that skill is installed; otherwise, the auditor should stop and ask whether to install it or use a fallback acceptance checklist.
+
 ---
 
 # 中文
@@ -203,6 +213,7 @@ This skill is intentionally lightweight. It does not call external services by i
 - **Stall/Pivot Rules**：用 stale_count 阻止低证据重复尝试，并要求结构性转向。
 - **Experiment Lane**：只有 metric 和 gate 都明确时，才允许多方案实验。
 - **Ideator/Verifier Loop**：把候选方向、实现和只读验证分开。
+- **Project Supervisor Bridge**：可选联动 `$project-supervisor`，用于验收门禁、Definition of Done、completion report 和防虚假完成检查。
 
 ## 适用场景
 
@@ -288,6 +299,13 @@ Use $codex-efficiency-auditor and load references/task-state-pack-template.md.
 为这个已授权 /goal 创建 Task State Pack 提案。
 ```
 
+也可以联动项目验收门禁：
+
+```text
+Use $codex-efficiency-auditor as Goal Compiler + Goal Supervisor, and use $project-supervisor for acceptance gates and completion evidence.
+如果 $project-supervisor 不可用，停在 NEEDS_HUMAN_DECISION，并询问是安装它还是使用 fallback acceptance checklist。
+```
+
 ## 评分维度
 
 审计满分为 100 分：
@@ -359,3 +377,5 @@ Recommended paste-back prompt:
 ## 说明
 
 这个 skill 保持轻量设计。它本身不会调用外部服务，也没有额外运行时依赖；可选评分脚本只需要 Python。
+
+`$project-supervisor` 是用于验收门禁和 completion report 的可选伴随 skill。桥接 prompt 在安装该 skill 时效果最好；如果不可用，效率专家应停在 `NEEDS_HUMAN_DECISION`，询问是否安装它或使用 fallback acceptance checklist。

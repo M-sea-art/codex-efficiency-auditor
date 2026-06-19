@@ -192,9 +192,13 @@ Verdict:
 
 ## Efficiency + Supervision Combined Report
 
-```markdown
+````markdown
 Combined Supervised Autopilot Report: READY_FOR_HUMAN_REVIEW | NEEDS_FIX | NEEDS_HUMAN_DECISION | BLOCKED
+Acceptance gate verdict: PASS | PARTIAL | FAIL | NOT_COMPLETE
 Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
+
+Gate rule:
+- Do not use READY_FOR_HUMAN_REVIEW unless Acceptance gate verdict is PASS or explicitly out of scope.
 
 Goal status:
 - Authorized /goal:
@@ -236,7 +240,7 @@ Next copy-ready prompt:
 ```text
 ...
 ```
-```
+````
 
 ## Goal Mode Closure
 
