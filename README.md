@@ -7,9 +7,17 @@
 
 English | [中文](#中文)
 
+Repo name: `codex-efficiency-auditor`
+
+CI checks code. Codexcavator checks agent workflow.
+
 `codex-efficiency-auditor` is an unofficial Codex Skill that digs out wasted capability in AI coding runs.
 
 Most AI coding tools help you write code. Codexcavator audits whether your Codex thread, project, worktree, pull request, or agent run actually used Codex like an engineering agent — not just a chat window.
+
+Codexcavator is an independent Codex skill and lightweight audit toolkit for checking whether a Codex thread, project, worktree, pull request, or agent run was engineered well enough to trust.
+
+It evaluates planning quality, multi-agent readiness, worktree isolation, CodeGraph usage, GitHub/PR flow, validation depth, reporting quality, and concrete upgrade opportunities.
 
 It checks:
 - goal clarity and task decomposition
@@ -25,6 +33,42 @@ The skill can be used after a run, but it is most useful as part of a Codex engi
 The goal-mode layer is inspired by the strong `/goal` contract principles in [joeseesun/qiaomu-goal-meta-skill](https://github.com/joeseesun/qiaomu-goal-meta-skill): every durable Codex goal should have an outcome, verification, constraints, boundaries, iteration policy, stop conditions, and pause conditions. This project extends that idea into goal supervision, multi-agent/worktree orchestration, polling audit, and version closure.
 
 The autoresearch-loop layer adapts public workflow ideas from Deli_AutoResearch, Scientific Paper Writing Skill Group, and evo into lightweight Codex audit templates. It does not install evo, modify Codex hooks, add telemetry, create dashboards, or run autonomous optimization runtimes.
+
+## 30-second Quickstart
+
+Paste this into Codex:
+
+```text
+Use $codex-efficiency-auditor.
+
+Audit this run as Codexcavator.
+
+Input:
+- goal:
+- changed files:
+- commands run:
+- test evidence:
+- Git evidence:
+- final handoff:
+
+Output:
+- score /100
+- verdict
+- Decision: GO / GO_WITH_MINOR_FIXES / GO_WITH_REQUIRED_FIXES / NO_GO / NEEDS_REPLAN
+- evidence-backed strengths
+- capability gaps
+- required fixes
+- next-run upgrade prompt
+```
+
+## What It Catches
+
+- Goal drift and missing stop conditions.
+- Single-thread work that should have been split into task cards or worktrees.
+- Missing reviewer, finalizer, or handoff.
+- Claimed tests without command output.
+- Screenshots or generated assets counted as implementation evidence.
+- Missing Git evidence, mutation status, or risk register.
 
 ## Three-Layer Model
 
@@ -164,11 +208,32 @@ Verdict bands:
 - `40-59`: mostly single-thread execution with weak auditability
 - `<40`: risky, unclear, or not meaningfully auditable
 
+Decision bands:
+
+- `90-100`: `GO`
+- `75-89`: `GO_WITH_MINOR_FIXES`
+- `60-74`: `GO_WITH_REQUIRED_FIXES`
+- `40-59`: `NO_GO`
+- `<40`: `NEEDS_REPLAN`
+
+## Minimum Evidence Bundle
+
+A run is not auditable unless it includes:
+
+- goal
+- changed files
+- commands run
+- validation output
+- Git evidence
+- known risks
+- final handoff
+
 ## Output Example
 
 ```text
 Codex Capability Utilization: 82/100
 Verdict: strong execution with clear upgrade opportunities
+Decision: GO_WITH_MINOR_FIXES
 
 Evidence-backed strengths:
 - Used a dedicated patch workspace.
@@ -186,7 +251,12 @@ Recommended paste-back prompt:
 ## Repository Contents
 
 - `SKILL.md`: core skill instructions
+- `.github/workflows/codexcavator-audit.yml`: advisory CI checks for scripts, fixtures, and example scores
+- `schemas/*.schema.json`: JSON schemas for audit reports, task cards, and evidence bundles
+- `examples/run-54-single-thread/`: weak single-thread run example
+- `examples/run-82-worktree-review/`: stronger audited worktree-style run example
 - `references/audit-rubric.md`: scoring rubric
+- `references/agent-run-smells.md`: common planning, execution, validation, audit, and handoff smells
 - `references/autoresearch-adoption-notes.md`: what is adopted or rejected from AutoResearch, paper-writing skill groups, and evo
 - `references/capability-audit-template.md`: one-time read-only plugin/app/skill/MCP scan template
 - `references/read-only-audit-guard.md`: protected read-only audit rules, mutation status, Git evidence, and UI file card disambiguation
@@ -207,12 +277,21 @@ Recommended paste-back prompt:
 - `references/multi-worktree-orchestration-template.md`: preflight split and worktree orchestration template
 - `references/paste-back-prompts.md`: prompts for worker, reviewer, auditor, and finalizer handoffs
 - `scripts/score_audit.py`: helper for totaling category scores
+- `scripts/test_score_audit.py`: lightweight regression checks for score and decision bands
 - `scripts/lint_goal_mode_contract.py`: helper for validating goal-mode contracts
 - `scripts/lint_task_state_pack.py`: helper for validating Task State Pack directories
 - `scripts/lint_experiment_lane.py`: helper for validating Experiment Lane contracts
 - `scripts/audit_codex_capabilities.py`: read-only capability scanner with Markdown and `--json` output
 - `scripts/test_capability_scan.py`: lightweight regression checks for capability scan ranking and JSON shape
 - `agents/openai.yaml`: Codex UI metadata
+
+## Disclaimer
+
+Codexcavator is an independent, unofficial open-source project.
+
+It is not affiliated with, endorsed by, or sponsored by OpenAI.
+
+Codex and related marks belong to their respective owners.
 
 ## Notes
 
@@ -230,6 +309,10 @@ The capability scanner reads local Codex config/cache/skill metadata only. It av
 
 **Codex 挖掘机** 不是帮你写代码，而是挖出一次 Codex 执行里没用上的能力。
 
+Codexcavator / Codex 挖掘机（仓库名：`codex-efficiency-auditor`）是一个独立 Codex Skill 和轻量审计工具包，用来检查一个 Codex 线程、项目、worktree、PR 或 agent run 是否真的工程化。
+
+CI 检查代码，Codex 挖掘机检查 agent 工作流。
+
 它关注的不是单次回答是否好看，而是整个执行过程是否具备清晰规划、合理并行、风险隔离、验证闭环、可审计报告和可升级空间。
 
 它可以在任务结束后复盘，也可以放进 Codex 多线工程闭环中：先生成目标合同，开工前判断是否值得拆分，执行中检查 worker 是否跑偏，周期审计验证缺口和阻塞，完成后生成审计报告和可回填到原线程的升级 prompt。
@@ -237,6 +320,42 @@ The capability scanner reads local Codex config/cache/skill metadata only. It av
 目标模式层参考了 [joeseesun/qiaomu-goal-meta-skill](https://github.com/joeseesun/qiaomu-goal-meta-skill) 的强 `/goal` 合同思想：长期任务应该有目标结果、验证、约束、边界、迭代策略、完成条件和暂停条件。本项目在此基础上扩展为目标监督、多 agent/worktree 编排、轮询审计和版本闭环。
 
 自动研究闭环层吸收了 Deli_AutoResearch、Scientific Paper Writing Skill Group 和 evo 的公开工作流思想，并转译成轻量 Codex 审计模板。它不会安装 evo，不会修改 Codex hooks，不会加入 telemetry、dashboard 或外部优化运行器。
+
+## 30 秒 Quickstart
+
+把这段贴进 Codex：
+
+```text
+Use $codex-efficiency-auditor.
+
+Audit this run as Codexcavator.
+
+Input:
+- goal:
+- changed files:
+- commands run:
+- test evidence:
+- Git evidence:
+- final handoff:
+
+Output:
+- score /100
+- verdict
+- Decision: GO / GO_WITH_MINOR_FIXES / GO_WITH_REQUIRED_FIXES / NO_GO / NEEDS_REPLAN
+- evidence-backed strengths
+- capability gaps
+- required fixes
+- next-run upgrade prompt
+```
+
+## 它会抓什么
+
+- 目标漂移和缺失停止条件。
+- 本该拆 Task Card 或 worktree 却单线程硬做。
+- 缺少 reviewer、finalizer 或 handoff。
+- 声称跑了测试但没有命令输出。
+- 把截图或生成资产当成实现证据。
+- 缺少 Git evidence、mutation status 或风险清单。
 
 ## 三层模型
 
@@ -382,11 +501,32 @@ Project context:
 - `40-59`：偏单线程聊天式执行，可审计性弱
 - `<40`：风险高、目标不清或难以审计
 
+决策区间：
+
+- `90-100`：`GO`
+- `75-89`：`GO_WITH_MINOR_FIXES`
+- `60-74`：`GO_WITH_REQUIRED_FIXES`
+- `40-59`：`NO_GO`
+- `<40`：`NEEDS_REPLAN`
+
+## 最小证据包
+
+一次 run 至少要包含：
+
+- 目标
+- 变更文件
+- 执行命令
+- 验证输出
+- Git 证据
+- 已知风险
+- 最终交接
+
 ## 输出示例
 
 ```text
 Codex Capability Utilization: 82/100
 Verdict: strong execution with clear upgrade opportunities
+Decision: GO_WITH_MINOR_FIXES
 
 Evidence-backed strengths:
 - 使用了独立 patch workspace。
@@ -404,7 +544,12 @@ Recommended paste-back prompt:
 ## 仓库内容
 
 - `SKILL.md`：核心 skill 指令
+- `.github/workflows/codexcavator-audit.yml`：针对脚本、fixture 和示例评分的 advisory CI 检查
+- `schemas/*.schema.json`：audit report、task card 和 evidence bundle 的 JSON Schema
+- `examples/run-54-single-thread/`：弱单线程 run 示例
+- `examples/run-82-worktree-review/`：更强的审计型 worktree run 示例
 - `references/audit-rubric.md`：评分标准
+- `references/agent-run-smells.md`：常见规划、执行、验证、审计和交接异味
 - `references/autoresearch-adoption-notes.md`：说明本项目从 AutoResearch、论文写作 skill group 和 evo 采用/拒绝了哪些思想
 - `references/capability-audit-template.md`：一次性只读插件/app/skill/MCP 能力审计模板
 - `references/read-only-audit-guard.md`：受保护只读审计规则、mutation status、Git 证据和 UI 文件卡片来源判断
@@ -425,12 +570,21 @@ Recommended paste-back prompt:
 - `references/multi-worktree-orchestration-template.md`：开工前任务拆分与多 worktree 编排模板
 - `references/paste-back-prompts.md`：worker、reviewer、auditor、finalizer 回填 prompt
 - `scripts/score_audit.py`：评分汇总辅助脚本
+- `scripts/test_score_audit.py`：评分与决策区间的轻量回归测试
 - `scripts/lint_goal_mode_contract.py`：目标模式合同校验脚本
 - `scripts/lint_task_state_pack.py`：Task State Pack 目录校验脚本
 - `scripts/lint_experiment_lane.py`：Experiment Lane 合同校验脚本
 - `scripts/audit_codex_capabilities.py`：只读能力扫描脚本，支持 Markdown 和 `--json` 输出
 - `scripts/test_capability_scan.py`：能力扫描排序和 JSON 结构的轻量回归测试
 - `agents/openai.yaml`：Codex UI 元数据
+
+## 免责声明
+
+Codexcavator 是一个独立、非官方的开源项目。
+
+本项目不隶属于 OpenAI，也未获得 OpenAI 的背书、赞助或合作授权。
+
+Codex 及相关标识归其各自权利人所有。
 
 ## 说明
 

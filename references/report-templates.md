@@ -5,6 +5,7 @@
 ```markdown
 Codex Capability Utilization: NN/100
 Verdict: READY_FOR_HUMAN_REVIEW | NEEDS_FIX | BLOCKED | INTERIM_ONLY
+Decision: GO | GO_WITH_MINOR_FIXES | GO_WITH_REQUIRED_FIXES | NO_GO | NEEDS_REPLAN | NEEDS_HUMAN_DECISION
 Status: active | idle | completed | unknown
 Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
 
@@ -34,6 +35,7 @@ Next action:
 ```markdown
 Codex Project Efficiency Score: NN/100
 Verdict: STRONG | UNDER_LEVERAGED | NEEDS_PROCESS | RISKY
+Decision: GO | GO_WITH_MINOR_FIXES | GO_WITH_REQUIRED_FIXES | NO_GO | NEEDS_REPLAN | NEEDS_HUMAN_DECISION
 
 Project state:
 - Path:
@@ -111,6 +113,7 @@ Output:
 - Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT / MUTATION_DETECTED / UNKNOWN
 - Git evidence
 - Codex capability utilization score out of 100
+- Decision: GO / GO_WITH_MINOR_FIXES / GO_WITH_REQUIRED_FIXES / NO_GO / NEEDS_REPLAN / NEEDS_HUMAN_DECISION
 - Evidence-backed strengths and gaps
 - Must-fix issues before human review
 - Suggested process upgrades

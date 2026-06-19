@@ -46,6 +46,18 @@ def verdict(score: int) -> str:
     return "risky, unclear, or not meaningfully auditable"
 
 
+def decision(score: int) -> str:
+    if score >= 90:
+        return "GO"
+    if score >= 75:
+        return "GO_WITH_MINOR_FIXES"
+    if score >= 60:
+        return "GO_WITH_REQUIRED_FIXES"
+    if score >= 40:
+        return "NO_GO"
+    return "NEEDS_REPLAN"
+
+
 def load_scores(path: str | None) -> dict[str, int]:
     raw = Path(path).read_text(encoding="utf-8") if path else sys.stdin.read()
     data = json.loads(raw)
@@ -68,13 +80,14 @@ def main() -> int:
 
     scores = load_scores(args.json_file)
     total = sum(scores.values())
-    result = {"score": total, "verdict": verdict(total), "categories": scores}
+    result = {"score": total, "verdict": verdict(total), "decision": decision(total), "categories": scores}
 
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
         print(f"Codex Capability Utilization: {total}/100")
         print(f"Verdict: {result['verdict']}")
+        print(f"Decision: {result['decision']}")
         for key, value in scores.items():
             print(f"- {key}: {value}/{MAX_POINTS[key]}")
     return 0
@@ -82,4 +95,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

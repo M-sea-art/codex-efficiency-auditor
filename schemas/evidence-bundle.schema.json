@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/M-sea-art/codex-efficiency-auditor/schemas/evidence-bundle.schema.json",
+  "title": "Codexcavator Evidence Bundle",
+  "type": "object",
+  "required": [
+    "goal",
+    "changed_files",
+    "commands_run",
+    "validation_output",
+    "git_evidence",
+    "known_risks",
+    "final_handoff"
+  ],
+  "properties": {
+    "goal": { "type": "string", "minLength": 1 },
+    "changed_files": { "type": "array", "items": { "type": "string" } },
+    "commands_run": { "type": "array", "items": { "type": "string" } },
+    "validation_output": { "type": "array", "items": { "type": "string" } },
+    "git_evidence": { "type": "array", "items": { "type": "string" } },
+    "known_risks": { "type": "array", "items": { "type": "string" } },
+    "final_handoff": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": true
+}
