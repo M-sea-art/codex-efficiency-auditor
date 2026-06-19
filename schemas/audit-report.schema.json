@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/M-sea-art/codex-efficiency-auditor/schemas/audit-report.schema.json",
+  "title": "Codexcavator Audit Report",
+  "type": "object",
+  "required": [
+    "run_id",
+    "target_type",
+    "score",
+    "verdict",
+    "decision",
+    "mutation_status",
+    "evidence",
+    "strengths",
+    "capability_gaps",
+    "risk_flags",
+    "upgrade_prompts"
+  ],
+  "properties": {
+    "run_id": { "type": "string", "minLength": 1 },
+    "target_type": {
+      "type": "string",
+      "enum": ["thread", "repo", "worktree", "pr", "agent_run", "transcript"]
+    },
+    "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "verdict": { "type": "string", "minLength": 1 },
+    "decision": {
+      "type": "string",
+      "enum": ["GO", "GO_WITH_MINOR_FIXES", "GO_WITH_REQUIRED_FIXES", "NO_GO", "NEEDS_REPLAN", "NEEDS_HUMAN_DECISION"]
+    },
+    "mutation_status": {
+      "type": "string",
+      "enum": ["NO_FILES_MODIFIED_BY_AUDIT", "MUTATION_DETECTED", "UNKNOWN"]
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["git", "tests", "commands", "artifacts"],
+      "properties": {
+        "git": { "type": "array", "items": { "type": "string" } },
+        "tests": { "type": "array", "items": { "type": "string" } },
+        "commands": { "type": "array", "items": { "type": "string" } },
+        "artifacts": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "strengths": { "type": "array", "items": { "type": "string" } },
+    "capability_gaps": { "type": "array", "items": { "type": "string" } },
+    "risk_flags": { "type": "array", "items": { "type": "string" } },
+    "upgrade_prompts": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

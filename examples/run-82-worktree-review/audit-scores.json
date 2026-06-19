@@ -1,0 +1,10 @@
+{
+  "goal_scope": 13,
+  "decomposition": 12,
+  "capability_use": 12,
+  "context_memory": 8,
+  "risk_git": 13,
+  "verification": 12,
+  "reporting": 8,
+  "upgrade_leverage": 4
+}

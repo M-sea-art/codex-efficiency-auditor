@@ -1,0 +1,30 @@
+{
+  "run_id": "run-54-single-thread",
+  "target_type": "agent_run",
+  "score": 54,
+  "verdict": "mostly single-thread execution with weak auditability",
+  "decision": "NO_GO",
+  "mutation_status": "UNKNOWN",
+  "evidence": {
+    "git": [],
+    "tests": ["test command was claimed but output was not included"],
+    "commands": [],
+    "artifacts": []
+  },
+  "strengths": [
+    "The agent produced a plausible implementation summary.",
+    "The run had some validation intent."
+  ],
+  "capability_gaps": [
+    "No explicit goal contract.",
+    "No task card, reviewer, worktree isolation, or evidence bundle.",
+    "No Git status or diff evidence."
+  ],
+  "risk_flags": [
+    "Final completion claim is unsupported by reproducible evidence.",
+    "A reviewer cannot distinguish actual validation from summary text."
+  ],
+  "upgrade_prompts": [
+    "Run a read-only Codexcavator audit. Require goal, changed files, commands run, validation output, Git evidence, known risks, and final handoff before claiming completion."
+  ]
+}

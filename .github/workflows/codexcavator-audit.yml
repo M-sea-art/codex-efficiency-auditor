@@ -1,0 +1,52 @@
+name: Codexcavator Audit
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  advisory-audit:
+    name: Advisory audit checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile scripts
+        run: |
+          python -m py_compile scripts/*.py
+
+      - name: Run regression checks
+        run: |
+          python scripts/test_capability_scan.py
+          python scripts/test_score_audit.py
+
+      - name: Score examples
+        run: |
+          python scripts/score_audit.py --json examples/run-54-single-thread/audit-scores.json
+          python scripts/score_audit.py --json examples/run-82-worktree-review/audit-scores.json
+
+      - name: Validate JSON fixtures
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          paths = list(Path("schemas").glob("*.json")) + list(Path("examples").glob("**/*.json"))
+          for path in paths:
+              with path.open("r", encoding="utf-8") as handle:
+                  json.load(handle)
+              print(f"valid json: {path}")
+          PY

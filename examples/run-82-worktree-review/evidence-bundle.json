@@ -1,0 +1,23 @@
+{
+  "goal": "Improve a small documentation feature using a bounded Codex workflow.",
+  "changed_files": [
+    "README.md",
+    "examples/run-82-worktree-review/goal-contract.md",
+    "examples/run-82-worktree-review/task-cards.md"
+  ],
+  "commands_run": [
+    "git diff --check",
+    "python scripts/score_audit.py --json examples/run-82-worktree-review/audit-scores.json"
+  ],
+  "validation_output": [
+    "git diff --check passed",
+    "score_audit.py produced score 82 and decision GO_WITH_MINOR_FIXES"
+  ],
+  "git_evidence": [
+    "changed files were limited to docs and examples"
+  ],
+  "known_risks": [
+    "No CI evidence in the example fixture."
+  ],
+  "final_handoff": "Ready for human review after confirming CI or local docs checks."
+}

@@ -72,6 +72,15 @@ Look for: final answer, PR body, build report, human next step.
 - 40-59: Mostly single-thread chat execution with weak auditability.
 - 0-39: Risky, unclear, or not meaningfully auditable.
 
+## Decision Bands
+
+- 90-100: `GO`
+- 75-89: `GO_WITH_MINOR_FIXES`
+- 60-74: `GO_WITH_REQUIRED_FIXES`
+- 40-59: `NO_GO`
+- 0-39: `NEEDS_REPLAN`
+- Any score: `NEEDS_HUMAN_DECISION` when a human gate, credential, account, billing, release, destructive action, legal/medical/financial judgment, ownership decision, or external comment is required.
+
 ## Common Deductions
 
 - In-progress run: cap final-readiness claims; do not issue final approval.
@@ -79,4 +88,3 @@ Look for: final answer, PR body, build report, human next step.
 - No validation: major deduction even if implementation looks plausible.
 - Parallelism not useful: do not deduct for missing subagents when the task is small or tightly coupled.
 - Tool unavailable but documented fallback used: small or no deduction if the fallback is appropriate.
-

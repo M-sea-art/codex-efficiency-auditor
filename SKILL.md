@@ -1,13 +1,15 @@
 ---
 name: codex-efficiency-auditor
-description: "Codex efficiency expert / Codex \u6548\u7387\u4e13\u5bb6 for auditing and upgrading Codex threads, projects, PRs, worktrees, agent runs, goal-mode workflows, acceptance gates, completion reports, Definition of Done, and one-time project capability scans. Use when the user says \u6548\u7387\u5ba1\u8ba1, \u9a8c\u6536\u95e8\u7981, \u9632\u865a\u5047\u5b8c\u6210, completion report, \u5ba1\u8ba1\u5f53\u524d\u4f1a\u8bdd, \u8bc4\u6d4b\u8fd9\u4e2a\u9879\u76ee, Codex \u7528\u5f97\u597d\u4e0d\u597d, \u80fd\u529b\u8fb9\u754c, \u9879\u76ee\u63d2\u4ef6\u80fd\u529b\u5ba1\u8ba1, Codex \u80fd\u529b\u76d8\u70b9, \u63a8\u8350\u672c\u9879\u76ee\u53ef\u7528\u63d2\u4ef6, Audit my available Codex plugins and app capabilities, \u591a\u667a\u80fd\u4f53\u7f16\u6392, \u591a agent, worktree, \u76ee\u6807\u6a21\u5f0f, /goal, \u76ee\u6807\u5408\u540c, \u81ea\u52a8\u5316\u95ed\u73af, \u5468\u671f\u5ba1\u8ba1, \u6700\u7ec8\u5ba1\u8ba1, READY_FOR_HUMAN_REVIEW, NEEDS_FIX, or asks to convert an idea into a bounded Codex goal, supervise progress, detect scope drift or stale work, prevent unsupported completion claims, audit available Codex capabilities, and produce paste-back prompts or reports."
+description: "Codexcavator / Codex efficiency expert / Codex \u6316\u6398\u673a / Codex \u6548\u7387\u4e13\u5bb6 for auditing and upgrading Codex threads, projects, PRs, worktrees, agent runs, goal-mode workflows, acceptance gates, completion reports, Definition of Done, and one-time project capability scans. Use when the user says Codexcavator, Codex \u6316\u6398\u673a, \u6548\u7387\u5ba1\u8ba1, \u9a8c\u6536\u95e8\u7981, \u9632\u865a\u5047\u5b8c\u6210, completion report, \u5ba1\u8ba1\u5f53\u524d\u4f1a\u8bdd, \u8bc4\u6d4b\u8fd9\u4e2a\u9879\u76ee, Codex \u7528\u5f97\u597d\u4e0d\u597d, \u80fd\u529b\u8fb9\u754c, \u9879\u76ee\u63d2\u4ef6\u80fd\u529b\u5ba1\u8ba1, Codex \u80fd\u529b\u76d8\u70b9, \u63a8\u8350\u672c\u9879\u76ee\u53ef\u7528\u63d2\u4ef6, Audit my available Codex plugins and app capabilities, \u591a\u667a\u80fd\u4f53\u7f16\u6392, \u591a agent, worktree, \u76ee\u6807\u6a21\u5f0f, /goal, \u76ee\u6807\u5408\u540c, \u81ea\u52a8\u5316\u95ed\u73af, \u5468\u671f\u5ba1\u8ba1, \u6700\u7ec8\u5ba1\u8ba1, READY_FOR_HUMAN_REVIEW, NEEDS_FIX, or asks to convert an idea into a bounded Codex goal, supervise progress, detect scope drift or stale work, prevent unsupported completion claims, audit available Codex capabilities, and produce paste-back prompts or reports."
 ---
 
-# Codex Efficiency Auditor
+# Codexcavator / Codex Efficiency Auditor
 
 ## Purpose
 
 Assess whether a Codex run used the available Codex capability boundary well: planning, subagents, worktrees, CodeGraph, GitHub/PRs, Browser, Cloud, tests, audits, reports, durable project memory, and goal-mode contracts.
+
+Position the project as Codexcavator: an agent-run auditor. CI checks code; Codexcavator checks agent workflow.
 
 Be an evaluator and upgrader, not a second implementer. Prefer read-only inspection unless the user explicitly asks to apply changes.
 
@@ -31,6 +33,7 @@ Cross-cutting controls:
 - **Ideator/Verifier Loop**: separate proposal generation from implementation and read-only verification.
 - **Project Supervisor Bridge**: coordinate with `$project-supervisor` for acceptance gates, completion reports, and fake/placeholder completion checks.
 - **Capability Scan**: run an explicit one-time, read-only project capability scan for available plugins, apps, skills, MCP tools, useful mentions, risk boundaries, and project-specific recommendations.
+- **Agent Run Smells**: detect weak planning, execution, validation, audit, and handoff signals even when the final diff looks plausible.
 
 Routing matrix:
 
@@ -42,6 +45,7 @@ Routing matrix:
 | measurable optimization or candidate comparison | Experiment Lane | `evo-style-experiment-lane.md`, then `ideator-verifier-loop.md` when multiple directions exist |
 | acceptance gates, fake completion, Definition of Done, or completion report | Supervision bridge | `project-supervisor-bridge.md`, then `$project-supervisor` |
 | project plugin/capability inventory or recommendation | Capability Scan | `capability-audit-template.md`, `read-only-audit-guard.md` |
+| weak run, fake progress, missing evidence, or "what smells wrong?" | Agent Run Smells | `agent-run-smells.md`, then `audit-rubric.md` |
 | repeated failure, stale progress, or scope drift | Recovery audit | `goal-mode-recovery-stale-work.md`, `stall-and-pivot-rules.md`, `read-only-audit-guard.md` |
 | completed run, commit, PR, or final claim | Efficiency Auditor | `read-only-audit-guard.md`, `audit-rubric.md`, `report-templates.md` |
 
@@ -202,6 +206,7 @@ Do not output a bare final verdict for a read-only audit unless the user explici
 Load these references only when they fit the user's request:
 
 - `references/read-only-audit-guard.md`: Use for any read-only review, final audit, commit audit, PR audit, periodic audit, Done Gate, or user prompt that says not to edit files.
+- `references/agent-run-smells.md`: Use when a run looks superficially successful but may lack planning, ownership, validation, audit, or handoff evidence.
 - `references/capability-audit-template.md`: Use for explicit, one-time project plugin/app/skill/MCP scans and compact project-specific capability recommendations.
 - `references/autoresearch-adoption-notes.md`: Use when explaining what this project adopts or rejects from AutoResearch, paper-writing skill groups, and evo.
 - `references/project-supervisor-bridge.md`: Use when combining `$codex-efficiency-auditor` with `$project-supervisor` for acceptance gates, completion reports, Definition of Done, or fake/placeholder completion control.

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/M-sea-art/codex-efficiency-auditor/schemas/task-card.schema.json",
+  "title": "Codexcavator Task Card",
+  "type": "object",
+  "required": [
+    "task_id",
+    "goal",
+    "owned_paths",
+    "forbidden_paths",
+    "shared_locks",
+    "done_criteria",
+    "validation_commands",
+    "human_gates"
+  ],
+  "properties": {
+    "task_id": { "type": "string", "minLength": 1 },
+    "goal": { "type": "string", "minLength": 1 },
+    "owned_paths": { "type": "array", "items": { "type": "string" } },
+    "forbidden_paths": { "type": "array", "items": { "type": "string" } },
+    "shared_locks": { "type": "array", "items": { "type": "string" } },
+    "done_criteria": { "type": "array", "items": { "type": "string" } },
+    "validation_commands": { "type": "array", "items": { "type": "string" } },
+    "human_gates": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}
