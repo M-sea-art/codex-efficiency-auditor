@@ -19,6 +19,16 @@ Codexcavator is an independent Codex skill and lightweight audit toolkit for che
 
 It evaluates planning quality, multi-agent readiness, worktree isolation, CodeGraph usage, GitHub/PR flow, validation depth, reporting quality, and concrete upgrade opportunities.
 
+## Plain-English Intro
+
+Codexcavator is a quality inspector for AI coding work.
+
+When an AI agent says "done", this project helps you ask: done how? Did it understand the goal? Did it split the work? Did it run tests? Did it keep Git clean? Did it leave enough evidence for a human or another agent to continue?
+
+Use it when a Codex run feels impressive but you are not sure whether it is actually safe to review, merge, release, or hand off. It turns a messy agent run into a simple report: score, decision, missing evidence, risks, and the next prompt to make the next run better.
+
+In short: Codexcavator does not replace your coding agent. It checks whether your coding agent worked like an engineer.
+
 It checks:
 - goal clarity and task decomposition
 - worktree isolation and multi-agent readiness
@@ -314,6 +324,16 @@ Codexcavator / Codex 挖掘机（仓库名：`codex-efficiency-auditor`）是一
 CI 检查代码，Codex 挖掘机检查 agent 工作流。
 
 它关注的不是单次回答是否好看，而是整个执行过程是否具备清晰规划、合理并行、风险隔离、验证闭环、可审计报告和可升级空间。
+
+## 大白话介绍
+
+Codex 挖掘机就是一个给 AI 编程过程做质检的工具。
+
+当一个 Codex 或 AI agent 说“我做完了”，它帮你继续追问：到底怎么做完的？目标清楚吗？有没有拆任务？有没有跑测试？Git 状态干净吗？有没有证据让人类或下一个 agent 接着看？
+
+它适合用在你觉得一次 AI coding run 看起来很厉害，但又不确定能不能 review、merge、release 或交接的时候。它会把一团复杂的执行过程整理成几个简单结果：分数、能不能过、缺什么证据、有什么风险、下一轮应该怎么提示 Codex。
+
+一句话：Codex 挖掘机不是替你写代码的 agent，而是检查写代码的 agent 有没有像工程师一样干活。
 
 它可以在任务结束后复盘，也可以放进 Codex 多线工程闭环中：先生成目标合同，开工前判断是否值得拆分，执行中检查 worker 是否跑偏，周期审计验证缺口和阻塞，完成后生成审计报告和可回填到原线程的升级 prompt。
 
