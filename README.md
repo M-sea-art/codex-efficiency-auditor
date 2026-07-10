@@ -1,49 +1,34 @@
-# Codexcavator / Codex 挖掘机
+<div align="center">
+  <img width="100%" alt="Codexcavator — Codex capability miner" src="https://github.com/user-attachments/assets/38c0a4c0-b754-4929-84d2-ce09043cc984" />
+  <h1>Codexcavator</h1>
+  <h3>The evidence-driven capability miner for Codex</h3>
+  <p>Find the Codex capability that matters to the task, prove how it was used, and recommend the smallest upgrade that creates real gain.</p>
+  <p>
+    <a href="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml"><img alt="Codexcavator Audit" src="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml/badge.svg" /></a>
+    <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
+  </p>
+  <p><a href="#why-codexcavator">English</a> · <a href="#中文简介">中文</a></p>
+</div>
 
-> Mine the Codex capability that matters. Do not maximize tool count.
+> CI checks the code. Codexcavator checks whether Codex used the right capabilities—and whether the evidence supports the claim.
 
-Codexcavator is an unofficial Codex Skill for finding capability that Codex could have used better in a thread, repository, worktree, pull request, transcript, or agent run.
+Codexcavator is an unofficial Codex Skill for auditing a thread, repository, worktree, pull request, transcript, or agent run. It identifies task-relevant capability that is unavailable, undiscovered, unused, misused, or unverified.
 
-It answers one question:
+It does not reward tool volume. It does not turn an inventory into an install list. If the current Codex stack already does the job well, the correct answer is `NO_CAPABILITY_UPGRADE_NEEDED`.
 
-> Which task-relevant Codex capability is unavailable, undiscovered, unused, misused, or unverified—and what is the smallest evidence-backed upgrade?
+## Why Codexcavator
 
-Codexcavator does not replace Codex, install a collection of tools, or reward using every available plugin. If the current Codex stack already satisfies the goal, it returns `NO_CAPABILITY_UPGRADE_NEEDED`.
-
-## Capability Mining Loop
-
-```text
-Orient
-  → Discover task-relevant capabilities
-  → Observe actual use and evidence
-  → Classify capability gaps
-  → Recommend at most three upgrades
-  → Verify the result
-```
-
-## Five Gap Types
-
-| Gap | Meaning |
+| A generic capability inventory | Codexcavator |
 |---|---|
-| `UNAVAILABLE` | A required or useful capability is confirmed absent. |
-| `UNDISCOVERED` | The capability exists, but Codex did not find it. |
-| `UNUSED` | The capability is relevant and known, but was not used. |
-| `MISUSED` | The capability was used with the wrong timing, scope, or method. |
-| `UNVERIFIED` | Correct use or benefit was claimed without sufficient evidence. |
+| Lists everything that exists | Filters to what materially affects this goal |
+| Treats installed as useful | Separates available, discovered, used, and verified |
+| Encourages more tools | Treats the current Codex stack as the default |
+| Relies on narrative judgment | Scores commands, tests, traces, Git, and artifacts |
+| Produces a broad roadmap | Returns no more than three verifiable upgrades |
 
-## What It Audits
+## 30-second Quickstart
 
-- task goal and acceptance criteria;
-- current-session tools and actual tool calls;
-- project rules, Skills, Plugins, MCP servers, CLIs, and validation commands;
-- commands, logs, tests, traces, screenshots, artifacts, and Git evidence;
-- whether a proposed external addition creates net gain over the current Codex stack.
-
-Only task-relevant capabilities are scored. Missing an irrelevant tool is not a defect.
-
-## Quickstart
-
-Paste this into Codex:
+Paste into Codex:
 
 ```text
 Use $codex-efficiency-auditor.
@@ -62,7 +47,30 @@ Decision: NO_CAPABILITY_UPGRADE_NEEDED | MINOR_CAPABILITY_GAPS | CAPABILITY_UPGR
 Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
 ```
 
-The report then lists relevant capabilities, evidence, classified gaps, at most three upgrades, and one concrete next action.
+The report lists only relevant capabilities, supporting evidence, classified gaps, at most three upgrades, and one concrete next action.
+
+## What It Finds
+
+| Gap | Meaning |
+|---|---|
+| `UNAVAILABLE` | A required or useful capability is confirmed absent. |
+| `UNDISCOVERED` | The capability exists, but Codex did not find it. |
+| `UNUSED` | The capability is relevant and known, but was not used. |
+| `MISUSED` | The capability was used with the wrong timing, scope, or method. |
+| `UNVERIFIED` | Correct use or benefit was claimed without sufficient evidence. |
+
+## How It Works
+
+```text
+Orient
+  → Discover task-relevant capabilities
+  → Observe actual use and evidence
+  → Classify capability gaps
+  → Recommend at most three upgrades
+  → Verify the result
+```
+
+Codexcavator examines the goal and acceptance criteria, current-session tools, project rules, Skills, Plugins, MCP servers, CLIs, validation commands, logs, tests, traces, screenshots, artifacts, and Git evidence. Only capabilities that materially affect the goal are scored.
 
 ## Evidence-Derived Scoring
 
@@ -169,11 +177,26 @@ Codexcavator is an independent, unofficial open-source project. It is not affili
 
 ## 中文简介
 
-Codexcavator（Codex 挖掘机）只做一件事：挖出当前任务中尚未发挥的 Codex 能力。
+Codexcavator（Codex 挖掘机）是一套以证据为基础的 Codex 能力挖掘 Skill。它只回答一个问题：
 
-它不会因为工具装得多就给高分，也不会为了体现价值而强行推荐插件。它只评估与当前目标真正相关的能力，依据实际命令、测试、日志、Git、截图、轨迹和产物证据，判断能力是缺失、未发现、未使用、误用，还是缺少验证。
+> 当前任务中，哪些 Codex 能力没有被发现、没有被正确使用，或者没有得到证据验证？最小的有效升级是什么？
 
-每次最多给出三个升级建议。如果当前 Codex 组合已经足够，它会明确返回：
+它不是插件清单，也不是“装得越多越强”的工具推荐器。它只评估与目标真正相关的能力，依据命令、测试、日志、Git、截图、轨迹和产物，将缺口归为：不可用、未发现、未使用、误用或未验证。
+
+- 只评分与当前目标有关的能力；
+- 优先挖掘现有 Codex 组合，而不是增加依赖；
+- 每次最多给出三个可验证升级；
+- 如果现有组合已经足够，就不强行推荐工具。
+
+30 秒使用：
+
+```text
+使用 $codex-efficiency-auditor 审计本次 Codex 执行。
+只评估与目标相关的能力，依据实际证据分类能力缺口。
+最多给出三个可验证升级；如果当前组合已经足够，返回 NO_CAPABILITY_UPGRADE_NEEDED。
+```
+
+当不需要升级时，它会明确返回：
 
 ```text
 NO_CAPABILITY_UPGRADE_NEEDED
