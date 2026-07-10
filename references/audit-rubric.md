@@ -1,90 +1,77 @@
-# Audit Rubric
+# Capability Mining Rubric
 
-Score each category from 0 to its maximum. Cite evidence for every high or low score.
+Score Codex only on capabilities that materially affect the audited goal. Do not reward tool volume or penalize irrelevant capabilities.
 
-## 1. Goal and Scope Clarity - 15 points
+## Required Inputs
 
-- 0-5: Goal is vague or drifting.
-- 6-10: Goal is understandable but lacks explicit acceptance criteria.
-- 11-15: Goal, non-goals, acceptance criteria, and stop conditions are explicit.
+For each task-relevant capability, record:
 
-Look for: task card, plan, user constraints, final verdict, scoped implementation notes.
+- `relevance`: `required`, `useful`, or `irrelevant`;
+- `availability`: `available`, `unavailable`, or `unknown`;
+- `discovered`: whether Codex found the capability;
+- `usage`: `used`, `unused`, `misused`, or `not_applicable`;
+- `impact`: integer from 1 to 5;
+- `evidence`: concrete proof of correct use and outcome.
 
-## 2. Task Decomposition and Ownership - 15 points
+Use `references/capability-mining-model.md` for gap precedence and weighting.
 
-- 0-5: Single blob of work with no ownership boundaries.
-- 6-10: Some files or modules identified, but shared files are not controlled.
-- 11-15: Owned paths, forbidden paths, shared locks, dependencies, and done criteria are explicit.
+## Evidence Rules
 
-Look for: worktree plan, owned paths, allowlist, forbidden paths, branch/worktree split.
+Strong evidence:
 
-## 3. Codex Capability Utilization - 15 points
+- tool calls or commands with output;
+- tests, builds, CI, traces, screenshots, or runtime state;
+- Git state, diffs, commits, or pull-request checks;
+- artifacts with clear provenance;
+- comparable before-and-after results.
 
-- 0-5: Uses Codex as a basic chat/code editor only.
-- 6-10: Uses some tools such as shell, git, tests, or web search.
-- 11-15: Appropriately uses subagents, CodeGraph, Browser, GitHub, Cloud, plugins, or noninteractive CLI where they materially help.
+Weak evidence:
 
-Do not require every tool. Reward the right tool for the task.
+- narrative claims without output;
+- a plan that was not executed;
+- a tool mentioned but not called;
+- a screenshot used to claim behavior it cannot prove;
+- an installed capability assumed to be available in the current session.
 
-## 4. Context and Memory Management - 10 points
+Classify claims supported only by weak evidence as `UNVERIFIED`.
 
-- 0-3: Context is implicit or lost across turns.
-- 4-7: Some summaries/checkpoints exist.
-- 8-10: AGENTS.md, build reports, task cards, resume checkpoints, or durable reports make the run resumable.
+## Utilization Score
 
-Look for: repo rules, build reports, checkpoint summaries, thread handoff notes.
+Include only `required` and `useful` capabilities that are confirmed `available`.
 
-## 5. Risk Isolation and Git Hygiene - 15 points
+Usage value:
 
-- 0-5: Dirty worktree, unclear branch, generated files or secrets risk.
-- 6-10: Basic Git hygiene but incomplete isolation.
-- 11-15: Dedicated branch/worktree, clean scope, no forbidden paths, no accidental generated/binary/secret files.
+- used correctly with evidence: `1.0`;
+- used without evidence: `0.25`;
+- misused: `0.25`;
+- unused: `0.0`.
 
-Look for: `git status`, changed files, branch, PR, allowlist, generated file handling.
+Weight:
 
-## 6. Verification and Audit Coverage - 15 points
+- `required`: `impact × 1.0`;
+- `useful`: `impact × 0.6`;
+- `irrelevant`: excluded.
 
-- 0-5: No meaningful validation.
-- 6-10: Targeted tests or manual checks only.
-- 11-15: Targeted tests, full tests or CI, diff audits, state/security checks, and final reviewer evidence.
+Formula:
 
-Look for: test command names, pass/fail status, CI checks, state audit, diff check, PR review.
+```text
+score = round(100 × weighted usage value / weighted available capability total)
+```
 
-## 7. Reporting and Handoff Quality - 10 points
+Unavailable and unknown capabilities remain visible as gaps but do not masquerade as utilization of an available capability.
 
-- 0-3: No final report or unclear outcome.
-- 4-7: Summary exists but lacks evidence or next steps.
-- 8-10: Report includes changed files, validation, risks, limitations, PR/commit state, and next action.
+## Decisions
 
-Look for: final answer, PR body, build report, human next step.
+- `NO_CAPABILITY_UPGRADE_NEEDED`: no material gaps and score is at least 90.
+- `MINOR_CAPABILITY_GAPS`: score is at least 85, with no required gap.
+- `CAPABILITY_UPGRADE_RECOMMENDED`: score is at least 50 and material gaps remain.
+- `CAPABILITY_REPLAN_NEEDED`: score is below 50 or a required capability is unavailable.
+- `NEEDS_HUMAN_DECISION`: the next action crosses a Human Gate.
 
-## 8. Upgrade Leverage - 5 points
+## Upgrade Rules
 
-- 0-1: No useful next-step recommendations.
-- 2-3: Generic recommendations.
-- 4-5: Specific paste-ready prompts or process upgrades tied to observed gaps.
-
-## Verdict Bands
-
-- 90-100: Exemplary Codex-native execution.
-- 75-89: Strong execution with clear upgrade opportunities.
-- 60-74: Useful but under-leveraged Codex run.
-- 40-59: Mostly single-thread chat execution with weak auditability.
-- 0-39: Risky, unclear, or not meaningfully auditable.
-
-## Decision Bands
-
-- 90-100: `GO`
-- 75-89: `GO_WITH_MINOR_FIXES`
-- 60-74: `GO_WITH_REQUIRED_FIXES`
-- 40-59: `NO_GO`
-- 0-39: `NEEDS_REPLAN`
-- Any score: `NEEDS_HUMAN_DECISION` when a human gate, credential, account, billing, release, destructive action, legal/medical/financial judgment, ownership decision, or external comment is required.
-
-## Common Deductions
-
-- In-progress run: cap final-readiness claims; do not issue final approval.
-- Missing thread/repo evidence: mark unknowns and deduct from reporting/context, not necessarily implementation.
-- No validation: major deduction even if implementation looks plausible.
-- Parallelism not useful: do not deduct for missing subagents when the task is small or tightly coupled.
-- Tool unavailable but documented fallback used: small or no deduction if the fallback is appropriate.
+- Recommend at most three upgrades.
+- Tie every upgrade to an observed gap.
+- State the smallest corrective action, expected gain, and verification.
+- Prefer better use of current Codex capabilities over external additions.
+- Return no upgrade when evidence shows the current stack is sufficient.

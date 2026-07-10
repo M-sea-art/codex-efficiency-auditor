@@ -53,52 +53,6 @@ HIGH_RISK_PATTERNS = [
     "game-studio",
 ]
 
-PROJECT_RECOMMENDATIONS = [
-    ("GitHub repo", ["github", "git-workflow", "code-review", "codex-security"]),
-    ("local development", ["shell", "CodeGraph", "tdd-workflow", "refactoring"]),
-    ("UI/browser testing", ["browser-use", "browser:control-in-app-browser", "Chrome/Browser", "Playwright"]),
-    ("Figma/design work", ["Canva", "Pencil", "Open Design", "frontend-design", "Figma missing-or-unknown"]),
-    ("PR review", ["GitHub", "code-review", "codex-security:security-diff-scan", "project-supervisor"]),
-    ("release gate", ["project-supervisor", "codex-security", "GitHub checks", "git-workflow"]),
-    ("game development", ["Game Studio", "game-playtest", "three-webgl-game", "sprite-pipeline", "frontend-design", "browser testing"]),
-]
-
-GENERAL_PREFERRED = [
-    "github",
-    "git-workflow",
-    "code-review",
-    "codex-security",
-    "project-supervisor",
-    "codegraph",
-    "browser",
-    "browser-use",
-    "frontend-design",
-    "imagegen",
-    "canva",
-    "pencil",
-    "open-design",
-    "game-studio",
-]
-
-GAME_PREFERRED = [
-    "game-studio",
-    "game-playtest",
-    "three-webgl-game",
-    "sprite-pipeline",
-    "web-game-foundations",
-    "phaser-2d-game",
-    "react-three-fiber-game",
-    "web-3d-asset-pipeline",
-]
-
-DESIGN_PREFERRED = [
-    "open-design",
-    "product-design",
-    "canva",
-    "pencil",
-    "frontend-design",
-]
-
 PLUGIN_SKILL_PREFIXES = {
     "game-studio": "game-studio",
     "github": "github",
@@ -410,6 +364,13 @@ def _frontmatter_name(text: str, fallback: str) -> str:
     return match.group("name").strip().strip('"')
 
 
+def _frontmatter_description(text: str) -> str:
+    match = re.search(r"^description:\s*(?P<description>.+)$", text, flags=re.MULTILINE)
+    if not match:
+        return ""
+    return match.group("description").strip().strip('"')
+
+
 def _scan_skills(codex_home: Path, items: dict[str, Capability]) -> None:
     roots = [codex_home / "skills", Path.home() / ".agents" / "skills"]
     for root in roots:
@@ -423,6 +384,7 @@ def _scan_skills(codex_home: Path, items: dict[str, Capability]) -> None:
             except OSError:
                 continue
             name = _frontmatter_name(text, skill_file.parent.name)
+            description = _frontmatter_description(text)
             _add_capability(
                 items,
                 Capability(
@@ -433,96 +395,47 @@ def _scan_skills(codex_home: Path, items: dict[str, Capability]) -> None:
                     confidence="best-effort",
                     mention=f"${name}",
                     risk=_risk_for(name),
+                    best_for=description[:180],
+                    definition=description,
                     evidence=["local SKILL.md"],
                 ),
             )
 
 
-def _best_for(name: str) -> str:
-    lowered = name.casefold()
-    if "game-studio" in lowered:
-        return "browser game architecture, prototype planning, gameplay loop, playtesting"
-    if "game-playtest" in lowered:
-        return "gameplay QA, playtest checklist, interaction and feel validation"
-    if "sprite-pipeline" in lowered:
-        return "sprite sheets, pixel-art pipeline, asset normalization and previews"
-    if "three-webgl" in lowered or "react-three-fiber" in lowered or "web-3d" in lowered:
-        return "3D browser game stack, WebGL debugging, asset loading and performance"
-    if "phaser" in lowered or "web-game" in lowered or "game-ui" in lowered:
-        return "2D browser game foundations, HUD, controls, and UI implementation"
-    if "github" in lowered or "gh-" in lowered or "yeet" in lowered:
-        return "GitHub repo, PR review, CI, push/release workflow"
-    if "security" in lowered:
-        return "security review, release gate, diff/scan validation"
-    if "browser" in lowered or "chrome" in lowered:
-        return "UI/browser testing and visual/runtime validation"
-    if "canva" in lowered or "pencil" in lowered or "design" in lowered:
-        return "design work, visual iteration, product/design assets"
-    if "project-supervisor" in lowered:
-        return "acceptance gates, completion reports, release gate"
-    if "frontend" in lowered:
-        return "frontend UI and game interface implementation"
-    if "imagegen" in lowered:
-        return "asset generation when visual output is required"
-    if "codegraph" in lowered:
-        return "structural code navigation and impact review"
-    return "project-specific Codex capability"
+def _best_for(name: str, definition: str = "") -> str:
+    if definition.strip():
+        return definition.strip().replace("|", "/")[:180]
+    return f"Codex capability: {name}"
 
 
 def _context_text(values: list[str] | None) -> str:
     return " ".join(values or []).casefold()
 
 
-def _preferred_for_context(context: str) -> list[str]:
-    preferred: list[str] = []
-    if any(token in context for token in ("game", "godot", "phaser", "three", "webgl", "playable", "interactive")):
-        preferred.extend(GAME_PREFERRED)
-    if any(token in context for token in ("design", "figma", "open design", "canva", "pencil", "prototype", "visual")):
-        preferred.extend(DESIGN_PREFERRED)
-    preferred.extend(GENERAL_PREFERRED)
-
-    deduped: list[str] = []
-    for token in preferred:
-        if token not in deduped:
-            deduped.append(token)
-    return deduped
+def _search_tokens(text: str) -> set[str]:
+    return {
+        token
+        for token in re.findall(r"[a-z0-9][a-z0-9.+:#/-]{1,}", text.casefold())
+        if len(token) >= 3
+    }
 
 
 def _rank(items: list[Capability], context: str = "") -> list[Capability]:
-    preferred = _preferred_for_context(context)
+    context_tokens = _search_tokens(context)
 
-    def score(item: Capability) -> tuple[int, int, str]:
-        name = item.name.casefold()
-        priority = next((index for index, token in enumerate(preferred) if token in name), len(preferred))
-        status_bonus = {"enabled": 0, "available-in-session": 1, "installed-not-exposed": 2, "missing-or-unknown": 3}.get(item.status, 3)
-        return (priority, status_bonus, item.name)
+    def score(item: Capability) -> tuple[int, int, int, str]:
+        searchable = " ".join([item.name, item.definition, item.best_for, *item.capabilities])
+        item_tokens = _search_tokens(searchable)
+        exact_matches = len(context_tokens & item_tokens)
+        substring_matches = sum(1 for token in context_tokens if token in searchable.casefold())
+        status_bonus = {"enabled": 3, "available-in-session": 2, "installed-not-exposed": 1, "missing-or-unknown": 0}.get(item.status, 0)
+        return (-exact_matches, -substring_matches, -status_bonus, item.name.casefold())
 
     return sorted(items, key=score)
 
 
 def _family_key(item: Capability) -> str:
-    name = item.name.casefold()
-    plugin = item.plugin.casefold()
-    if plugin:
-        return plugin
-    for token in (
-        "github",
-        "codex-security",
-        "game-studio",
-        "browser",
-        "chrome",
-        "computer-use",
-        "canva",
-        "pencil",
-        "open-design",
-        "codegraph",
-        "project-supervisor",
-        "frontend-design",
-        "imagegen",
-    ):
-        if token in name:
-            return token
-    return name
+    return item.plugin.casefold() or item.name.casefold()
 
 
 def _compact_ranked(items: list[Capability], context: str = "", limit: int = 8) -> list[Capability]:
@@ -551,7 +464,7 @@ def _compact_ranked(items: list[Capability], context: str = "", limit: int = 8) 
 
 def _prepare_items(items: list[Capability]) -> list[Capability]:
     for item in items:
-        item.best_for = item.best_for or _best_for(item.name)
+        item.best_for = item.best_for or _best_for(item.name, item.definition)
     return items
 
 
@@ -588,15 +501,11 @@ def _json_payload(items: list[Capability], full: bool, context: str) -> dict[str
     payload: dict[str, Any] = {
         "scan": "FULL_INVENTORY" if full else "COMPACT",
         "audit_mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
-        "scope": "one-time read-only recommendation",
+        "scope": "one-time read-only capability inventory",
         "scan_basis": "script-run",
         "context": context or "generic",
         "status_descriptions": STATUS_DESCRIPTIONS,
-        "best_capabilities": [_capability_dict(item) for item in selected],
-        "project_recommendations": [
-            {"context": label, "capabilities": names}
-            for label, names in PROJECT_RECOMMENDATIONS
-        ],
+        "relevant_capabilities": [_capability_dict(item) for item in selected],
     }
     if full:
         payload["full_inventory"] = [_capability_dict(item) for item in ranked]
@@ -609,11 +518,11 @@ def _markdown(items: list[Capability], full: bool, context: str) -> str:
     lines = [
         f"Project Capability Scan: {'FULL_INVENTORY' if full else 'COMPACT'}",
         "Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT",
-        "Scope: one-time read-only recommendation",
+        "Scope: one-time read-only capability inventory",
         f"Scan basis: script-run; context={context or 'generic'}",
         "Status note: `installed-not-exposed` means detected locally, but current-session callable exposure is not confirmed.",
         "",
-        "Best capabilities for this project:",
+        "Capabilities most relevant to the supplied context:",
         "| Rank | Capability | Status | Best for | Useful mention | Risk | Notes |",
         "|---:|---|---|---|---|---|---|",
     ]
@@ -628,26 +537,13 @@ def _markdown(items: list[Capability], full: bool, context: str) -> str:
         if extra_mentions:
             lines[-1] = lines[-1].replace(f"`{mention}`", f"`{mention_text}`")
 
-    lines.extend(["", "Suggested usage order:"])
-    for index, (context, names) in enumerate(PROJECT_RECOMMENDATIONS[:7], start=1):
-        lines.append(f"{index}. {context}: {', '.join(names)}")
-
     lines.extend(
         [
             "",
-            "Risk boundaries:",
-            "| Capability | Human Gate needed before | Safe read-only use |",
-            "|---|---|---|",
-            "| GitHub / git-workflow | push, merge, auto-merge, PR/issue comments, release | inspect repo, PR checks, diffs, CI status |",
-            "| Browser / Chrome / Computer Use | form submission, purchase, upload, account changes | open pages, screenshot, inspect UI behavior |",
-            "| Design tools | publishing, sharing, overwriting remote designs, exports to external systems | inspect design context and recommend workflow |",
-            "| Automation | create, update, delete, or wake recurring jobs | suggest bounded automation prompt |",
-            "| Security tools | external ticket/comment creation or account changes | local/diff scan recommendations |",
-            "",
-            "Missing or recommended:",
-            "- Figma is `missing-or-unknown` unless a Figma connector/tool is visible in the current session.",
-            "- Marketplace-wide uninstalled plugins are `missing-or-unknown` unless Codex exposes a plugin inventory API.",
-            "- Local plugin definitions come from `.codex-plugin/plugin.json`; plugin skills come from cached plugin `skills/*/SKILL.md`.",
+            "Interpretation:",
+            "- Inventory presence does not prove task relevance, correct use, or net benefit.",
+            "- Treat write-capable or external-state capabilities as requiring a Human Gate before mutation.",
+            "- Use a capability audit to classify actual gaps; do not turn this inventory into a generic install list.",
         ]
     )
 
@@ -700,7 +596,7 @@ def _markdown(items: list[Capability], full: bool, context: str) -> str:
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Read-only Codex capability scan.")
     parser.add_argument("--codex-home", help="Override Codex home directory. Defaults to CODEX_HOME or ~/.codex.")
-    parser.add_argument("--context", action="append", help="Project context hints such as game, GitHub repo, UI testing, design, PR review, release gate.")
+    parser.add_argument("--context", action="append", help="Task or project context used for generic relevance matching.")
     parser.add_argument("--full", action="store_true", help="Print full inventory instead of compact recommendations.")
     parser.add_argument("--json", action="store_true", dest="json_output", help="Print machine-readable JSON instead of Markdown.")
     args = parser.parse_args(argv[1:])
