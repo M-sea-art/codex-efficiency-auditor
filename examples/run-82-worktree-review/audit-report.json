@@ -1,32 +1,8 @@
 {
-  "run_id": "run-82-worktree-review",
-  "target_type": "agent_run",
-  "score": 82,
-  "verdict": "strong execution with clear upgrade opportunities",
-  "decision": "GO_WITH_MINOR_FIXES",
-  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
-  "evidence": {
-    "git": ["changed files were limited to docs and examples"],
-    "tests": ["git diff --check passed"],
-    "commands": [
-      "git diff --check",
-      "python scripts/score_audit.py --json examples/run-82-worktree-review/audit-scores.json"
-    ],
-    "artifacts": ["examples/run-82-worktree-review/evidence-bundle.json"]
-  },
-  "strengths": [
-    "The run started from a bounded goal contract.",
-    "Worker and reviewer responsibilities were separated.",
-    "Evidence bundle and final handoff were present."
-  ],
-  "capability_gaps": [
-    "No CI evidence in the fixture.",
-    "No benchmark or release-gate evidence."
-  ],
-  "risk_flags": [
-    "Human review is still required before any publish or release."
-  ],
-  "upgrade_prompts": [
-    "Add CI output or a reproducible local docs check before marking this run GO."
-  ]
+  "audit_id": "run-82-worktree-review",
+  "capability_utilization_score": 100,
+  "decision": "NO_CAPABILITY_UPGRADE_NEEDED",
+  "relevant_capability_count": 3,
+  "gaps": [],
+  "recommended_upgrades": []
 }

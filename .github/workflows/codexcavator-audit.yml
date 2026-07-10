@@ -33,7 +33,7 @@ jobs:
           python scripts/test_capability_scan.py
           python scripts/test_score_audit.py
 
-      - name: Score examples
+      - name: Analyze capability audit examples
         run: |
           python scripts/score_audit.py --json examples/run-54-single-thread/audit-scores.json
           python scripts/score_audit.py --json examples/run-82-worktree-review/audit-scores.json

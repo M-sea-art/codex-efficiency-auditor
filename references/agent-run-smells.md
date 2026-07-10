@@ -1,59 +1,51 @@
-# Agent Run Smells
+# Capability Mining Smells
 
-Use this reference when a run feels successful from the final diff but weak as an engineering process.
+Use this reference when a Codex run appears successful but may have left relevant capability unused or unverified.
 
-## Planning Smells
+## Orientation Smells
 
-- No explicit goal contract.
-- No acceptance criteria.
-- No stop conditions or pause conditions.
-- The run starts implementing before scope and ownership are clear.
-- The final answer describes intent but not the authorized boundary.
+- The goal or acceptance criteria are missing.
+- The audit lists tools before identifying task needs.
+- Irrelevant capabilities are treated as mandatory.
 
-## Execution Smells
+## Discovery Smells
 
-- Everything happened in one long thread with no task card.
-- No owned paths, forbidden paths, or shared locks.
-- No worktree isolation for independent work.
-- Worker, reviewer, and finalizer roles are blurred.
-- The run keeps retrying the same approach without fresh evidence.
+- Codex searches manually while a relevant exposed capability is visible.
+- Project rules, existing commands, Skills, Plugins, or MCP servers are not inspected.
+- Installed capability is assumed to be callable without session evidence.
+- A missing capability is claimed without checking the current stack.
 
-## Validation Smells
+## Usage Smells
 
-- Tests are claimed but command output is missing.
-- Screenshots are treated as proof without behavior or state evidence.
-- No reproduction path.
-- No CI, targeted test, or manual validation summary.
-- Generated assets, TODOs, dummy data, or static UI are counted as completion.
+- A relevant, discovered capability is not used and no reason is given.
+- A tool is invoked after the decision it should have informed.
+- The wrong scope, target, or mode is used.
+- More tools are invoked without improving the task result.
 
-## Audit Smells
+## Evidence Smells
 
-- The auditor edits files during a read-only review.
-- No mutation status is reported.
-- Git status and diff scope are missing.
-- UI file cards are treated as proof of audit-time mutation without Git evidence.
-- Security, privacy, or credential boundaries are not checked before release.
+- Tool use is claimed without a tool call or output.
+- Tests are claimed without command results.
+- Screenshots are used to prove behavior they cannot establish.
+- Plans, generated assets, TODOs, or static placeholders are counted as completion.
+- Before-and-after comparisons change the goal or capability set.
 
-## Handoff Smells
+## Upgrade Smells
 
-- No changed-file summary.
-- No risk register.
-- No next-agent instructions.
-- No final handoff.
-- The next run cannot resume without rereading the whole transcript.
+- More than three upgrades are recommended.
+- A recommendation is not tied to an observed gap.
+- An external dependency is preferred without net-gain evidence.
+- The current Codex stack is sufficient, but an upgrade is still forced.
+- Verification is missing or cannot falsify the recommendation.
 
 ## Codexcavator Response
 
-When two or more smell categories are present, report:
+Classify each material issue as `UNAVAILABLE`, `UNDISCOVERED`, `UNUSED`, `MISUSED`, or `UNVERIFIED`. Score only task-relevant capabilities, recommend at most three upgrades, and return one of:
 
 ```text
-Decision: GO_WITH_REQUIRED_FIXES | NO_GO | NEEDS_REPLAN
-Required evidence before merge/release:
-- goal contract
-- changed files
-- commands run
-- validation output
-- Git evidence
-- known risks
-- final handoff
+NO_CAPABILITY_UPGRADE_NEEDED
+MINOR_CAPABILITY_GAPS
+CAPABILITY_UPGRADE_RECOMMENDED
+CAPABILITY_REPLAN_NEEDED
+NEEDS_HUMAN_DECISION
 ```
