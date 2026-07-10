@@ -1,27 +1,16 @@
-# Upgrade Prompt
+# Capability Upgrade Prompt
 
 ```text
-Use $codex-efficiency-auditor as Codexcavator.
+Use $codex-efficiency-auditor.
 
-Perform a read-only audit of this run.
-Do not modify files.
+Re-audit this run for task-relevant Codex capability utilization.
 
-Before any READY_FOR_HUMAN_REVIEW verdict, collect:
-- original goal
-- changed files
-- commands run
-- validation output
-- git status --short --branch
-- git diff --name-status
-- known risks
-- final handoff
+Required evidence:
+- the actual test command and output;
+- branch, status, and diff evidence;
+- the same goal and acceptance criteria as the baseline audit.
 
-Output:
-- score /100
-- verdict
-- Decision: GO / GO_WITH_MINOR_FIXES / GO_WITH_REQUIRED_FIXES / NO_GO / NEEDS_REPLAN
-- evidence-backed strengths
-- capability gaps
-- required fixes
-- next-run upgrade prompt
+Classify gaps only as UNAVAILABLE, UNDISCOVERED, UNUSED, MISUSED, or UNVERIFIED.
+Recommend no more than three upgrades.
+If the current stack is sufficient, return NO_CAPABILITY_UPGRADE_NEEDED.
 ```

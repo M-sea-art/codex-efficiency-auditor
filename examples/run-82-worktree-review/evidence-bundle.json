@@ -11,7 +11,7 @@
   ],
   "validation_output": [
     "git diff --check passed",
-    "score_audit.py produced score 82 and decision GO_WITH_MINOR_FIXES"
+    "score_audit.py produced score 100 and decision NO_CAPABILITY_UPGRADE_NEEDED"
   ],
   "git_evidence": [
     "changed files were limited to docs and examples"
