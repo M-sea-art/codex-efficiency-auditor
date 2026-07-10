@@ -1,10 +1,51 @@
 {
-  "goal_scope": 8,
-  "decomposition": 7,
-  "capability_use": 6,
-  "context_memory": 5,
-  "risk_git": 8,
-  "verification": 9,
-  "reporting": 7,
-  "upgrade_leverage": 4
+  "audit_id": "run-54-single-thread",
+  "target_type": "agent_run",
+  "goal": "Complete the requested code change with validation evidence.",
+  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "capabilities": [
+    {
+      "name": "shell",
+      "relevance": "required",
+      "availability": "available",
+      "discovered": true,
+      "usage": "used",
+      "impact": 5,
+      "evidence": ["implementation command output"]
+    },
+    {
+      "name": "project tests",
+      "relevance": "required",
+      "availability": "available",
+      "discovered": true,
+      "usage": "used",
+      "impact": 5,
+      "evidence": []
+    },
+    {
+      "name": "Git evidence",
+      "relevance": "useful",
+      "availability": "available",
+      "discovered": false,
+      "usage": "unused",
+      "impact": 3,
+      "evidence": []
+    }
+  ],
+  "upgrades": [
+    {
+      "capability": "project tests",
+      "gap": "UNVERIFIED",
+      "action": "Capture the test command and result.",
+      "expected_gain": "Verifiable correctness claim.",
+      "verification": "The test exits successfully and its output is included."
+    },
+    {
+      "capability": "Git evidence",
+      "gap": "UNDISCOVERED",
+      "action": "Inspect branch, status, and diff before handoff.",
+      "expected_gain": "Auditable change scope.",
+      "verification": "Git evidence matches the reported files."
+    }
+  ]
 }

@@ -1,10 +1,36 @@
 {
-  "goal_scope": 13,
-  "decomposition": 12,
-  "capability_use": 12,
-  "context_memory": 8,
-  "risk_git": 13,
-  "verification": 12,
-  "reporting": 8,
-  "upgrade_leverage": 4
+  "audit_id": "run-82-worktree-review",
+  "target_type": "worktree",
+  "goal": "Complete and verify a scoped change in an isolated worktree.",
+  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "capabilities": [
+    {
+      "name": "worktree isolation",
+      "relevance": "required",
+      "availability": "available",
+      "discovered": true,
+      "usage": "used",
+      "impact": 4,
+      "evidence": ["dedicated worktree and branch"]
+    },
+    {
+      "name": "project tests",
+      "relevance": "required",
+      "availability": "available",
+      "discovered": true,
+      "usage": "used",
+      "impact": 5,
+      "evidence": ["targeted and full test output"]
+    },
+    {
+      "name": "read-only review",
+      "relevance": "useful",
+      "availability": "available",
+      "discovered": true,
+      "usage": "used",
+      "impact": 3,
+      "evidence": ["review report with mutation status"]
+    }
+  ],
+  "upgrades": []
 }
