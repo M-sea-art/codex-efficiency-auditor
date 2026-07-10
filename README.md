@@ -7,7 +7,7 @@
     <a href="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml"><img alt="Codexcavator Audit" src="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml/badge.svg" /></a>
     <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   </p>
-  <p><a href="#why-codexcavator">English</a> · <a href="#中文简介">中文</a></p>
+  <p><a href="#why-this-exists">English</a> · <a href="#中文简介">中文</a></p>
 </div>
 
 > CI checks the code. Codexcavator checks whether Codex used the right capabilities—and whether the evidence supports the claim.
@@ -15,6 +15,26 @@
 Codexcavator is an unofficial Codex Skill for auditing a thread, repository, worktree, pull request, transcript, or agent run. It identifies task-relevant capability that is unavailable, undiscovered, unused, misused, or unverified.
 
 It does not reward tool volume. It does not turn an inventory into an install list. If the current Codex stack already does the job well, the correct answer is `NO_CAPABILITY_UPGRADE_NEEDED`.
+
+## Why This Exists
+
+Codexcavator grew out of a recurring problem observed in real Codex work:
+
+Codex may have access to many built-in tools, Skills, Plugins, MCP servers, CLIs, and open-source projects—but capability availability does not guarantee capability discovery or effective use.
+
+A useful capability may be overlooked, invoked too late, applied incorrectly, or recommended without practical validation. Sometimes the current Codex stack is already sufficient, and adding another tool only increases complexity.
+
+Codexcavator turns these questions into an evidence-backed capability audit:
+
+- Was a task-relevant capability overlooked?
+- Was an available capability left unused?
+- Was a capability applied incorrectly?
+- Was the claimed benefit actually verified?
+- Is the current Codex stack already sufficient?
+
+The goal is not to make Codex use more tools.
+
+The goal is to help Codex use the right capability—and prove that it helped.
 
 ## Why Codexcavator
 
@@ -176,6 +196,28 @@ Codexcavator is an independent, unofficial open-source project. It is not affili
 ---
 
 ## 中文简介
+
+### 为什么创建 Codexcavator
+
+Codexcavator 来自长期使用 Codex 时反复遇到的一个问题：
+
+Codex 可能已经拥有许多内置工具、Skill、插件、MCP、CLI 和开源能力，但“拥有能力”并不等于“能够主动发现并正确使用能力”。
+
+某项能力可能被遗漏、没有使用、使用时机不对，或者在没有实际验证的情况下被推荐。有时，Codex 当前的原生组合其实已经足够，继续增加工具只会增加复杂度。
+
+因此，Codexcavator 关注的不是“还能安装什么”，而是：
+
+- 当前任务是否遗漏了相关能力？
+- 已有能力是否没有被使用？
+- 某项能力是否被错误应用？
+- 所谓的提升是否有实际证据？
+- 原生 Codex 组合是否已经足够？
+
+它的目标不是让 Codex 使用更多工具。
+
+而是让 Codex 找到正确的能力，并证明这项能力确实带来了提升。
+
+### 它如何工作
 
 Codexcavator（Codex 挖掘机）是一套以证据为基础的 Codex 能力挖掘 Skill。它只回答一个问题：
 
