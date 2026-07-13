@@ -1,0 +1,51 @@
+name: Real-world adoption report
+description: Share a reproducible example of Codexcavator used on a real Codex task.
+title: "[Adoption] "
+labels:
+  - adoption
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for sharing real usage. Do not include credentials, private repository content, personal data, or sensitive local paths.
+  - type: textarea
+    id: task
+    attributes:
+      label: Task and environment
+      description: What goal was Codex working toward, and which shareable environment details matter?
+      placeholder: A concise, non-sensitive description.
+    validations:
+      required: true
+  - type: dropdown
+    id: decision
+    attributes:
+      label: Audit decision
+      options:
+        - NO_CAPABILITY_UPGRADE_NEEDED
+        - MINOR_CAPABILITY_GAPS
+        - CAPABILITY_UPGRADE_RECOMMENDED
+        - CAPABILITY_REPLAN_NEEDED
+        - NEEDS_HUMAN_DECISION
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Which commands, tests, traces, or artifacts supported the decision?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What changed after the audit? Say clearly if the result was inconclusive.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed credentials, personal data, private code, and sensitive local paths.
+          required: true
