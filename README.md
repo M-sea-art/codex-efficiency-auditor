@@ -189,6 +189,23 @@ python scripts/score_audit.py --json examples/run-82-worktree-review/audit-score
 python scripts/score_audit.py --baseline before.json --json after.json
 ```
 
+## Project Status and Maintenance
+
+Codexcavator is an early-stage, independently maintained open-source project. The repository does not claim broad adoption yet; it publishes reproducible checks, example fixtures, and CI so users can verify behavior directly.
+
+- **Maintainer:** [M-sea-art](https://github.com/M-sea-art)
+- **Maintenance work:** issue triage, pull-request review, regression tests, release preparation, and documentation
+- **Contributing:** see [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Release history:** see [CHANGELOG.md](CHANGELOG.md)
+- **Real-world use:** share a reproducible audit through the [adoption template](.github/ISSUE_TEMPLATE/adoption.yml)
+
+### Near-term Roadmap
+
+1. Collect reproducible audits from different Codex workflows.
+2. Stabilize the audit schema and CLI contract.
+3. Publish a first tagged release only after the documented release checklist passes.
+4. Measure whether recommended capability upgrades improve comparable task outcomes.
+
 ## Disclaimer
 
 Codexcavator is an independent, unofficial open-source project. It is not affiliated with, endorsed by, or sponsored by OpenAI.
