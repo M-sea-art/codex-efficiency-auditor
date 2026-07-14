@@ -11,7 +11,7 @@ For each task-relevant capability, record:
 - `discovered`: whether Codex found the capability;
 - `usage`: `used`, `unused`, `misused`, or `not_applicable`;
 - `impact`: integer from 1 to 5;
-- `evidence`: concrete proof of correct use and outcome.
+- `evidence`: v0.2 objects with `kind`, `status`, `summary`, and optional `locator`.
 
 Use `references/capability-mining-model.md` for gap precedence and weighting.
 
@@ -33,7 +33,7 @@ Weak evidence:
 - a screenshot used to claim behavior it cannot prove;
 - an installed capability assumed to be available in the current session.
 
-Classify claims supported only by weak evidence as `UNVERIFIED`.
+Classify claims supported only by weak evidence as `UNVERIFIED`. Only an evidence item with `status: PASS` earns full utilization credit; `PARTIAL`, `FAIL`, and `NOT_EVALUATED` remain visible without proving completion.
 
 ## Utilization Score
 
@@ -41,8 +41,8 @@ Include only `required` and `useful` capabilities that are confirmed `available`
 
 Usage value:
 
-- used correctly with evidence: `1.0`;
-- used without evidence: `0.25`;
+- used correctly with at least one `PASS` evidence item: `1.0`;
+- used without a `PASS` evidence item: `0.25`;
 - misused: `0.25`;
 - unused: `0.0`.
 
@@ -72,6 +72,9 @@ Unavailable and unknown capabilities remain visible as gaps but do not masquerad
 
 - Recommend at most three upgrades.
 - Tie every upgrade to an observed gap.
+- Require an exact capability/gap match, a boolean `human_gate`, and a non-empty reason when that gate is true.
 - State the smallest corrective action, expected gain, and verification.
 - Prefer better use of current Codex capabilities over external additions.
 - Return no upgrade when evidence shows the current stack is sufficient.
+
+The deterministic scorer checks the audit declaration and consistency. It is not a substitute for investigating the underlying command, artifact, screenshot, runtime, or human claim.

@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.2",
+  "audit_id": "registered-disabled-before",
+  "target_type": "agent_run",
+  "goal": "Use the required session capability and verify it in a fresh process.",
+  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "capabilities": [
+    {
+      "name": "session MCP exposure",
+      "relevance": "required",
+      "availability": "unavailable",
+      "discovered": true,
+      "usage": "not_applicable",
+      "impact": 5,
+      "evidence": [
+        {
+          "kind": "runtime",
+          "status": "FAIL",
+          "summary": "The server was registered with enabled=false and was not callable in the fresh process.",
+          "locator": "sanitized fresh-process capability listing"
+        }
+      ]
+    }
+  ],
+  "upgrades": [
+    {
+      "capability": "session MCP exposure",
+      "gap": "UNAVAILABLE",
+      "action": "Enable the registered server through the approved local configuration path and start a fresh process.",
+      "expected_gain": "The required capability becomes callable in the audited session.",
+      "verification": "The fresh-process capability listing and a harmless read-only call both pass.",
+      "human_gate": false
+    }
+  ]
+}

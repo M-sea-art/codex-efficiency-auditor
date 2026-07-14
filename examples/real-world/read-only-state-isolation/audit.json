@@ -1,0 +1,42 @@
+{
+  "schema_version": "0.2",
+  "audit_id": "read-only-state-isolation",
+  "target_type": "worktree",
+  "goal": "Audit state through an isolated temporary copy without changing protected files.",
+  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "capabilities": [
+    {
+      "name": "temporary state isolation",
+      "relevance": "required",
+      "availability": "available",
+      "discovered": true,
+      "usage": "used",
+      "impact": 5,
+      "evidence": [
+        {
+          "kind": "artifact",
+          "status": "PASS",
+          "summary": "Inspection ran against a disposable state copy that was removed afterward.",
+          "locator": "sanitized temporary-state manifest"
+        }
+      ]
+    },
+    {
+      "name": "protected file integrity",
+      "relevance": "required",
+      "availability": "available",
+      "discovered": true,
+      "usage": "used",
+      "impact": 5,
+      "evidence": [
+        {
+          "kind": "command",
+          "status": "PASS",
+          "summary": "Pre-audit and post-audit SHA-256 values matched for every protected file.",
+          "locator": "sanitized integrity comparison"
+        }
+      ]
+    }
+  ],
+  "upgrades": []
+}

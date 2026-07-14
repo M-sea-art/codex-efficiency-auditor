@@ -37,11 +37,15 @@ jobs:
         run: |
           python scripts/score_audit.py --json examples/run-54-single-thread/audit-scores.json
           python scripts/score_audit.py --json examples/run-82-worktree-review/audit-scores.json
+          python scripts/score_audit.py --json examples/real-world/read-only-state-isolation/audit.json
+          python scripts/score_audit.py --json examples/real-world/visual-proof-human-gate/audit.json
+          python scripts/score_audit.py --baseline examples/real-world/registered-disabled-fresh-process/before.json --json examples/real-world/registered-disabled-fresh-process/after.json
 
-      - name: Validate JSON fixtures
+      - name: Validate JSON and assert real-world fixture decisions
         run: |
           python - <<'PY'
           import json
+          import sys
           from pathlib import Path
 
           paths = list(Path("schemas").glob("*.json")) + list(Path("examples").glob("**/*.json"))
@@ -49,4 +53,27 @@ jobs:
               with path.open("r", encoding="utf-8") as handle:
                   json.load(handle)
               print(f"valid json: {path}")
+
+          sys.path.insert(0, "scripts")
+          from score_audit import analyze_audit, compare_audits
+
+          def load(path):
+              return json.loads(Path(path).read_text(encoding="utf-8"))
+
+          root = Path("examples/real-world")
+          before = load(root / "registered-disabled-fresh-process/before.json")
+          after = load(root / "registered-disabled-fresh-process/after.json")
+          assert analyze_audit(before)["decision"] == "CAPABILITY_REPLAN_NEEDED"
+          assert analyze_audit(after)["decision"] == "NO_CAPABILITY_UPGRADE_NEEDED"
+          assert compare_audits(before, after)["capability_upgrade_verification"] == "PROVEN"
+
+          isolated = load(root / "read-only-state-isolation/audit.json")
+          isolated_result = analyze_audit(isolated)
+          assert isolated_result["decision"] == "NO_CAPABILITY_UPGRADE_NEEDED"
+          assert isolated["mutation_status"] == "NO_FILES_MODIFIED_BY_AUDIT"
+
+          visual = analyze_audit(load(root / "visual-proof-human-gate/audit.json"))
+          assert visual["decision"] == "NEEDS_HUMAN_DECISION"
+          assert {item["gap"] for item in visual["gaps"]} == {"MISUSED", "UNVERIFIED"}
+          print("real-world fixture decisions verified")
           PY

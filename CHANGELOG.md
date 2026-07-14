@@ -4,6 +4,20 @@ All notable user-visible changes will be documented here. This project has not y
 
 ## Unreleased
 
+### Changed
+
+- Migrated the pre-release audit contract to strict `schema_version: "0.2"` structured evidence without a legacy string-evidence compatibility layer.
+- Required exact upgrade-to-gap matching, explicit Human Gates, and immutable declarations for comparable before/after scoring.
+- Distinguished configured, disabled, installed, and explicitly current-session capabilities in the read-only scanner.
+- Added Unicode-aware Chinese context ranking and Chinese Human Gate risk terms.
+
+### Fixed
+
+- Disabled MCP servers are no longer reported as enabled.
+- Non-PASS claims no longer receive full utilization credit.
+- Reweighting a capability can no longer manufacture a `PROVEN` comparison.
+- `NEEDS_HUMAN_DECISION` is now reachable through a retained Human Gate.
+
 ### Added
 
 - Evidence-derived capability scoring for task-relevant Codex capabilities.
@@ -13,6 +27,7 @@ All notable user-visible changes will be documented here. This project has not y
 - JSON schema, example fixtures, regression checks, and GitHub Actions CI.
 - Bilingual project introduction and 30-second quickstart.
 - Public contribution, adoption-reporting, and release-readiness guidance.
+- Three sanitized, reproducible real-world workflow fixtures for disabled registration, read-only state isolation, and screenshot/Human Gate boundaries.
 
 ## Release Policy
 

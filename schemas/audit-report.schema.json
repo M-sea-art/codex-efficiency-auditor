@@ -1,33 +1,54 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/M-sea-art/codex-efficiency-auditor/schemas/audit-report.schema.json",
-  "title": "Codexcavator Capability Audit",
+  "title": "Codexcavator Capability Audit v0.2",
   "type": "object",
-  "required": ["audit_id", "target_type", "goal", "mutation_status", "capabilities", "upgrades"],
+  "required": ["schema_version", "audit_id", "target_type", "goal", "mutation_status", "capabilities", "upgrades"],
   "properties": {
-    "audit_id": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": "0.2" },
+    "audit_id": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
     "target_type": {
       "type": "string",
       "enum": ["thread", "repo", "worktree", "pr", "agent_run", "transcript"]
     },
-    "goal": { "type": "string", "minLength": 1 },
+    "goal": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
     "mutation_status": {
       "type": "string",
       "enum": ["NO_FILES_MODIFIED_BY_AUDIT", "MUTATION_DETECTED", "UNKNOWN"]
     },
     "capabilities": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
         "required": ["name", "relevance", "availability", "discovered", "usage", "impact", "evidence"],
         "properties": {
-          "name": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
           "relevance": { "type": "string", "enum": ["required", "useful", "irrelevant"] },
           "availability": { "type": "string", "enum": ["available", "unavailable", "unknown"] },
           "discovered": { "type": "boolean" },
           "usage": { "type": "string", "enum": ["used", "unused", "misused", "not_applicable"] },
           "impact": { "type": "integer", "minimum": 1, "maximum": 5 },
-          "evidence": { "type": "array", "items": { "type": "string" } }
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind", "status", "summary"],
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": ["command", "test", "build", "ci", "git", "trace", "runtime", "screenshot", "artifact", "human", "other"]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["PASS", "FAIL", "PARTIAL", "NOT_EVALUATED"]
+                },
+                "summary": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+                "locator": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" }
+              },
+              "additionalProperties": false
+            }
+          }
         },
         "additionalProperties": false
       }
@@ -37,18 +58,28 @@
       "maxItems": 3,
       "items": {
         "type": "object",
-        "required": ["capability", "gap", "action", "expected_gain", "verification"],
+        "required": ["capability", "gap", "action", "expected_gain", "verification", "human_gate"],
         "properties": {
-          "capability": { "type": "string", "minLength": 1 },
+          "capability": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
           "gap": {
             "type": "string",
             "enum": ["UNAVAILABLE", "UNDISCOVERED", "UNUSED", "MISUSED", "UNVERIFIED"]
           },
-          "action": { "type": "string", "minLength": 1 },
-          "expected_gain": { "type": "string", "minLength": 1 },
-          "verification": { "type": "string", "minLength": 1 },
-          "human_gate": { "type": "string" }
+          "action": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+          "expected_gain": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+          "verification": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+          "human_gate": { "type": "boolean" },
+          "human_gate_reason": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" }
         },
+        "allOf": [
+          {
+            "if": {
+              "properties": { "human_gate": { "const": true } },
+              "required": ["human_gate"]
+            },
+            "then": { "required": ["human_gate_reason"] }
+          }
+        ],
         "additionalProperties": false
       }
     }
