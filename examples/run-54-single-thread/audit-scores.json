@@ -1,4 +1,5 @@
 {
+  "schema_version": "0.2",
   "audit_id": "run-54-single-thread",
   "target_type": "agent_run",
   "goal": "Complete the requested code change with validation evidence.",
@@ -11,7 +12,13 @@
       "discovered": true,
       "usage": "used",
       "impact": 5,
-      "evidence": ["implementation command output"]
+      "evidence": [
+        {
+          "kind": "command",
+          "status": "PASS",
+          "summary": "The implementation command completed successfully."
+        }
+      ]
     },
     {
       "name": "project tests",
@@ -38,14 +45,16 @@
       "gap": "UNVERIFIED",
       "action": "Capture the test command and result.",
       "expected_gain": "Verifiable correctness claim.",
-      "verification": "The test exits successfully and its output is included."
+      "verification": "The test exits successfully and its output is included.",
+      "human_gate": false
     },
     {
       "capability": "Git evidence",
       "gap": "UNDISCOVERED",
       "action": "Inspect branch, status, and diff before handoff.",
       "expected_gain": "Auditable change scope.",
-      "verification": "Git evidence matches the reported files."
+      "verification": "Git evidence matches the reported files.",
+      "human_gate": false
     }
   ]
 }

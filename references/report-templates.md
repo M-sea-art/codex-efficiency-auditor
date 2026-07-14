@@ -3,6 +3,7 @@
 ## Focused Capability Audit
 
 ```markdown
+Schema version: 0.2
 Codex Capability Utilization: NN/100
 Decision: NO_CAPABILITY_UPGRADE_NEEDED | MINOR_CAPABILITY_GAPS | CAPABILITY_UPGRADE_RECOMMENDED | CAPABILITY_REPLAN_NEEDED | NEEDS_HUMAN_DECISION
 Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
@@ -20,6 +21,8 @@ Highest-leverage upgrades:
    - Smallest action:
    - Expected gain:
    - Verification:
+   - Human Gate: true / false
+   - Human Gate reason: required when true
 
 Next action:
 - ...
@@ -62,3 +65,5 @@ After:
 Decision:
 - Retain current stack / retain focused upgrade / reject upgrade / collect more evidence
 ```
+
+Comparable audits must preserve schema version, target type, normalized goal, and the full `(name, relevance, impact)` declaration set.

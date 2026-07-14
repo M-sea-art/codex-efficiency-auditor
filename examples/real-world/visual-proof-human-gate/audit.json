@@ -1,0 +1,59 @@
+{
+  "schema_version": "0.2",
+  "audit_id": "visual-proof-human-gate",
+  "target_type": "agent_run",
+  "goal": "Verify visual quality without treating a screenshot as functional completion or owner acceptance.",
+  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "capabilities": [
+    {
+      "name": "visual rendering evidence",
+      "relevance": "required",
+      "availability": "available",
+      "discovered": true,
+      "usage": "misused",
+      "impact": 4,
+      "evidence": [
+        {
+          "kind": "screenshot",
+          "status": "PARTIAL",
+          "summary": "The screenshot supports a visual judgment but was incorrectly used as proof of end-to-end behavior.",
+          "locator": "sanitized render screenshot"
+        }
+      ]
+    },
+    {
+      "name": "owner acceptance",
+      "relevance": "required",
+      "availability": "available",
+      "discovered": true,
+      "usage": "used",
+      "impact": 5,
+      "evidence": [
+        {
+          "kind": "human",
+          "status": "NOT_EVALUATED",
+          "summary": "No owner acceptance was recorded; the screenshot cannot substitute for it."
+        }
+      ]
+    }
+  ],
+  "upgrades": [
+    {
+      "capability": "visual rendering evidence",
+      "gap": "MISUSED",
+      "action": "Limit screenshot claims to the visible state and run the functional path separately.",
+      "expected_gain": "Visual and functional claims remain evidence-bounded.",
+      "verification": "The report maps the screenshot only to visual criteria and cites a separate runtime result.",
+      "human_gate": false
+    },
+    {
+      "capability": "owner acceptance",
+      "gap": "UNVERIFIED",
+      "action": "Request owner review after automated evidence is complete.",
+      "expected_gain": "The final acceptance claim has an authorized human source.",
+      "verification": "An explicit owner decision is recorded without being inferred from a screenshot.",
+      "human_gate": true,
+      "human_gate_reason": "Owner acceptance is an external human judgment and cannot be self-issued by the auditor."
+    }
+  ]
+}
