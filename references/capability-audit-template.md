@@ -22,6 +22,7 @@ Use this template for a focused Codex capability audit. Load `references/capabil
 ## Focused Report
 
 ```markdown
+Schema version: 0.2
 Codex Capability Utilization: NN/100
 Decision: NO_CAPABILITY_UPGRADE_NEEDED | MINOR_CAPABILITY_GAPS | CAPABILITY_UPGRADE_RECOMMENDED | CAPABILITY_REPLAN_NEEDED | NEEDS_HUMAN_DECISION
 Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
@@ -40,6 +41,8 @@ Highest-leverage upgrades:
    - Action:
    - Expected gain:
    - Verification:
+   - Human Gate: true / false
+   - Human Gate reason: required when true
 
 Next action:
 - ...
@@ -64,3 +67,5 @@ Create JSON conforming to `schemas/audit-report.schema.json`, then run:
 ```text
 python scripts/score_audit.py --json <audit.json>
 ```
+
+Every evidence item must contain `kind`, `status`, and a non-empty `summary`; use `locator` for a relative path, command, public URL, or other reproducible location. Do not use a bare string claim as evidence.

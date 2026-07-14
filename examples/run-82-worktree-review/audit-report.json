@@ -1,4 +1,5 @@
 {
+  "schema_version": "0.2",
   "audit_id": "run-82-worktree-review",
   "capability_utilization_score": 100,
   "decision": "NO_CAPABILITY_UPGRADE_NEEDED",

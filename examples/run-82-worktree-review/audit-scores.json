@@ -1,4 +1,5 @@
 {
+  "schema_version": "0.2",
   "audit_id": "run-82-worktree-review",
   "target_type": "worktree",
   "goal": "Complete and verify a scoped change in an isolated worktree.",
@@ -11,7 +12,13 @@
       "discovered": true,
       "usage": "used",
       "impact": 4,
-      "evidence": ["dedicated worktree and branch"]
+      "evidence": [
+        {
+          "kind": "git",
+          "status": "PASS",
+          "summary": "Git reported a dedicated worktree and branch."
+        }
+      ]
     },
     {
       "name": "project tests",
@@ -20,7 +27,13 @@
       "discovered": true,
       "usage": "used",
       "impact": 5,
-      "evidence": ["targeted and full test output"]
+      "evidence": [
+        {
+          "kind": "test",
+          "status": "PASS",
+          "summary": "Targeted and full test commands exited successfully."
+        }
+      ]
     },
     {
       "name": "read-only review",
@@ -29,7 +42,13 @@
       "discovered": true,
       "usage": "used",
       "impact": 3,
-      "evidence": ["review report with mutation status"]
+      "evidence": [
+        {
+          "kind": "artifact",
+          "status": "PASS",
+          "summary": "The review report records the audit mutation status."
+        }
+      ]
     }
   ],
   "upgrades": []

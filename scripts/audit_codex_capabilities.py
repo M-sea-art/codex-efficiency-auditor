@@ -13,6 +13,7 @@ import json
 import os
 import re
 import sys
+import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -50,8 +51,19 @@ HIGH_RISK_PATTERNS = [
     "lark",
     "account",
     "billing",
+    "发布",
+    "部署",
+    "账号",
+    "凭据",
+    "付费",
+    "删除",
+    "邮件",
+    "日历",
+    "云盘",
     "game-studio",
 ]
+
+SESSION_CAPABILITY_KINDS = {"skill", "plugin", "plugin-skill", "app", "mcp"}
 
 PLUGIN_SKILL_PREFIXES = {
     "game-studio": "game-studio",
@@ -67,7 +79,7 @@ PLUGIN_SKILL_PREFIXES = {
 }
 
 STATUS_DESCRIPTIONS = {
-    "enabled": "Explicitly enabled in local config or currently callable.",
+    "enabled": "Explicitly enabled in local config; current-session callable exposure is not confirmed.",
     "available-in-session": "Exposed in the current Codex session as a skill, app, or MCP tool.",
     "installed-not-exposed": "Detected locally in config/cache/skills, but current-session callable exposure is not confirmed.",
     "missing-or-unknown": "Not detected locally, or only inferable from project needs.",
@@ -92,7 +104,7 @@ class Capability:
 
 
 def _risk_for(name: str) -> str:
-    lowered = name.casefold()
+    lowered = unicodedata.normalize("NFKC", name).casefold()
     if any(pattern in lowered for pattern in HIGH_RISK_PATTERNS):
         return "high-human-gate"
     return "low"
@@ -170,9 +182,11 @@ def _add_capability(items: dict[str, Capability], capability: Capability) -> Non
     if existing is None:
         items[key] = capability
         return
-    status_rank = {"enabled": 3, "available-in-session": 2, "installed-not-exposed": 1, "missing-or-unknown": 0}
+    status_rank = {"available-in-session": 3, "enabled": 2, "installed-not-exposed": 1, "missing-or-unknown": 0}
     if status_rank.get(capability.status, 0) > status_rank.get(existing.status, 0):
         existing.status = capability.status
+        existing.source = capability.source
+        existing.confidence = capability.confidence
     if capability.evidence:
         existing.evidence.extend(e for e in capability.evidence if e not in existing.evidence)
     if not existing.mention and capability.mention:
@@ -207,20 +221,69 @@ def _scan_config(codex_home: Path, items: dict[str, Capability], config_data: di
 
     mcp_servers = config_data.get("mcp_servers", {})
     if isinstance(mcp_servers, dict):
-        for name in mcp_servers:
+        for name, value in mcp_servers.items():
+            disabled = isinstance(value, dict) and value.get("enabled") is False
             _add_capability(
                 items,
                 Capability(
                     name=str(name),
                     kind="mcp",
                     source="config.toml",
-                    status="enabled",
+                    status="installed-not-exposed" if disabled else "enabled",
                     confidence="confirmed",
                     mention=f"mcp:{name}",
                     risk=_risk_for(str(name)),
-                    evidence=["config.toml mcp server entry"],
+                    evidence=["config.toml mcp server entry with enabled=false" if disabled else "config.toml mcp server entry"],
                 ),
             )
+
+
+def _load_session_capabilities(path: Path) -> list[dict[str, str]]:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except OSError as error:
+        raise ValueError(f"cannot read session capabilities: {error}") from error
+    except json.JSONDecodeError as error:
+        raise ValueError(f"invalid session capabilities JSON: {error}") from error
+    if not isinstance(data, dict) or set(data) != {"capabilities"} or not isinstance(data["capabilities"], list):
+        raise ValueError("session capabilities must be an object containing only a capabilities array")
+    result: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for index, item in enumerate(data["capabilities"]):
+        if not isinstance(item, dict) or set(item) != {"kind", "name"}:
+            raise ValueError(f"session capabilities[{index}] must contain exactly kind and name")
+        kind = item["kind"]
+        name = item["name"]
+        if not isinstance(kind, str) or kind not in SESSION_CAPABILITY_KINDS:
+            raise ValueError(f"session capabilities[{index}].kind contains an unknown value")
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError(f"session capabilities[{index}].name must be a non-empty string")
+        key = (kind, unicodedata.normalize("NFKC", name).casefold())
+        if key in seen:
+            raise ValueError(f"duplicate session capability: {kind}:{name}")
+        seen.add(key)
+        result.append({"kind": kind, "name": name})
+    return result
+
+
+def _apply_session_capabilities(items: dict[str, Capability], session_items: list[dict[str, str]]) -> None:
+    for item in session_items:
+        name = item["name"]
+        kind = item["kind"]
+        mention = f"${name}" if kind in {"skill", "plugin-skill"} else f"@{name}" if kind in {"plugin", "app"} else f"mcp:{name}"
+        _add_capability(
+            items,
+            Capability(
+                name=name,
+                kind=kind,
+                source="session-overlay",
+                status="available-in-session",
+                confidence="confirmed",
+                mention=mention,
+                risk=_risk_for(name),
+                evidence=["explicit session capability overlay"],
+            ),
+        )
 
 
 def _plugin_status(plugin_name: str, enabled_plugins: set[str]) -> str:
@@ -409,26 +472,31 @@ def _best_for(name: str, definition: str = "") -> str:
 
 
 def _context_text(values: list[str] | None) -> str:
-    return " ".join(values or []).casefold()
+    return unicodedata.normalize("NFKC", " ".join(values or [])).casefold()
 
 
 def _search_tokens(text: str) -> set[str]:
-    return {
+    normalized = unicodedata.normalize("NFKC", text).casefold()
+    tokens = {
         token
-        for token in re.findall(r"[a-z0-9][a-z0-9.+:#/-]{1,}", text.casefold())
-        if len(token) >= 3
+        for token in re.findall(r"[^\W_][\w.+:#/-]*", normalized, flags=re.UNICODE)
+        if len(token) >= 2
     }
+    for run in re.findall(r"[\u3400-\u4dbf\u4e00-\u9fff]+", normalized):
+        tokens.add(run)
+        tokens.update(run[index : index + 2] for index in range(len(run) - 1))
+    return tokens
 
 
 def _rank(items: list[Capability], context: str = "") -> list[Capability]:
     context_tokens = _search_tokens(context)
 
     def score(item: Capability) -> tuple[int, int, int, str]:
-        searchable = " ".join([item.name, item.definition, item.best_for, *item.capabilities])
+        searchable = unicodedata.normalize("NFKC", " ".join([item.name, item.definition, item.best_for, *item.capabilities])).casefold()
         item_tokens = _search_tokens(searchable)
         exact_matches = len(context_tokens & item_tokens)
-        substring_matches = sum(1 for token in context_tokens if token in searchable.casefold())
-        status_bonus = {"enabled": 3, "available-in-session": 2, "installed-not-exposed": 1, "missing-or-unknown": 0}.get(item.status, 0)
+        substring_matches = sum(1 for token in context_tokens if token in searchable)
+        status_bonus = {"available-in-session": 3, "enabled": 2, "installed-not-exposed": 1, "missing-or-unknown": 0}.get(item.status, 0)
         return (-exact_matches, -substring_matches, -status_bonus, item.name.casefold())
 
     return sorted(items, key=score)
@@ -597,6 +665,7 @@ def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Read-only Codex capability scan.")
     parser.add_argument("--codex-home", help="Override Codex home directory. Defaults to CODEX_HOME or ~/.codex.")
     parser.add_argument("--context", action="append", help="Task or project context used for generic relevance matching.")
+    parser.add_argument("--session-capabilities", help="JSON file containing explicit current-session capability facts.")
     parser.add_argument("--full", action="store_true", help="Print full inventory instead of compact recommendations.")
     parser.add_argument("--json", action="store_true", dest="json_output", help="Print machine-readable JSON instead of Markdown.")
     args = parser.parse_args(argv[1:])
@@ -610,6 +679,12 @@ def main(argv: list[str]) -> int:
     _scan_config(codex_home, items, config_data)
     _scan_plugin_cache(codex_home, items, enabled_plugins)
     _scan_skills(codex_home, items)
+    try:
+        if args.session_capabilities:
+            _apply_session_capabilities(items, _load_session_capabilities(Path(args.session_capabilities)))
+    except ValueError as error:
+        print(str(error), file=sys.stderr)
+        return 2
 
     capabilities = list(items.values())
     if args.json_output:

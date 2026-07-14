@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.2",
+  "audit_id": "registered-disabled-after",
+  "target_type": "agent_run",
+  "goal": "Use the required session capability and verify it in a fresh process.",
+  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "capabilities": [
+    {
+      "name": "session MCP exposure",
+      "relevance": "required",
+      "availability": "available",
+      "discovered": true,
+      "usage": "used",
+      "impact": 5,
+      "evidence": [
+        {
+          "kind": "runtime",
+          "status": "PASS",
+          "summary": "A fresh process exposed the server and completed a harmless read-only capability call.",
+          "locator": "sanitized fresh-process call result"
+        }
+      ]
+    }
+  ],
+  "upgrades": []
+}
