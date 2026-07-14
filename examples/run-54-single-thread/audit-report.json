@@ -1,4 +1,5 @@
 {
+  "schema_version": "0.2",
   "audit_id": "run-54-single-thread",
   "capability_utilization_score": 53,
   "decision": "CAPABILITY_UPGRADE_RECOMMENDED",
@@ -17,6 +18,24 @@
       "relevance": "useful",
       "impact": 3,
       "evidence": []
+    }
+  ],
+  "recommended_upgrades": [
+    {
+      "capability": "project tests",
+      "gap": "UNVERIFIED",
+      "action": "Capture the test command and result.",
+      "expected_gain": "Verifiable correctness claim.",
+      "verification": "The test exits successfully and its output is included.",
+      "human_gate": false
+    },
+    {
+      "capability": "Git evidence",
+      "gap": "UNDISCOVERED",
+      "action": "Inspect branch, status, and diff before handoff.",
+      "expected_gain": "Auditable change scope.",
+      "verification": "Git evidence matches the reported files.",
+      "human_gate": false
     }
   ]
 }

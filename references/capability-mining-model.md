@@ -14,7 +14,14 @@ Record one entry for every task-relevant capability:
   "discovered": true,
   "usage": "used",
   "impact": 5,
-  "evidence": ["command or artifact proving correct use"]
+  "evidence": [
+    {
+      "kind": "test",
+      "status": "PASS",
+      "summary": "The targeted regression test exited successfully.",
+      "locator": "python scripts/test_score_audit.py"
+    }
+  ]
 }
 ```
 
@@ -47,8 +54,8 @@ Availability marked `unknown` produces `UNVERIFIED`, not `UNAVAILABLE`.
 
 Score only available, task-relevant capabilities:
 
-- correctly used with evidence: `1.0`;
-- used without evidence: `0.25`;
+- correctly used with at least one structured `PASS` evidence item: `1.0`;
+- used with no `PASS` evidence: `0.25` and `UNVERIFIED`;
 - misused: `0.25`;
 - unused: `0.0`.
 
@@ -77,6 +84,10 @@ Keep at most three. Every retained recommendation must include:
 - the smallest corrective action;
 - expected task-level gain;
 - a concrete verification check;
-- any Human Gate.
+- `human_gate: true|false`, plus a reason when true.
+
+The upgrade capability and gap must exactly match a computed gap. A retained Human Gate takes decision precedence and returns `NEEDS_HUMAN_DECISION`.
+
+Before/after verification requires the same v0.2 schema, target type, normalized goal, and immutable `(name, relevance, impact)` declarations. Changing a weight makes the comparison `INCONCLUSIVE` rather than manufacturing improvement.
 
 Return `NO_CAPABILITY_UPGRADE_NEEDED` when there are no material relevant gaps.

@@ -98,8 +98,8 @@ Codexcavator scores only available capabilities marked `required` or `useful` fo
 
 | Usage | Value |
 |---|---:|
-| Correctly used with evidence | 1.0 |
-| Used without evidence | 0.25 |
+| Correctly used with at least one structured `PASS` evidence item | 1.0 |
+| Used with only `FAIL`, `PARTIAL`, `NOT_EVALUATED`, or no evidence | 0.25 |
 | Misused | 0.25 |
 | Unused | 0.0 |
 
@@ -111,7 +111,18 @@ Run a structured audit:
 python scripts/score_audit.py --json path/to/audit.json
 ```
 
-The input format is defined in `schemas/audit-report.schema.json`.
+The input format is defined in `schemas/audit-report.schema.json`. v0.2 is a breaking pre-release contract: every audit declares `"schema_version": "0.2"`, evidence is structured, and upgrades declare a boolean `human_gate`.
+
+```json
+{
+  "kind": "test",
+  "status": "PASS",
+  "summary": "The targeted regression test exited successfully.",
+  "locator": "python scripts/test_score_audit.py"
+}
+```
+
+The snippet above shows an evidence object; it belongs inside a capability's `evidence` array, while `schema_version` remains a top-level audit field. The scorer validates structure, gap consistency, and comparison invariants. It does not independently investigate whether a submitted statement is true.
 
 Verify an upgrade against a comparable baseline:
 
@@ -121,7 +132,7 @@ python scripts/score_audit.py \
   --json path/to/after.json
 ```
 
-The goal and task-relevant capability set must match. Otherwise the result is `INCONCLUSIVE`.
+`schema_version`, `target_type`, normalized goal, and every `(name, relevance, impact)` declaration must match. Otherwise the result is `INCONCLUSIVE`. A result is `PROVEN` only when the score rises, at least one actual gap closes, and no required gap is introduced or worsened.
 
 ## Capability Inventory
 
@@ -141,6 +152,17 @@ python scripts/audit_codex_capabilities.py \
 ```
 
 Inventory presence does not prove task relevance, correct use, or net benefit. Continue to a focused capability audit before recommending adoption.
+
+When the caller has explicit current-session facts, supply a strict overlay:
+
+```bash
+python scripts/audit_codex_capabilities.py \
+  --context "the actual task goal and constraints" \
+  --session-capabilities path/to/session-capabilities.json \
+  --json
+```
+
+Only the five kinds `skill`, `plugin`, `plugin-skill`, `app`, and `mcp` are accepted. An overlay item means it is `available-in-session`; absence from the overlay does not erase locally scanned inventory.
 
 ## Native Capability Rule
 
@@ -166,6 +188,8 @@ The current Codex stack is the default solution.
 
 Additional references are remediation strategies. Codexcavator loads them only when the mining loop identifies the matching gap; they are not separate product modes.
 
+`project-supervisor` owns product-completion truth and long-running supervision. Codexcavator owns the narrower question of whether Codex discovered, used, and verified the capabilities needed for the current goal.
+
 ## Safety
 
 Read-only audits do not install, authenticate, publish, push, deploy, comment externally, or mutate project files. Credentials, billing, destructive actions, production changes, public releases, external account changes, and outbound comments require a Human Gate.
@@ -186,7 +210,9 @@ python scripts/test_capability_scan.py
 python scripts/test_score_audit.py
 python scripts/score_audit.py --json examples/run-54-single-thread/audit-scores.json
 python scripts/score_audit.py --json examples/run-82-worktree-review/audit-scores.json
-python scripts/score_audit.py --baseline before.json --json after.json
+python scripts/score_audit.py --json examples/real-world/read-only-state-isolation/audit.json
+python scripts/score_audit.py --json examples/real-world/visual-proof-human-gate/audit.json
+python scripts/score_audit.py --baseline examples/real-world/registered-disabled-fresh-process/before.json --json examples/real-world/registered-disabled-fresh-process/after.json
 ```
 
 ## Project Status and Maintenance
@@ -201,8 +227,8 @@ Codexcavator is an early-stage, independently maintained open-source project. Th
 
 ### Near-term Roadmap
 
-1. Collect reproducible audits from different Codex workflows.
-2. Stabilize the audit schema and CLI contract.
+1. Collect additional reproducible audits from different Codex workflows.
+2. Stabilize the v0.2 audit schema and CLI contract from public fixture feedback.
 3. Publish a first tagged release only after the documented release checklist passes.
 4. Measure whether recommended capability upgrades improve comparable task outcomes.
 

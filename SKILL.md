@@ -22,7 +22,8 @@ Do not maximize tool count. Do not recommend capabilities merely because they ar
    - Run `scripts/audit_codex_capabilities.py` for an explicit local capability inventory when local access is available.
 3. **Observe**
    - Record whether each relevant capability was available, discovered, used correctly, and supported by evidence.
-   - Prefer commands, logs, Git state, test output, traces, screenshots, artifacts, and tool calls over narrative claims.
+   - Record v0.2 evidence as `{kind, status, summary, locator?}` and require at least one `PASS` item for full utilization credit.
+   - Prefer commands, logs, Git state, test output, traces, screenshots, artifacts, and tool calls over narrative claims. A screenshot proves only what is visibly shown.
 4. **Classify**
    - Assign at most one primary gap to each relevant capability:
      - `UNAVAILABLE`: required capability is not present.
@@ -35,6 +36,7 @@ Do not maximize tool count. Do not recommend capabilities merely because they ar
    - Recommend no more than three upgrades.
    - Prefer using the current Codex stack better before adding an external dependency.
    - When an external repository, library, plugin, MCP server, CLI, or workflow is considered, require evidence that it creates material net gain over the current stack.
+   - Tie every upgrade to the exact capability name and computed gap, declare `human_gate: true|false`, and keep no more than three.
 6. **Verify**
    - Define a concrete check for every recommendation.
    - Re-audit after the change when evidence is available.
@@ -69,11 +71,14 @@ High-quality evidence includes:
 
 Narrative claims without corroborating evidence classify as `UNVERIFIED`.
 
+The scorer validates the v0.2 declaration structure and internal consistency; it does not replace source investigation or prove that a submitted evidence summary is truthful.
+
 ## Output Contract
 
 Lead with:
 
 ```text
+Schema version: 0.2
 Codex Capability Utilization: NN/100
 Decision: NO_CAPABILITY_UPGRADE_NEEDED | MINOR_CAPABILITY_GAPS | CAPABILITY_UPGRADE_RECOMMENDED | CAPABILITY_REPLAN_NEEDED | NEEDS_HUMAN_DECISION
 Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
@@ -108,6 +113,8 @@ Load these only after the mining loop identifies the matching capability gap:
 - suspicious final claim: `references/agent-run-smells.md`
 
 These are remediation strategies, not separate product modes.
+
+Codexcavator does not replace `project-supervisor`: the supervisor owns product completion and long-running execution truth, while Codexcavator audits Codex capability use for the current goal.
 
 ## Stop Rules
 
