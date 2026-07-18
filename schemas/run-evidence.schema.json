@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/M-sea-art/codex-efficiency-auditor/schemas/run-evidence.schema.json",
-  "title": "Codexcavator Strict Run Evidence v0.3",
+  "title": "codex-efficiency-auditor Strict Run Evidence v0.3",
   "type": "object",
   "required": [
     "schema_version",

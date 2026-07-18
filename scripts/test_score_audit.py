@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression checks for the Codexcavator v0.3 audit contract."""
+"""Regression checks for the codex-efficiency-auditor v0.3 audit contract."""
 
 from __future__ import annotations
 
@@ -347,7 +347,7 @@ def main() -> int:
     test_utilization_only_is_not_proven()
     test_outcome_or_metric_can_prove_upgrade()
     test_regression_and_inconclusive_paths()
-    print("Codexcavator v0.3 score regression checks passed")
+    print("codex-efficiency-auditor v0.3 score regression checks passed")
     return 0
 
 

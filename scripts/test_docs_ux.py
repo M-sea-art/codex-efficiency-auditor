@@ -37,11 +37,26 @@ def test_first_success_routes() -> None:
 
 def test_readme_hero_is_local_and_accessible() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    asset = ROOT / "assets" / "codexcavator-evidence-loop-hero-v2.png"
+    asset = ROOT / "assets" / "codex-efficiency-auditor-evidence-loop-hero-v2.png"
     assert 'alt="Four labeled evidence layers—operation contract, run evidence, capability use, and outcome gain—connected to a verified result"' in readme
-    assert 'src="assets/codexcavator-evidence-loop-hero-v2.png"' in readme
+    assert 'src="assets/codex-efficiency-auditor-evidence-loop-hero-v2.png"' in readme
     assert "github.com/user-attachments/assets/38c0a4c0-b754-4929-84d2-ce09043cc984" not in readme
     assert asset.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+
+
+def test_public_name_uses_canonical_identifier_and_chinese_display_name() -> None:
+    public_documents = (
+        ROOT / "README.md",
+        ROOT / "SKILL.md",
+        ROOT / "CONTRIBUTING.md",
+        ROOT / "agents" / "openai.yaml",
+    )
+    for document in public_documents:
+        content = document.read_text(encoding="utf-8")
+        assert "Codexcavator" not in content, document
+        assert "codex-efficiency-auditor" in content, document
+    for document in (ROOT / "README.md", ROOT / "SKILL.md", ROOT / "agents" / "openai.yaml"):
+        assert "Codex 挖掘机" in document.read_text(encoding="utf-8"), document
 
 
 def test_contract_docs_are_current() -> None:
@@ -69,6 +84,7 @@ def test_quickstart_fixture_is_sanitized() -> None:
 def main() -> int:
     test_first_success_routes()
     test_readme_hero_is_local_and_accessible()
+    test_public_name_uses_canonical_identifier_and_chinese_display_name()
     test_contract_docs_are_current()
     test_quickstart_fixture_is_sanitized()
     print("documentation UX and contract-drift checks passed")
