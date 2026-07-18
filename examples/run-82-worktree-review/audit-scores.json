@@ -1,14 +1,28 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "audit_id": "run-82-worktree-review",
   "target_type": "worktree",
   "goal": "Complete and verify a scoped change in an isolated worktree.",
-  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "operation_contract": {
+    "task_mode": "unknown",
+    "local_mutation_scope": "unknown",
+    "external_actions": "unknown",
+    "constraints": [],
+    "human_gates": []
+  },
+  "scope_conformance": {
+    "status": "UNKNOWN",
+    "evidence": []
+  },
+  "audit_mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "run_evidence": null,
+  "outcomes": [],
+  "efficiency_metrics": [],
   "capabilities": [
     {
       "name": "worktree isolation",
       "relevance": "required",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": true,
       "usage": "used",
       "impact": 4,
@@ -16,14 +30,15 @@
         {
           "kind": "git",
           "status": "PASS",
-          "summary": "Git reported a dedicated worktree and branch."
+          "summary": "Git reported a dedicated worktree and branch.",
+          "claim_scope": "capability_use"
         }
       ]
     },
     {
       "name": "project tests",
       "relevance": "required",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": true,
       "usage": "used",
       "impact": 5,
@@ -31,14 +46,15 @@
         {
           "kind": "test",
           "status": "PASS",
-          "summary": "Targeted and full test commands exited successfully."
+          "summary": "Targeted and full test commands exited successfully.",
+          "claim_scope": "capability_use"
         }
       ]
     },
     {
       "name": "read-only review",
       "relevance": "useful",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": true,
       "usage": "used",
       "impact": 3,
@@ -46,10 +62,19 @@
         {
           "kind": "artifact",
           "status": "PASS",
-          "summary": "The review report records the audit mutation status."
+          "summary": "The review report records the audit mutation status.",
+          "claim_scope": "capability_use"
         }
       ]
     }
   ],
-  "upgrades": []
+  "upgrades": [],
+  "migration": {
+    "from_schema": "0.2",
+    "notes": [
+      "Operation contract and scope conformance were not present in v0.2 and remain unknown.",
+      "Run evidence, task outcomes, and efficiency metrics require fresh evidence before comparison can be PROVEN.",
+      "Non-Human-Gate upgrade routes were conservatively set to DISCOVER_FIRST."
+    ]
+  }
 }

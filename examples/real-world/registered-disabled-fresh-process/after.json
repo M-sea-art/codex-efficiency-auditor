@@ -1,14 +1,86 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "audit_id": "registered-disabled-after",
   "target_type": "agent_run",
   "goal": "Use the required session capability and verify it in a fresh process.",
-  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "operation_contract": {
+    "task_mode": "implement",
+    "local_mutation_scope": "host",
+    "external_actions": "forbidden",
+    "constraints": ["Use the approved local configuration path and a harmless read-only probe."],
+    "human_gates": []
+  },
+  "scope_conformance": {
+    "status": "PASS",
+    "evidence": [
+      {
+        "kind": "artifact",
+        "status": "PASS",
+        "claim_scope": "authorization",
+        "summary": "The probe stayed within the approved local capability configuration scope."
+      }
+    ]
+  },
+  "audit_mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "run_evidence": {
+    "schema_version": "0.3",
+    "source_format": "codex_jsonl",
+    "source_sha256": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "redaction": "strict_metadata_v1",
+    "parse_status": "PASS",
+    "invalid_line_count": 0,
+    "unknown_event_types": [],
+    "session": {
+      "session_id_hash": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "cli_version": "sanitized-cli-version",
+      "originator": "sanitized-fixture",
+      "turn_count": 1
+    },
+    "execution_contexts": [],
+    "metrics": {
+      "turns_started": 1,
+      "turns_completed": 1,
+      "turns_aborted": 0,
+      "total_duration_ms": 1000,
+      "average_time_to_first_token_ms": 100,
+      "input_tokens": 100,
+      "cached_input_tokens": 0,
+      "output_tokens": 50,
+      "reasoning_output_tokens": 10,
+      "total_tokens": 150,
+      "tool_calls": 1,
+      "failed_tool_calls": 0,
+      "mcp_calls": 1,
+      "failed_mcp_calls": 0,
+      "web_searches": 0,
+      "patch_calls": 0,
+      "failed_patch_calls": 0
+    },
+    "tool_usage": [{ "name": "mcp::fixture::probe", "count": 1, "failures": 0 }]
+  },
+  "outcomes": [
+    {
+      "id": "fresh-process-capability-call",
+      "description": "A fresh process exposes the capability and completes a harmless read-only call.",
+      "required": true,
+      "claim_scope": "functional",
+      "status": "PASS",
+      "evidence": [
+        {
+          "kind": "runtime",
+          "status": "PASS",
+          "claim_scope": "functional",
+          "summary": "The fresh process exposed the server and completed the harmless read-only call."
+        }
+      ]
+    }
+  ],
+  "efficiency_metrics": [],
   "capabilities": [
     {
       "name": "session MCP exposure",
       "relevance": "required",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": true,
       "usage": "used",
       "impact": 5,
@@ -16,6 +88,7 @@
         {
           "kind": "runtime",
           "status": "PASS",
+          "claim_scope": "capability_use",
           "summary": "A fresh process exposed the server and completed a harmless read-only capability call.",
           "locator": "sanitized fresh-process call result"
         }

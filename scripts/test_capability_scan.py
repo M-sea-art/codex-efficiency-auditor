@@ -72,7 +72,7 @@ def test_context_ranking_uses_capability_evidence() -> None:
     assert "generic install list" in markdown
 
 
-def test_disabled_mcp_is_not_reported_enabled() -> None:
+def test_disabled_mcp_is_reported_separately() -> None:
     items: dict[str, Capability] = {}
     config = {
         "mcp_servers": {
@@ -82,7 +82,7 @@ def test_disabled_mcp_is_not_reported_enabled() -> None:
         }
     }
     _scan_config(Path("fixture"), items, config)
-    assert items["mcp:disabled_demo"].status == "installed-not-exposed"
+    assert items["mcp:disabled_demo"].status == "disabled"
     assert items["mcp:default_demo"].status == "enabled"
     assert items["mcp:enabled_demo"].status == "enabled"
 
@@ -144,7 +144,7 @@ def test_json_output_shape() -> None:
 def main() -> int:
     test_generic_inventory_prefers_available_session_capability()
     test_context_ranking_uses_capability_evidence()
-    test_disabled_mcp_is_not_reported_enabled()
+    test_disabled_mcp_is_reported_separately()
     test_session_overlay_promotes_and_adds_explicit_facts()
     test_chinese_context_and_human_gate_risk()
     test_json_output_shape()

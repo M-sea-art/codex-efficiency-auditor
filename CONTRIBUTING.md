@@ -16,9 +16,12 @@ Please do not submit invented adoption claims, synthetic community activity pres
 Run from the repository root:
 
 ```bash
-python -m py_compile scripts/*.py
+python -m compileall -q scripts
 python scripts/test_capability_scan.py
 python scripts/test_score_audit.py
+python scripts/test_run_evidence.py
+python scripts/test_migrate_audit.py
+python scripts/test_examples.py
 python scripts/score_audit.py --json examples/run-54-single-thread/audit-scores.json
 python scripts/score_audit.py --json examples/run-82-worktree-review/audit-scores.json
 git diff --check

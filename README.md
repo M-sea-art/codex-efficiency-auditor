@@ -1,8 +1,8 @@
 <div align="center">
   <img width="100%" alt="Codexcavator — Codex capability miner" src="https://github.com/user-attachments/assets/38c0a4c0-b754-4929-84d2-ce09043cc984" />
   <h1>Codexcavator</h1>
-  <h3>The evidence-driven capability miner for Codex</h3>
-  <p>Find the Codex capability that matters to the task, prove how it was used, and recommend the smallest upgrade that creates real gain.</p>
+  <h3>Evidence-driven capability and execution-efficiency audits for Codex</h3>
+  <p>Find the capability that matters, stay inside the authorized scope, and prove that the upgrade improved the task.</p>
   <p>
     <a href="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml"><img alt="Codexcavator Audit" src="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml/badge.svg" /></a>
     <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
@@ -10,41 +10,26 @@
   <p><a href="#why-this-exists">English</a> · <a href="#中文简介">中文</a></p>
 </div>
 
-> CI checks the code. Codexcavator checks whether Codex used the right capabilities—and whether the evidence supports the claim.
+> CI checks the code. Codexcavator checks whether Codex used the right capability, respected the operation contract, and produced measurable gain.
 
-Codexcavator is an unofficial Codex Skill for auditing a thread, repository, worktree, pull request, transcript, or agent run. It identifies task-relevant capability that is unavailable, undiscovered, unused, misused, or unverified.
+Codexcavator is an unofficial open-source Codex Skill and deterministic audit toolkit. It audits a thread, repository, worktree, pull request, transcript, or agent run for task-relevant capability that is unavailable, undiscovered, unused, misused, or unverified.
 
-It does not reward tool volume. It does not turn an inventory into an install list. If the current Codex stack already does the job well, the correct answer is `NO_CAPABILITY_UPGRADE_NEEDED`.
+It does not reward tool volume. It does not turn an inventory into an install list. If the current Codex stack already does the job, the correct result is `NO_CAPABILITY_UPGRADE_NEEDED`.
 
 ## Why This Exists
 
-Codexcavator grew out of a recurring problem observed in real Codex work:
+Capability availability does not guarantee effective use. A Skill, Plugin, MCP server, CLI, browser, test path, or subagent workflow may be installed but not exposed in the current session, discovered too late, used outside the authorized scope, or credited without evidence.
 
-Codex may have access to many built-in tools, Skills, Plugins, MCP servers, CLIs, and open-source projects—but capability availability does not guarantee capability discovery or effective use.
+Earlier audit contracts could also prove only that capability utilization improved. That is not enough: a busier agent is not necessarily a better agent.
 
-A useful capability may be overlooked, invoked too late, applied incorrectly, or recommended without practical validation. Sometimes the current Codex stack is already sufficient, and adding another tool only increases complexity.
+The v0.3 evidence loop asks four separate questions:
 
-Codexcavator turns these questions into an evidence-backed capability audit:
+1. Was the capability callable in this session?
+2. Was it used correctly and within the declared operation contract?
+3. Did a real capability gap close?
+4. Did a task outcome reach `PASS`, or did a predeclared efficiency metric improve?
 
-- Was a task-relevant capability overlooked?
-- Was an available capability left unused?
-- Was a capability applied incorrectly?
-- Was the claimed benefit actually verified?
-- Is the current Codex stack already sufficient?
-
-The goal is not to make Codex use more tools.
-
-The goal is to help Codex use the right capability—and prove that it helped.
-
-## Why Codexcavator
-
-| A generic capability inventory | Codexcavator |
-|---|---|
-| Lists everything that exists | Filters to what materially affects this goal |
-| Treats installed as useful | Separates available, discovered, used, and verified |
-| Encourages more tools | Treats the current Codex stack as the default |
-| Relies on narrative judgment | Scores commands, tests, traces, Git, and artifacts |
-| Produces a broad roadmap | Returns no more than three verifiable upgrades |
+Only that full chain returns `PROVEN`.
 
 ## 30-second Quickstart
 
@@ -53,154 +38,130 @@ Paste into Codex:
 ```text
 Use $codex-efficiency-auditor.
 
-Audit this Codex run for task-relevant capability utilization.
-Classify gaps only as UNAVAILABLE, UNDISCOVERED, UNUSED, MISUSED, or UNVERIFIED.
-Recommend no more than three evidence-backed upgrades.
-If the current Codex stack is sufficient, return NO_CAPABILITY_UPGRADE_NEEDED.
+Audit this Codex run using the v0.3 evidence loop.
+Record the operation contract and scope conformance.
+Collect strict metadata-only run evidence when a rollout JSONL is available.
+Classify only task-relevant capability gaps.
+Recommend at most three upgrades, each with a route and one smallest useful check.
+Do not return PROVEN unless a task outcome or declared efficiency metric also improves.
 ```
 
-Expected output:
+Expected header:
 
 ```text
+Schema version: 0.3
 Codex Capability Utilization: NN/100
 Decision: NO_CAPABILITY_UPGRADE_NEEDED | MINOR_CAPABILITY_GAPS | CAPABILITY_UPGRADE_RECOMMENDED | CAPABILITY_REPLAN_NEEDED | NEEDS_HUMAN_DECISION
 Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
+Scope conformance: PASS | FAIL | UNKNOWN
 ```
 
-The report lists only relevant capabilities, supporting evidence, classified gaps, at most three upgrades, and one concrete next action.
-
-## What It Finds
-
-| Gap | Meaning |
-|---|---|
-| `UNAVAILABLE` | A required or useful capability is confirmed absent. |
-| `UNDISCOVERED` | The capability exists, but Codex did not find it. |
-| `UNUSED` | The capability is relevant and known, but was not used. |
-| `MISUSED` | The capability was used with the wrong timing, scope, or method. |
-| `UNVERIFIED` | Correct use or benefit was claimed without sufficient evidence. |
-
-## How It Works
+## Evidence Loop
 
 ```text
-Orient
-  → Discover task-relevant capabilities
-  → Observe actual use and evidence
-  → Classify capability gaps
-  → Recommend at most three upgrades
-  → Verify the result
+Orient operation contract
+  -> collect strict run metadata
+  -> discover session-relevant capability
+  -> separate evidence claim scopes
+  -> classify one gap per capability
+  -> choose at most three shortest-safe routes
+  -> re-audit the same declarations
+  -> prove outcome or cost gain
 ```
 
-Codexcavator examines the goal and acceptance criteria, current-session tools, project rules, Skills, Plugins, MCP servers, CLIs, validation commands, logs, tests, traces, screenshots, artifacts, and Git evidence. Only capabilities that materially affect the goal are scored.
+### Capability states
 
-## Evidence-Derived Scoring
+| State | Meaning |
+|---|---|
+| `available_in_session` | Explicitly exposed in the audited session. |
+| `installed_not_exposed` | Present locally, but callable session exposure is not proven. |
+| `disabled` | Explicitly disabled in local configuration. |
+| `unavailable` | Confirmed absent for the audited run. |
+| `unknown` | Evidence is insufficient. |
 
-Codexcavator scores only available capabilities marked `required` or `useful` for the current goal.
+### Evidence claim scopes
 
-| Usage | Value |
-|---|---:|
-| Correctly used with at least one structured `PASS` evidence item | 1.0 |
-| Used with only `FAIL`, `PARTIAL`, `NOT_EVALUATED`, or no evidence | 0.25 |
-| Misused | 0.25 |
-| Unused | 0.0 |
+Evidence declares what it can prove: `capability_use`, `functional`, `visual`, `domain`, `integrity`, `human_acceptance`, `authorization`, `efficiency`, or `other`.
 
-Required capabilities receive their full impact weight. Useful capabilities receive a reduced weight. Irrelevant capabilities are excluded.
+Only `capability_use + PASS` earns full utilization credit. A screenshot cannot close a functional outcome, and an Agent cannot self-issue Human acceptance.
 
-Run a structured audit:
+### Upgrade routes
+
+Every retained upgrade chooses one route: `REUSE`, `NATIVE`, `INSTALLED`, `BUILD`, `DISCOVER_FIRST`, or `HUMAN_GATE`. It must also declare one falsifiable `smallest_useful_check`.
+
+No upgrade is the equivalent of `SKIP`; Codexcavator returns `NO_CAPABILITY_UPGRADE_NEEDED` instead of manufacturing work.
+
+## Strict Run Evidence
+
+Collect metadata from a Codex rollout JSONL:
 
 ```bash
-python scripts/score_audit.py --json path/to/audit.json
+python scripts/collect_run_evidence.py --input path/to/rollout.jsonl
+python scripts/collect_run_evidence.py --input path/to/rollout.jsonl --output run-evidence.json
 ```
 
-The input format is defined in `schemas/audit-report.schema.json`. v0.2 is a breaking pre-release contract: every audit declares `"schema_version": "0.2"`, evidence is structured, and upgrades declare a boolean `human_gate`.
+The collector retains only:
 
-```json
-{
-  "kind": "test",
-  "status": "PASS",
-  "summary": "The targeted regression test exited successfully.",
-  "locator": "python scripts/test_score_audit.py"
-}
-```
+- SHA-256 source and identifier hashes;
+- safe CLI/session metadata;
+- task, turn, tool, MCP, search, patch, and failure counts;
+- duration, time-to-first-token, and token totals;
+- parser coverage and unknown event types.
 
-The snippet above shows an evidence object; it belongs inside a capability's `evidence` array, while `schema_version` remains a top-level audit field. The scorer validates structure, gap consistency, and comparison invariants. It does not independently investigate whether a submitted statement is true.
+It never emits messages, reasoning, arguments, tool output, commands, paths, working directories, or raw session/turn/call identifiers.
 
-Verify an upgrade against a comparable baseline:
+Malformed JSONL and unknown event structures fail closed with exit code `2`. `--allow-partial` emits `parse_status: PARTIAL` for diagnostics; partial evidence can never support `PROVEN`.
+
+## Score and Compare
 
 ```bash
-python scripts/score_audit.py \
-  --baseline path/to/before.json \
-  --json path/to/after.json
+python scripts/score_audit.py --json path/to/audit-v0.3.json
+python scripts/score_audit.py --baseline path/to/before.json --json path/to/after.json
 ```
 
-`schema_version`, `target_type`, normalized goal, and every `(name, relevance, impact)` declaration must match. Otherwise the result is `INCONCLUSIVE`. A result is `PROVEN` only when the score rises, at least one actual gap closes, and no required gap is introduced or worsened.
+Comparison results:
+
+| Result | Meaning |
+|---|---|
+| `PROVEN` | Utilization and a real gap improve, plus a task outcome or declared metric improves without regression. |
+| `UTILIZATION_IMPROVED_OUTCOME_UNPROVEN` | Capability use improved, but task benefit did not. |
+| `REGRESSION` | Capability, required outcome, metric, scope, or mutation safety regressed. |
+| `INCONCLUSIVE` | Declarations differ, scope is unknown, or run evidence is missing/partial. |
+| `NO_CHANGE` | Comparable evidence shows no effective improvement. |
+
+Comparable audits must preserve the target type, normalized goal, operation contract, capability declarations, outcome declarations, and efficiency-metric thresholds. Reweighting or changing the contract cannot manufacture improvement.
+
+## Migrate v0.2 Audits
+
+```bash
+python scripts/migrate_audit.py --input old-v0.2.json
+python scripts/migrate_audit.py --input old-v0.2.json --output audit-v0.3.json
+```
+
+Migration preserves the individual utilization score and gap classification. Missing operation-contract, scope, outcome, metric, and run evidence remains unknown. A migrated before/after pair cannot inherit `PROVEN` until fresh evidence is supplied.
 
 ## Capability Inventory
 
-The read-only scanner inventories locally visible Codex Skills, Plugins, MCP servers, and related manifests:
-
 ```bash
-python scripts/audit_codex_capabilities.py \
-  --context "the actual task goal and constraints"
+python scripts/audit_codex_capabilities.py --context "the actual task goal and constraints"
+python scripts/audit_codex_capabilities.py --context "the actual task goal and constraints" --json
 ```
 
-For machine-readable output:
-
-```bash
-python scripts/audit_codex_capabilities.py \
-  --context "the actual task goal and constraints" \
-  --json
-```
-
-Inventory presence does not prove task relevance, correct use, or net benefit. Continue to a focused capability audit before recommending adoption.
-
-When the caller has explicit current-session facts, supply a strict overlay:
-
-```bash
-python scripts/audit_codex_capabilities.py \
-  --context "the actual task goal and constraints" \
-  --session-capabilities path/to/session-capabilities.json \
-  --json
-```
-
-Only the five kinds `skill`, `plugin`, `plugin-skill`, `app`, and `mcp` are accepted. An overlay item means it is `available-in-session`; absence from the overlay does not erase locally scanned inventory.
-
-## Native Capability Rule
-
-The current Codex stack is the default solution.
-
-- Prefer better use of existing capabilities before adding dependencies.
-- Do not adopt a repository, library, plugin, MCP server, CLI, or workflow because it is novel or popular.
-- Require task-level evidence of material net gain.
-- Count integration, maintenance, context, permission, and supply-chain cost.
-- Prefer a focused hybrid improvement over adopting an entire external system.
+The inventory distinguishes enabled, disabled, installed-not-exposed, and explicitly current-session capability. Presence is not proof of relevance or benefit; continue to a focused audit before recommending adoption.
 
 ## Repository Contents
 
-- `SKILL.md`: concise routing and capability-mining workflow.
-- `references/capability-mining-model.md`: capability record, gap precedence, scoring, and upgrade ranking.
-- `references/audit-rubric.md`: evidence and decision rules.
-- `references/capability-audit-template.md`: focused report template.
-- `references/read-only-audit-guard.md`: mutation and Git evidence protection.
-- `scripts/audit_codex_capabilities.py`: read-only local capability inventory.
-- `scripts/score_audit.py`: deterministic capability-utilization scoring.
-- `schemas/audit-report.schema.json`: machine-readable audit contract.
-- `examples/`: weak and strong audit fixtures.
+- `SKILL.md`: routing and evidence-loop workflow.
+- `schemas/audit-report.schema.json`: strict v0.3 audit contract.
+- `schemas/run-evidence.schema.json`: strict metadata-only collector output.
+- `scripts/collect_run_evidence.py`: privacy-bounded Codex JSONL collector.
+- `scripts/score_audit.py`: deterministic scoring and before/after verification.
+- `scripts/migrate_audit.py`: deterministic v0.2-to-v0.3 migration.
+- `examples/`: weak, strong, migration, and sanitized real-world fixtures.
 
-Additional references are remediation strategies. Codexcavator loads them only when the mining loop identifies the matching gap; they are not separate product modes.
+Additional references are conditional remediation strategies, not separate product modes.
 
 `project-supervisor` owns product-completion truth and long-running supervision. Codexcavator owns the narrower question of whether Codex discovered, used, and verified the capabilities needed for the current goal.
-
-## Safety
-
-Read-only audits do not install, authenticate, publish, push, deploy, comment externally, or mutate project files. Credentials, billing, destructive actions, production changes, public releases, external account changes, and outbound comments require a Human Gate.
-
-The scanner avoids authentication files and credential stores. Review full inventory output before sharing it publicly because it may contain local environment metadata.
-
-## Install
-
-```powershell
-git clone https://github.com/M-sea-art/codex-efficiency-auditor.git "$env:USERPROFILE\.codex\skills\codex-efficiency-auditor"
-```
 
 ## Development Checks
 
@@ -208,6 +169,8 @@ git clone https://github.com/M-sea-art/codex-efficiency-auditor.git "$env:USERPR
 python -m py_compile scripts/*.py
 python scripts/test_capability_scan.py
 python scripts/test_score_audit.py
+python scripts/test_run_evidence.py
+python scripts/test_migrate_audit.py
 python scripts/score_audit.py --json examples/run-54-single-thread/audit-scores.json
 python scripts/score_audit.py --json examples/run-82-worktree-review/audit-scores.json
 python scripts/score_audit.py --json examples/real-world/read-only-state-isolation/audit.json
@@ -215,74 +178,35 @@ python scripts/score_audit.py --json examples/real-world/visual-proof-human-gate
 python scripts/score_audit.py --baseline examples/real-world/registered-disabled-fresh-process/before.json --json examples/real-world/registered-disabled-fresh-process/after.json
 ```
 
-## Project Status and Maintenance
+## Project Status
 
-Codexcavator is an early-stage, independently maintained open-source project. The repository does not claim broad adoption yet; it publishes reproducible checks, example fixtures, and CI so users can verify behavior directly.
+Codexcavator is an early-stage, independently maintained project. v0.3 remains an unreleased pre-stable contract. The project publishes schemas, deterministic checks, privacy fixtures, migration tooling, and real-world examples so claims can be reproduced.
 
 - **Maintainer:** [M-sea-art](https://github.com/M-sea-art)
-- **Maintenance work:** issue triage, pull-request review, regression tests, release preparation, and documentation
 - **Contributing:** see [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Release history:** see [CHANGELOG.md](CHANGELOG.md)
-- **Real-world use:** share a reproducible audit through the [adoption template](.github/ISSUE_TEMPLATE/adoption.yml)
 
-### Near-term Roadmap
+No stable tag is published until CI, migration, privacy, schema, example, and release checks all pass.
 
-1. Collect additional reproducible audits from different Codex workflows.
-2. Stabilize the v0.2 audit schema and CLI contract from public fixture feedback.
-3. Publish a first tagged release only after the documented release checklist passes.
-4. Measure whether recommended capability upgrades improve comparable task outcomes.
+## 中文简介
+
+Codexcavator（Codex 挖掘机）不是让 Codex 使用更多工具，而是判断当前任务真正需要什么能力、该能力是否在本次会话可用、是否在授权范围内正确使用，以及升级后任务结果或成本是否真的改善。
+
+v0.3 默认流程是：
+
+```text
+采集严格脱敏运行元数据
+  -> 声明任务模式与权限边界
+  -> 只审计相关能力
+  -> 区分功能、视觉、领域、人类验收和效率证据
+  -> 最多给出三条最短安全升级路线
+  -> 用同一目标复验结果或成本
+```
+
+只有“能力利用改善 + 真实缺口关闭 + 结果门禁或预声明效率指标改善”才返回 `PROVEN`。如果只是工具用得更多，则返回 `UTILIZATION_IMPROVED_OUTCOME_UNPROVEN`。
+
+采集器默认不输出对话、推理、参数、结果、命令、路径或原始标识；遇到未知结构会失败关闭。旧 v0.2 审计可迁移并保持单份分数，但不能在没有新证据时继承旧的 `PROVEN`。
 
 ## Disclaimer
 
 Codexcavator is an independent, unofficial open-source project. It is not affiliated with, endorsed by, or sponsored by OpenAI.
-
----
-
-## 中文简介
-
-### 为什么创建 Codexcavator
-
-Codexcavator 来自长期使用 Codex 时反复遇到的一个问题：
-
-Codex 可能已经拥有许多内置工具、Skill、插件、MCP、CLI 和开源能力，但“拥有能力”并不等于“能够主动发现并正确使用能力”。
-
-某项能力可能被遗漏、没有使用、使用时机不对，或者在没有实际验证的情况下被推荐。有时，Codex 当前的原生组合其实已经足够，继续增加工具只会增加复杂度。
-
-因此，Codexcavator 关注的不是“还能安装什么”，而是：
-
-- 当前任务是否遗漏了相关能力？
-- 已有能力是否没有被使用？
-- 某项能力是否被错误应用？
-- 所谓的提升是否有实际证据？
-- 原生 Codex 组合是否已经足够？
-
-它的目标不是让 Codex 使用更多工具。
-
-而是让 Codex 找到正确的能力，并证明这项能力确实带来了提升。
-
-### 它如何工作
-
-Codexcavator（Codex 挖掘机）是一套以证据为基础的 Codex 能力挖掘 Skill。它只回答一个问题：
-
-> 当前任务中，哪些 Codex 能力没有被发现、没有被正确使用，或者没有得到证据验证？最小的有效升级是什么？
-
-它不是插件清单，也不是“装得越多越强”的工具推荐器。它只评估与目标真正相关的能力，依据命令、测试、日志、Git、截图、轨迹和产物，将缺口归为：不可用、未发现、未使用、误用或未验证。
-
-- 只评分与当前目标有关的能力；
-- 优先挖掘现有 Codex 组合，而不是增加依赖；
-- 每次最多给出三个可验证升级；
-- 如果现有组合已经足够，就不强行推荐工具。
-
-30 秒使用：
-
-```text
-使用 $codex-efficiency-auditor 审计本次 Codex 执行。
-只评估与目标相关的能力，依据实际证据分类能力缺口。
-最多给出三个可验证升级；如果当前组合已经足够，返回 NO_CAPABILITY_UPGRADE_NEEDED。
-```
-
-当不需要升级时，它会明确返回：
-
-```text
-NO_CAPABILITY_UPGRADE_NEEDED
-```

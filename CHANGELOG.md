@@ -4,6 +4,15 @@ All notable user-visible changes will be documented here. This project has not y
 
 ## Unreleased
 
+### v0.3 evidence loop
+
+- Added strict metadata-only Codex rollout JSONL collection with fail-closed parsing, source and identifier hashes, timing/token/tool aggregates, and no messages, reasoning, arguments, outputs, commands, paths, or raw IDs.
+- Added operation contracts, independent scope conformance, explicit audit mutation status, capability availability lifecycle states, scoped evidence claims, task outcomes, and predeclared efficiency metrics.
+- Added shortest-safe upgrade routes and one falsifiable `smallest_useful_check` per recommendation.
+- Changed before/after proof so utilization improvement alone returns `UTILIZATION_IMPROVED_OUTCOME_UNPROVEN`; `PROVEN` also requires task outcome or declared efficiency improvement without regression.
+- Added deterministic v0.2-to-v0.3 migration that preserves individual scores and gaps without inventing scope, run, outcome, or cost evidence.
+- Added Ubuntu and Windows CI coverage for schema synchronization, scoring, collection, migration, examples, and privacy boundaries.
+
 ### Changed
 
 - Migrated the pre-release audit contract to strict `schema_version: "0.2"` structured evidence without a legacy string-evidence compatibility layer.

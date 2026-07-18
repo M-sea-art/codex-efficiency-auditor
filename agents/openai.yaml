@@ -1,4 +1,4 @@
 interface:
   display_name: "Codexcavator"
   short_description: "挖掘当前任务中尚未发挥的 Codex 能力"
-  default_prompt: "使用 $codex-efficiency-auditor 按 v0.2 契约审计当前 Codex 执行：只评估与目标相关的能力，用结构化 PASS/FAIL/PARTIAL/NOT_EVALUATED 证据识别 UNAVAILABLE、UNDISCOVERED、UNUSED、MISUSED 或 UNVERIFIED 缺口，最多给出三个与实际缺口精确匹配的可验证升级，并显式声明 Human Gate。"
+  default_prompt: "使用 $codex-efficiency-auditor 按 v0.3 证据闭环审计当前 Codex 执行：声明操作合同和范围一致性，必要时采集严格脱敏运行元数据，只评估与目标相关的能力，最多给出三个带路线和最小可证伪检查的升级；只有结果门禁或预声明效率指标同时改善时才返回 PROVEN。"

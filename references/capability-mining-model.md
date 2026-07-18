@@ -1,93 +1,52 @@
-# Capability Mining Model
+# Capability Mining Model v0.3
 
-Use this reference when producing or validating a structured Codex capability audit.
+Use this reference when producing or validating a structured Codexcavator audit.
 
-## Capability Record
+## Availability Lifecycle
 
-Record one entry for every task-relevant capability:
+`available_in_session` is the only state that enters the utilization denominator. `installed_not_exposed`, `disabled`, and `unavailable` remain explicit `UNAVAILABLE` gaps; `unknown` becomes `UNVERIFIED`.
 
-```json
-{
-  "name": "example capability",
-  "relevance": "required",
-  "availability": "available",
-  "discovered": true,
-  "usage": "used",
-  "impact": 5,
-  "evidence": [
-    {
-      "kind": "test",
-      "status": "PASS",
-      "summary": "The targeted regression test exited successfully.",
-      "locator": "python scripts/test_score_audit.py"
-    }
-  ]
-}
-```
-
-Allowed relevance values:
-
-- `required`: the goal or an acceptance gate depends on it;
-- `useful`: it materially improves cost, quality, reliability, or auditability;
-- `irrelevant`: it does not materially affect this goal and is excluded from scoring.
-
-Allowed usage values:
-
-- `used`: used correctly for the relevant purpose;
-- `unused`: known and available but not used;
-- `misused`: invoked with the wrong timing, scope, or method;
-- `not_applicable`: unavailable or irrelevant to actual execution.
+Do not infer current-session exposure from installation, cache, registration, configuration, or a previous process.
 
 ## Gap Precedence
 
-Assign at most one primary gap per relevant capability in this order:
+Assign at most one primary gap per relevant capability:
 
-1. `UNAVAILABLE` when a required or useful capability is confirmed absent.
-2. `UNDISCOVERED` when it is available but Codex did not discover it.
-3. `UNUSED` when it is available and discovered but not used.
-4. `MISUSED` when it was used incorrectly.
-5. `UNVERIFIED` when correct use or benefit lacks evidence.
+1. `UNAVAILABLE`: installed but not exposed, disabled, or confirmed absent.
+2. `UNDISCOVERED`: session-available but not found.
+3. `UNUSED`: discovered but unused.
+4. `MISUSED`: used at the wrong time, scope, or method.
+5. `UNVERIFIED`: correct use or availability lacks scoped evidence.
 
-Availability marked `unknown` produces `UNVERIFIED`, not `UNAVAILABLE`.
+## Operation and Evidence Contracts
 
-## Evidence-Derived Utilization
+Keep operation authority separate from capability scoring. Scope `FAIL` forces replanning; scope `UNKNOWN` blocks proof.
 
-Score only available, task-relevant capabilities:
+Evidence declares one `claim_scope`. Capability evidence, task outcomes, Human acceptance, authorization, and efficiency are separate claims. A PASS item closes only a matching scope.
 
-- correctly used with at least one structured `PASS` evidence item: `1.0`;
-- used with no `PASS` evidence: `0.25` and `UNVERIFIED`;
-- misused: `0.25`;
-- unused: `0.0`.
+## Shortest Safe Route
 
-Weight each capability by:
+For each retained upgrade choose the earliest route supported by evidence:
 
-```text
-impact × relevance multiplier
-```
+1. `REUSE`
+2. `NATIVE`
+3. `INSTALLED`
+4. `DISCOVER_FIRST`
+5. `BUILD`
+6. `HUMAN_GATE` when authority is required
 
-Use multiplier `1.0` for `required` and `0.6` for `useful`.
+Every route includes one `smallest_useful_check`. Do not save time by cutting validation, privacy, security, data-loss prevention, accessibility, Git hygiene, release gates, or Human Gates.
 
-Report unavailable and unknown capabilities as gaps without pretending they measure utilization of an available tool.
+## Outcome-Aware Verification
 
-## Upgrade Ranking
+Before/after verification freezes:
 
-Rank a proposed upgrade using:
+- schema, target type, and normalized goal;
+- task mode and authority contract;
+- `(name, relevance, impact)` capability declarations;
+- outcome IDs, descriptions, required flags, and claim scopes;
+- efficiency metric names, directions, and thresholds.
 
-```text
-expected leverage = task impact × evidence confidence × reuse value
-                    - adoption cost - context cost - risk
-```
+The capability score is diagnostic. `PROVEN` additionally requires either a new outcome PASS or a declared metric improvement, with complete strict run evidence and no regression.
 
-Keep at most three. Every retained recommendation must include:
-
-- the observed gap;
-- the smallest corrective action;
-- expected task-level gain;
-- a concrete verification check;
-- `human_gate: true|false`, plus a reason when true.
-
-The upgrade capability and gap must exactly match a computed gap. A retained Human Gate takes decision precedence and returns `NEEDS_HUMAN_DECISION`.
-
-Before/after verification requires the same v0.2 schema, target type, normalized goal, and immutable `(name, relevance, impact)` declarations. Changing a weight makes the comparison `INCONCLUSIVE` rather than manufacturing improvement.
-
-Return `NO_CAPABILITY_UPGRADE_NEEDED` when there are no material relevant gaps.
+Migrated v0.2 audits keep individual score semantics but remain `INCONCLUSIVE` for comparison until new scope and run evidence is supplied.
