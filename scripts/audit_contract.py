@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Shared constants for the Codexcavator v0.3 audit contract."""
+"""Shared constants for the codex-efficiency-auditor v0.3 audit contract."""
 
 from __future__ import annotations
 

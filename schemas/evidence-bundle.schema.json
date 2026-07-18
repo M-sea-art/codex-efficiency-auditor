@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/M-sea-art/codex-efficiency-auditor/schemas/evidence-bundle.schema.json",
-  "title": "Codexcavator Evidence Bundle",
+  "title": "codex-efficiency-auditor Evidence Bundle",
   "type": "object",
   "required": [
     "goal",

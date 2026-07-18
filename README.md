@@ -1,18 +1,23 @@
 <div align="center">
-  <img width="100%" alt="Four labeled evidence layers—operation contract, run evidence, capability use, and outcome gain—connected to a verified result" src="assets/codexcavator-evidence-loop-hero-v2.png" />
-  <h1>Codexcavator</h1>
+  <img width="100%" alt="Four labeled evidence layers—operation contract, run evidence, capability use, and outcome gain—connected to a verified result" src="assets/codex-efficiency-auditor-evidence-loop-hero-v2.png" />
+  <h1>codex-efficiency-auditor</h1>
+  <p><strong>中文名：Codex 挖掘机</strong></p>
   <h3>Evidence-driven capability and execution-efficiency audits for Codex</h3>
   <p><strong>Discover the right capability. Keep the authorized boundary. Prove the gain.</strong></p>
   <p>
-    <a href="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml"><img alt="Codexcavator Audit" src="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml/badge.svg" /></a>
+    <a href="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml"><img alt="codex-efficiency-auditor Audit" src="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml/badge.svg" /></a>
     <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   </p>
   <p><a href="#choose-your-path">English</a> · <a href="#选择你的路径">中文</a></p>
 </div>
 
+> **Official name:** [**codex-efficiency-auditor**](https://github.com/M-sea-art/codex-efficiency-auditor). **中文名：Codex 挖掘机。**
+
 > **One job:** turn a Codex run into a decision you can trust—without mistaking tool volume for evidence.
 
-Codexcavator is an unofficial open-source Codex Skill and deterministic audit toolkit. It checks whether a thread, repository, worktree, pull request, transcript, or agent run used the task-relevant capability, stayed inside the operation contract, and earned its claim of improvement.
+codex-efficiency-auditor is an unofficial open-source Codex Skill and deterministic audit toolkit. It checks whether a thread, repository, worktree, pull request, transcript, or agent run used the task-relevant capability, stayed inside the operation contract, and earned its claim of improvement.
+
+`codexcavator.py` remains the backward-compatible CLI filename; it is not a second project name.
 
 It does not reward tool volume or turn inventory into an install list. If the current Codex stack already does the job, the correct result is `NO_CAPABILITY_UPGRADE_NEEDED`.
 
@@ -26,7 +31,7 @@ Paste one sentence into Codex:
 Use $codex-efficiency-auditor to audit this run. Keep the audit read-only unless I authorized changes.
 ```
 
-Codexcavator will declare the operation contract, keep evidence scopes separate, recommend at most three upgrades, and return one next action. It will not return `PROVEN` unless a real outcome or declared efficiency metric also improves.
+codex-efficiency-auditor will declare the operation contract, keep evidence scopes separate, recommend at most three upgrades, and return one next action. It will not return `PROVEN` unless a real outcome or declared efficiency metric also improves.
 
 If the Skill is not installed, ask Codex to install it from this repository and verify it in a fresh process. Installation is a separate action; an audit never installs or authenticates by itself.
 
@@ -120,7 +125,7 @@ Only `capability_use + PASS` earns full utilization credit. A screenshot cannot 
 
 Every retained upgrade chooses one route: `REUSE`, `NATIVE`, `INSTALLED`, `BUILD`, `DISCOVER_FIRST`, or `HUMAN_GATE`. It must also declare one falsifiable `smallest_useful_check`.
 
-No upgrade is the equivalent of `SKIP`; Codexcavator returns `NO_CAPABILITY_UPGRADE_NEEDED` instead of manufacturing work.
+No upgrade is the equivalent of `SKIP`; codex-efficiency-auditor returns `NO_CAPABILITY_UPGRADE_NEEDED` instead of manufacturing work.
 
 ## Strict Run Evidence
 
@@ -208,7 +213,7 @@ The inventory distinguishes enabled, disabled, installed-not-exposed, and explic
 
 Additional references are conditional remediation strategies, not separate product modes.
 
-`project-supervisor` owns product-completion truth and long-running supervision. Codexcavator owns the narrower question of whether Codex discovered, used, and verified the capabilities needed for the current goal.
+`project-supervisor` owns product-completion truth and long-running supervision. codex-efficiency-auditor owns the narrower question of whether Codex discovered, used, and verified the capabilities needed for the current goal.
 
 ## Development Checks
 
@@ -230,7 +235,7 @@ python scripts/score_audit.py --baseline examples/real-world/registered-disabled
 
 ## Project Status
 
-Codexcavator is an early-stage, independently maintained project. v0.3 remains an unreleased pre-stable contract; v0.3.1 adds a non-breaking first-success experience over the same Schema and proof semantics. The project publishes schemas, deterministic checks, privacy fixtures, migration tooling, and real-world examples so claims can be reproduced.
+codex-efficiency-auditor is an early-stage, independently maintained project. v0.3 remains an unreleased pre-stable contract; v0.3.1 adds a non-breaking first-success experience over the same Schema and proof semantics. The project publishes schemas, deterministic checks, privacy fixtures, migration tooling, and real-world examples so claims can be reproduced.
 
 - **Maintainer:** [M-sea-art](https://github.com/M-sea-art)
 - **Contributing:** see [CONTRIBUTING.md](CONTRIBUTING.md)
@@ -240,7 +245,7 @@ No stable tag is published until CI, migration, privacy, schema, example, and re
 
 ## 中文简介
 
-Codexcavator（Codex 挖掘机）不是让 Codex 使用更多工具，而是把一次执行变成可信决策：先找出当前任务真正需要的能力，再守住授权边界，最后用结果或成本改善证明升级值得发生。
+codex-efficiency-auditor（Codex 挖掘机）不是让 Codex 使用更多工具，而是把一次执行变成可信决策：先找出当前任务真正需要的能力，再守住授权边界，最后用结果或成本改善证明升级值得发生。
 
 ### 选择你的路径
 
@@ -277,4 +282,4 @@ v0.3 默认流程是：
 
 ## Disclaimer
 
-Codexcavator is an independent, unofficial open-source project. It is not affiliated with, endorsed by, or sponsored by OpenAI.
+codex-efficiency-auditor is an independent, unofficial open-source project. It is not affiliated with, endorsed by, or sponsored by OpenAI.

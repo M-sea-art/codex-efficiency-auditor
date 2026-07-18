@@ -1,6 +1,6 @@
 # Capability Mining Model v0.3
 
-Use this reference when producing or validating a structured Codexcavator audit.
+Use this reference when producing or validating a structured codex-efficiency-auditor audit.
 
 ## Availability Lifecycle
 

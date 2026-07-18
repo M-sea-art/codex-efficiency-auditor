@@ -1,4 +1,4 @@
-# Contributing to Codexcavator
+# Contributing to codex-efficiency-auditor
 
 Thank you for helping improve evidence-based capability audits for Codex.
 
@@ -43,4 +43,4 @@ The maintainer reviews scope, evidence quality, backwards compatibility, and whe
 
 ## Reporting Real-World Use
 
-Use the adoption issue template when Codexcavator helped on a real task. Include only shareable data and enough detail for another maintainer to understand the goal, audit decision, evidence, and outcome.
+Use the adoption issue template when codex-efficiency-auditor helped on a real task. Include only shareable data and enough detail for another maintainer to understand the goal, audit decision, evidence, and outcome.

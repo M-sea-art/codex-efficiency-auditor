@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/M-sea-art/codex-efficiency-auditor/schemas/task-card.schema.json",
-  "title": "Codexcavator Task Card",
+  "title": "codex-efficiency-auditor Task Card",
   "type": "object",
   "required": [
     "task_id",
