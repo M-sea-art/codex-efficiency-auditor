@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.3",
+  "audit_id": "read-only-state-isolation",
+  "capability_utilization_score": 100,
+  "decision": "NO_CAPABILITY_UPGRADE_NEEDED",
+  "audit_mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "scope_conformance": "PASS",
+  "relevant_capability_count": 2,
+  "gaps": [],
+  "recommended_upgrades": [],
+  "warnings": [
+    "Run evidence is absent; before/after verification cannot be PROVEN."
+  ]
+}

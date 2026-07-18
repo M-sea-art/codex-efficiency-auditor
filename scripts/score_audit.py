@@ -12,6 +12,7 @@ import unicodedata
 from pathlib import Path
 from typing import Any
 
+from cli_support import render_audit, render_comparison
 from audit_contract import (
     AUDIT_MUTATION_STATUSES,
     AVAILABILITY_TYPES,
@@ -664,21 +665,9 @@ def main() -> int:
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     elif args.baseline:
-        print(f"Schema Version: {result['schema_version']}")
-        print(f"Capability Upgrade Verification: {result['capability_upgrade_verification']}")
-        print(f"Score: {result['baseline_score']} -> {result['candidate_score']} ({result['score_delta']:+d})")
-        print(f"Gaps: {result['baseline_gaps']} -> {result['candidate_gaps']}")
+        print(render_comparison(result))
     else:
-        print(f"Schema Version: {result['schema_version']}")
-        print(f"Codex Capability Utilization: {result['capability_utilization_score']}/100")
-        print(f"Decision: {result['decision']}")
-        print(f"Audit Mutation Status: {result['audit_mutation_status']}")
-        print(f"Scope Conformance: {result['scope_conformance']}")
-        for gap in result["gaps"]:
-            print(f"- {gap['gap']}: {gap['capability']} ({gap['relevance']}, impact={gap['impact']})")
-        for index, upgrade in enumerate(result["recommended_upgrades"], start=1):
-            print(f"{index}. [{upgrade['route']}] {upgrade['capability']}: {upgrade['action']}")
-            print(f"   Smallest useful check: {upgrade['smallest_useful_check']}")
+        print(render_audit(result))
     return 0
 
 

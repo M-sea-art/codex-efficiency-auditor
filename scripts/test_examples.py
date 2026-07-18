@@ -6,8 +6,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from collect_run_evidence import collect_run_evidence
 from migrate_audit import migrate_audit
-from score_audit import analyze_audit, compare_audits
+from score_audit import analyze_audit, compare_audits, validate_run_evidence
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,6 +30,10 @@ def test_json_and_privacy() -> None:
 
 
 def test_documented_decisions() -> None:
+    quickstart = collect_run_evidence(ROOT / "examples" / "quickstart" / "minimal-rollout.jsonl")
+    validate_run_evidence(quickstart)
+    assert quickstart["parse_status"] == "PASS"
+
     for relative in (
         "examples/run-54-single-thread/audit-scores.json",
         "examples/run-82-worktree-review/audit-scores.json",

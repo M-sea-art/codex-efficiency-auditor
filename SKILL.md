@@ -13,6 +13,16 @@ Do not maximize tool count. Do not recommend capabilities because they are insta
 
 Codexcavator owns Codex execution quality and capability utilization. It does not replace `project-supervisor`, which owns product completion, Definition of Done, and release gates.
 
+## Start Here
+
+For the default path, the user only needs to say:
+
+```text
+Use $codex-efficiency-auditor to audit this run. Keep the audit read-only unless I authorized changes.
+```
+
+Infer no missing authority. Lead with the v0.3 header, surface warnings, and end with exactly one concrete next action. Load the detailed rules below internally instead of asking the user to paste the full contract.
+
 ## Default v0.3 Workflow
 
 1. **Orient**
@@ -29,7 +39,7 @@ Codexcavator owns Codex execution quality and capability utilization. It does no
 4. **Observe**
    - Record v0.3 evidence as `{kind, status, claim_scope, summary, locator?}`.
    - Only `capability_use + PASS` earns full capability-utilization credit.
-   - Keep functional, visual, domain, integrity, Human acceptance, authorization, and efficiency claims separate. A screenshot proves only visible state; an Agent cannot self-issue Human acceptance.
+   - Keep `capability_use`, `functional`, `visual`, `domain`, `integrity`, `human_acceptance`, `authorization`, `efficiency`, and `other` claims separate. A screenshot proves only visible state; an Agent cannot self-issue Human acceptance.
 5. **Classify**
    - Assign at most one primary gap per relevant capability: `UNAVAILABLE`, `UNDISCOVERED`, `UNUSED`, `MISUSED`, or `UNVERIFIED`.
 6. **Upgrade**
@@ -86,16 +96,21 @@ Then report only:
 4. outcome or efficiency verification status;
 5. one concrete next action.
 
+Human-readable CLI output must expose warnings and exactly one `Next action`. Machine-readable JSON remains the stable integration surface.
+
 Do not produce generic plugin lists or broad transformation roadmaps unless the user explicitly asks for a complete inventory.
 
 ## CLI
 
 ```text
-python scripts/collect_run_evidence.py --input <rollout.jsonl> [--output <run-evidence.json>]
-python scripts/migrate_audit.py --input <v0.2.json> [--output <v0.3.json>]
-python scripts/score_audit.py --json <audit-v0.3.json>
-python scripts/score_audit.py --baseline <before-v0.3.json> --json <after-v0.3.json>
+python scripts/codexcavator.py audit <audit-v0.3.json> [--json]
+python scripts/codexcavator.py compare --before <before-v0.3.json> --after <after-v0.3.json> [--json]
+python scripts/codexcavator.py collect --input <rollout.jsonl> [--output <run-evidence.json>] [--allow-partial]
+python scripts/codexcavator.py migrate --input <v0.2.json> [--output <v0.3.json>]
+python scripts/codexcavator.py inventory --context "<goal and constraints>" [--json]
 ```
+
+The original per-purpose scripts remain supported. The unified CLI returns exit code `2` for input failures, keeps stdout empty, and prints a stable error code plus one safe `NEXT` command. JSON errors are emitted to stderr when `--json` is present.
 
 Migrated v0.2 audits preserve their individual score and gaps, but keep scope and run evidence unknown. They cannot inherit a v0.2 `PROVEN` comparison without fresh outcome or efficiency evidence.
 
