@@ -1,4 +1,4 @@
-name: Codexcavator Audit
+name: codex-efficiency-auditor Audit
 
 on:
   pull_request:

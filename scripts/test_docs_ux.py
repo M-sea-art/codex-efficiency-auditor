@@ -57,6 +57,8 @@ def test_public_name_uses_canonical_identifier_and_chinese_display_name() -> Non
         assert "codex-efficiency-auditor" in content, document
     for document in (ROOT / "README.md", ROOT / "SKILL.md", ROOT / "agents" / "openai.yaml"):
         assert "Codex 挖掘机" in document.read_text(encoding="utf-8"), document
+    workflow = (ROOT / ".github" / "workflows" / "codexcavator-audit.yml").read_text(encoding="utf-8")
+    assert workflow.startswith("name: codex-efficiency-auditor Audit\n")
 
 
 def test_contract_docs_are_current() -> None:
