@@ -649,7 +649,7 @@ def load_audit(path: str | None) -> dict[str, Any]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate and score a Codexcavator v0.3 capability audit.")
+    parser = argparse.ArgumentParser(description="Validate and score a codex-efficiency-auditor v0.3 capability audit.")
     parser.add_argument("json_file", nargs="?", help="Audit JSON path. Reads stdin if omitted.")
     parser.add_argument("--baseline", help="Optional baseline audit JSON for before-and-after verification.")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON.")

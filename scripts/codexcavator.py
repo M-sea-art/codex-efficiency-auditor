@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unified, non-breaking Codexcavator command-line experience."""
+"""Unified, non-breaking codex-efficiency-auditor command-line experience."""
 
 from __future__ import annotations
 

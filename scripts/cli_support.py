@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Shared human rendering and privacy-bounded CLI errors for Codexcavator."""
+"""Shared human rendering and privacy-bounded CLI errors for codex-efficiency-auditor."""
 
 from __future__ import annotations
 

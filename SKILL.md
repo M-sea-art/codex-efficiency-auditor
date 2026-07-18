@@ -1,9 +1,9 @@
 ---
 name: codex-efficiency-auditor
-description: "Codexcavator is an evidence-driven Codex capability and execution-efficiency auditor. Use it to audit a Codex thread, repository, worktree, pull request, transcript, or agent run; collect strict metadata-only run evidence; distinguish session availability from installed or disabled capability; identify unavailable, undiscovered, unused, misused, or unverified capability; choose the shortest safe upgrade route; and prove whether task outcomes or declared efficiency metrics improved. Trigger for Codex capability audits, Codex efficiency reviews, underused tools or plugins, weak validation, repeated failure, scope drift, or requests to improve how Codex works."
+description: "codex-efficiency-auditor（Codex 挖掘机） is an evidence-driven Codex capability and execution-efficiency auditor. Use it to audit a Codex thread, repository, worktree, pull request, transcript, or agent run; collect strict metadata-only run evidence; distinguish session availability from installed or disabled capability; identify unavailable, undiscovered, unused, misused, or unverified capability; choose the shortest safe upgrade route; and prove whether task outcomes or declared efficiency metrics improved. Trigger for Codex capability audits, Codex efficiency reviews, underused tools or plugins, weak validation, repeated failure, scope drift, or requests to improve how Codex works."
 ---
 
-# Codexcavator
+# codex-efficiency-auditor（Codex 挖掘机）
 
 ## Purpose
 
@@ -11,7 +11,7 @@ Determine which Codex capabilities materially affect the current goal, whether C
 
 Do not maximize tool count. Do not recommend capabilities because they are installed, popular, or novel. If the current stack already satisfies the goal, return `NO_CAPABILITY_UPGRADE_NEEDED`.
 
-Codexcavator owns Codex execution quality and capability utilization. It does not replace `project-supervisor`, which owns product completion, Definition of Done, and release gates.
+codex-efficiency-auditor owns Codex execution quality and capability utilization. It does not replace `project-supervisor`, which owns product completion, Definition of Done, and release gates.
 
 ## Start Here
 

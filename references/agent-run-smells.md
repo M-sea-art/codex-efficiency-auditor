@@ -38,7 +38,7 @@ Use this reference when a Codex run appears successful but may have left relevan
 - The current Codex stack is sufficient, but an upgrade is still forced.
 - Verification is missing or cannot falsify the recommendation.
 
-## Codexcavator Response
+## codex-efficiency-auditor Response
 
 Classify each material issue as `UNAVAILABLE`, `UNDISCOVERED`, `UNUSED`, `MISUSED`, or `UNVERIFIED`. Score only task-relevant capabilities, recommend at most three upgrades, and return one of:
 

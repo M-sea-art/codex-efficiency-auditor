@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministically migrate a Codexcavator v0.2 audit to v0.3."""
+"""Deterministically migrate a codex-efficiency-auditor v0.2 audit to v0.3."""
 
 from __future__ import annotations
 
@@ -132,7 +132,7 @@ def migrate_audit(data: dict[str, Any]) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Migrate a Codexcavator v0.2 audit to strict v0.3.")
+    parser = argparse.ArgumentParser(description="Migrate a codex-efficiency-auditor v0.2 audit to strict v0.3.")
     parser.add_argument("--input", required=True, help="v0.2 audit JSON path.")
     parser.add_argument("--output", help="Optional v0.3 output JSON path. Defaults to stdout.")
     args = parser.parse_args(argv)
