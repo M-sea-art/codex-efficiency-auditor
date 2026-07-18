@@ -11,9 +11,13 @@ permissions:
   contents: read
 
 jobs:
-  advisory-audit:
-    name: Advisory audit checks
-    runs-on: ubuntu-latest
+  evidence-loop:
+    name: v0.3 evidence loop (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Check out repository
@@ -25,13 +29,15 @@ jobs:
           python-version: "3.11"
 
       - name: Compile scripts
-        run: |
-          python -m py_compile scripts/*.py
+        run: python -m compileall -q scripts
 
-      - name: Run regression checks
+      - name: Run regression and privacy checks
         run: |
           python scripts/test_capability_scan.py
           python scripts/test_score_audit.py
+          python scripts/test_run_evidence.py
+          python scripts/test_migrate_audit.py
+          python scripts/test_examples.py
 
       - name: Analyze capability audit examples
         run: |
@@ -40,40 +46,3 @@ jobs:
           python scripts/score_audit.py --json examples/real-world/read-only-state-isolation/audit.json
           python scripts/score_audit.py --json examples/real-world/visual-proof-human-gate/audit.json
           python scripts/score_audit.py --baseline examples/real-world/registered-disabled-fresh-process/before.json --json examples/real-world/registered-disabled-fresh-process/after.json
-
-      - name: Validate JSON and assert real-world fixture decisions
-        run: |
-          python - <<'PY'
-          import json
-          import sys
-          from pathlib import Path
-
-          paths = list(Path("schemas").glob("*.json")) + list(Path("examples").glob("**/*.json"))
-          for path in paths:
-              with path.open("r", encoding="utf-8") as handle:
-                  json.load(handle)
-              print(f"valid json: {path}")
-
-          sys.path.insert(0, "scripts")
-          from score_audit import analyze_audit, compare_audits
-
-          def load(path):
-              return json.loads(Path(path).read_text(encoding="utf-8"))
-
-          root = Path("examples/real-world")
-          before = load(root / "registered-disabled-fresh-process/before.json")
-          after = load(root / "registered-disabled-fresh-process/after.json")
-          assert analyze_audit(before)["decision"] == "CAPABILITY_REPLAN_NEEDED"
-          assert analyze_audit(after)["decision"] == "NO_CAPABILITY_UPGRADE_NEEDED"
-          assert compare_audits(before, after)["capability_upgrade_verification"] == "PROVEN"
-
-          isolated = load(root / "read-only-state-isolation/audit.json")
-          isolated_result = analyze_audit(isolated)
-          assert isolated_result["decision"] == "NO_CAPABILITY_UPGRADE_NEEDED"
-          assert isolated["mutation_status"] == "NO_FILES_MODIFIED_BY_AUDIT"
-
-          visual = analyze_audit(load(root / "visual-proof-human-gate/audit.json"))
-          assert visual["decision"] == "NEEDS_HUMAN_DECISION"
-          assert {item["gap"] for item in visual["gaps"]} == {"MISUSED", "UNVERIFIED"}
-          print("real-world fixture decisions verified")
-          PY

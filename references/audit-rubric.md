@@ -1,80 +1,80 @@
-# Capability Mining Rubric
+# Capability Mining Rubric v0.3
 
-Score Codex only on capabilities that materially affect the audited goal. Do not reward tool volume or penalize irrelevant capabilities.
+Score only Codex capabilities that materially affect the audited goal. Do not reward tool volume or penalize irrelevant capability.
 
-## Required Inputs
+## Required Contract
 
-For each task-relevant capability, record:
+Declare the task mode, local mutation scope, external-action policy, constraints, Human Gates, scope conformance, audit mutation status, task outcomes, and any efficiency metrics before comparing runs.
+
+`scope_conformance: PASS` requires independent authorization evidence. Run metadata alone cannot prove that project or host state stayed unchanged.
+
+## Capability Record
+
+For each relevant capability record:
 
 - `relevance`: `required`, `useful`, or `irrelevant`;
-- `availability`: `available`, `unavailable`, or `unknown`;
-- `discovered`: whether Codex found the capability;
+- `availability`: `available_in_session`, `installed_not_exposed`, `disabled`, `unavailable`, or `unknown`;
+- `discovered`: whether Codex found it;
 - `usage`: `used`, `unused`, `misused`, or `not_applicable`;
 - `impact`: integer from 1 to 5;
-- `evidence`: v0.2 objects with `kind`, `status`, `summary`, and optional `locator`.
+- `evidence`: `{kind, status, claim_scope, summary, locator?}` objects.
 
-Use `references/capability-mining-model.md` for gap precedence and weighting.
+Only `capability_use + PASS` earns full utilization credit.
 
-## Evidence Rules
+## Evidence Boundaries
 
-Strong evidence:
+Strong evidence includes actual tool calls, commands and output, tests, builds, CI, traces, runtime state, Git evidence, scoped artifacts, and comparable before/after results.
 
-- tool calls or commands with output;
-- tests, builds, CI, traces, screenshots, or runtime state;
-- Git state, diffs, commits, or pull-request checks;
-- artifacts with clear provenance;
-- comparable before-and-after results.
+Weak evidence includes narrative claims, unexecuted plans, tools that were mentioned but not called, installed capability assumed callable without session proof, screenshots used as functional proof, or Agent-authored Human acceptance.
 
-Weak evidence:
+Evidence scopes are not interchangeable:
 
-- narrative claims without output;
-- a plan that was not executed;
-- a tool mentioned but not called;
-- a screenshot used to claim behavior it cannot prove;
-- an installed capability assumed to be available in the current session.
-
-Classify claims supported only by weak evidence as `UNVERIFIED`. Only an evidence item with `status: PASS` earns full utilization credit; `PARTIAL`, `FAIL`, and `NOT_EVALUATED` remain visible without proving completion.
+- `visual` does not prove `functional`;
+- `capability_use` does not prove a task outcome;
+- `human_acceptance` requires `kind: human`;
+- `authorization` evidence supports scope conformance, not product completion;
+- partial or unknown run parsing cannot support `PROVEN`.
 
 ## Utilization Score
 
-Include only `required` and `useful` capabilities that are confirmed `available`.
+Score only `available_in_session` capabilities marked `required` or `useful`.
 
-Usage value:
-
-- used correctly with at least one `PASS` evidence item: `1.0`;
-- used without a `PASS` evidence item: `0.25`;
-- misused: `0.25`;
+- correct use with scoped PASS evidence: `1.0`;
+- use without scoped PASS evidence: `0.25`;
+- misuse: `0.25`;
 - unused: `0.0`.
 
-Weight:
-
-- `required`: `impact × 1.0`;
-- `useful`: `impact × 0.6`;
-- `irrelevant`: excluded.
-
-Formula:
-
-```text
-score = round(100 × weighted usage value / weighted available capability total)
-```
-
-Unavailable and unknown capabilities remain visible as gaps but do not masquerade as utilization of an available capability.
+Weight is `impact × 1.0` for required and `impact × 0.6` for useful capability.
 
 ## Decisions
 
-- `NO_CAPABILITY_UPGRADE_NEEDED`: no material gaps and score is at least 90.
-- `MINOR_CAPABILITY_GAPS`: score is at least 85, with no required gap.
-- `CAPABILITY_UPGRADE_RECOMMENDED`: score is at least 50 and material gaps remain.
-- `CAPABILITY_REPLAN_NEEDED`: score is below 50 or a required capability is unavailable.
-- `NEEDS_HUMAN_DECISION`: the next action crosses a Human Gate.
+1. Audit mutation detected or target scope `FAIL` -> `CAPABILITY_REPLAN_NEEDED`.
+2. Retained Human Gate -> `NEEDS_HUMAN_DECISION`.
+3. Required unavailable capability or score below 50 -> `CAPABILITY_REPLAN_NEEDED`.
+4. Score at least 85 with no required gap -> `MINOR_CAPABILITY_GAPS`.
+5. Score at least 50 with material gaps -> `CAPABILITY_UPGRADE_RECOMMENDED`.
+6. No material gaps and score at least 90 -> `NO_CAPABILITY_UPGRADE_NEEDED`.
+
+Unknown scope remains visible as a warning and blocks before/after `PROVEN`.
 
 ## Upgrade Rules
 
 - Recommend at most three upgrades.
-- Tie every upgrade to an observed gap.
-- Require an exact capability/gap match, a boolean `human_gate`, and a non-empty reason when that gate is true.
-- State the smallest corrective action, expected gain, and verification.
-- Prefer better use of current Codex capabilities over external additions.
-- Return no upgrade when evidence shows the current stack is sufficient.
+- Match every upgrade to an observed capability and exact gap.
+- Select one route: `REUSE`, `NATIVE`, `INSTALLED`, `BUILD`, `DISCOVER_FIRST`, or `HUMAN_GATE`.
+- State the smallest corrective action, expected gain, and one falsifiable `smallest_useful_check`.
+- Prefer current Codex and project capability before external adoption.
 
-The deterministic scorer checks the audit declaration and consistency. It is not a substitute for investigating the underlying command, artifact, screenshot, runtime, or human claim.
+## Before/After Proof
+
+Comparable audits preserve schema, target type, normalized goal, operation contract, capability declarations, outcome declarations, and metric thresholds.
+
+Return:
+
+- `PROVEN` only when utilization rises, a real gap closes, and an outcome reaches PASS or a declared metric meets its threshold without regression;
+- `UTILIZATION_IMPROVED_OUTCOME_UNPROVEN` when only utilization improves;
+- `REGRESSION` for capability, required outcome, metric, scope, or mutation-safety regression;
+- `INCONCLUSIVE` for incomparable declarations, unknown scope, or missing/partial run evidence;
+- `NO_CHANGE` when comparable evidence shows no effective improvement.
+
+The scorer validates declarations and consistency. It does not independently investigate whether a submitted evidence summary is true.

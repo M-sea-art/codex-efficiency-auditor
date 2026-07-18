@@ -1,14 +1,66 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "audit_id": "visual-proof-human-gate",
   "target_type": "agent_run",
   "goal": "Verify visual quality without treating a screenshot as functional completion or owner acceptance.",
-  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "operation_contract": {
+    "task_mode": "review",
+    "local_mutation_scope": "none",
+    "external_actions": "human_gate",
+    "constraints": ["Do not use visual evidence to claim functional completion."],
+    "human_gates": ["Owner visual acceptance"]
+  },
+  "scope_conformance": {
+    "status": "PASS",
+    "evidence": [
+      {
+        "kind": "artifact",
+        "status": "PASS",
+        "claim_scope": "authorization",
+        "summary": "The audit remained advisory and did not self-issue owner acceptance."
+      }
+    ]
+  },
+  "audit_mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "run_evidence": null,
+  "outcomes": [
+    {
+      "id": "visible-render-state",
+      "description": "The screenshot supports only the visible render state.",
+      "required": false,
+      "claim_scope": "visual",
+      "status": "PARTIAL",
+      "evidence": [
+        {
+          "kind": "screenshot",
+          "status": "PARTIAL",
+          "claim_scope": "visual",
+          "summary": "The screenshot shows the rendered state but not end-to-end behavior."
+        }
+      ]
+    },
+    {
+      "id": "owner-acceptance",
+      "description": "The authorized owner explicitly accepts the visual result.",
+      "required": true,
+      "claim_scope": "human_acceptance",
+      "status": "NOT_EVALUATED",
+      "evidence": [
+        {
+          "kind": "human",
+          "status": "NOT_EVALUATED",
+          "claim_scope": "human_acceptance",
+          "summary": "No owner decision was recorded."
+        }
+      ]
+    }
+  ],
+  "efficiency_metrics": [],
   "capabilities": [
     {
       "name": "visual rendering evidence",
       "relevance": "required",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": true,
       "usage": "misused",
       "impact": 4,
@@ -16,7 +68,8 @@
         {
           "kind": "screenshot",
           "status": "PARTIAL",
-          "summary": "The screenshot supports a visual judgment but was incorrectly used as proof of end-to-end behavior.",
+          "claim_scope": "capability_use",
+          "summary": "The screenshot was incorrectly used as proof of end-to-end behavior.",
           "locator": "sanitized render screenshot"
         }
       ]
@@ -24,7 +77,7 @@
     {
       "name": "owner acceptance",
       "relevance": "required",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": true,
       "usage": "used",
       "impact": 5,
@@ -32,6 +85,7 @@
         {
           "kind": "human",
           "status": "NOT_EVALUATED",
+          "claim_scope": "capability_use",
           "summary": "No owner acceptance was recorded; the screenshot cannot substitute for it."
         }
       ]
@@ -41,17 +95,19 @@
     {
       "capability": "visual rendering evidence",
       "gap": "MISUSED",
+      "route": "DISCOVER_FIRST",
       "action": "Limit screenshot claims to the visible state and run the functional path separately.",
       "expected_gain": "Visual and functional claims remain evidence-bounded.",
-      "verification": "The report maps the screenshot only to visual criteria and cites a separate runtime result.",
+      "smallest_useful_check": "The report maps the screenshot only to visual criteria and cites a separate runtime result.",
       "human_gate": false
     },
     {
       "capability": "owner acceptance",
       "gap": "UNVERIFIED",
+      "route": "HUMAN_GATE",
       "action": "Request owner review after automated evidence is complete.",
       "expected_gain": "The final acceptance claim has an authorized human source.",
-      "verification": "An explicit owner decision is recorded without being inferred from a screenshot.",
+      "smallest_useful_check": "An explicit owner decision is recorded without being inferred from a screenshot.",
       "human_gate": true,
       "human_gate_reason": "Owner acceptance is an external human judgment and cannot be self-issued by the auditor."
     }

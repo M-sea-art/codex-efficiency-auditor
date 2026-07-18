@@ -1,9 +1,15 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "audit_id": "run-82-worktree-review",
   "capability_utilization_score": 100,
   "decision": "NO_CAPABILITY_UPGRADE_NEEDED",
+  "audit_mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "scope_conformance": "UNKNOWN",
   "relevant_capability_count": 3,
   "gaps": [],
-  "recommended_upgrades": []
+  "recommended_upgrades": [],
+  "warnings": [
+    "Scope conformance is unknown; before/after verification cannot be PROVEN.",
+    "Run evidence is absent; before/after verification cannot be PROVEN."
+  ]
 }

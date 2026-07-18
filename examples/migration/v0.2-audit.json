@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.2",
+  "audit_id": "migration-example",
+  "target_type": "thread",
+  "goal": "Demonstrate deterministic migration without inventing new evidence.",
+  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "capabilities": [
+    {
+      "name": "targeted tests",
+      "relevance": "required",
+      "availability": "available",
+      "discovered": true,
+      "usage": "unused",
+      "impact": 5,
+      "evidence": []
+    }
+  ],
+  "upgrades": [
+    {
+      "capability": "targeted tests",
+      "gap": "UNUSED",
+      "action": "Run the existing targeted regression test.",
+      "expected_gain": "The change is checked against its failure mode.",
+      "verification": "The targeted regression test exits successfully.",
+      "human_gate": false
+    }
+  ]
+}

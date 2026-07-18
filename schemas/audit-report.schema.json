@@ -1,20 +1,118 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/M-sea-art/codex-efficiency-auditor/schemas/audit-report.schema.json",
-  "title": "Codexcavator Capability Audit v0.2",
+  "title": "Codexcavator Capability Audit v0.3",
   "type": "object",
-  "required": ["schema_version", "audit_id", "target_type", "goal", "mutation_status", "capabilities", "upgrades"],
+  "required": [
+    "schema_version",
+    "audit_id",
+    "target_type",
+    "goal",
+    "operation_contract",
+    "scope_conformance",
+    "audit_mutation_status",
+    "run_evidence",
+    "outcomes",
+    "efficiency_metrics",
+    "capabilities",
+    "upgrades"
+  ],
   "properties": {
-    "schema_version": { "const": "0.2" },
-    "audit_id": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+    "schema_version": { "const": "0.3" },
+    "audit_id": { "$ref": "#/$defs/nonemptyString" },
     "target_type": {
       "type": "string",
       "enum": ["thread", "repo", "worktree", "pr", "agent_run", "transcript"]
     },
-    "goal": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
-    "mutation_status": {
+    "goal": { "$ref": "#/$defs/nonemptyString" },
+    "operation_contract": {
+      "type": "object",
+      "required": ["task_mode", "local_mutation_scope", "external_actions", "constraints", "human_gates"],
+      "properties": {
+        "task_mode": {
+          "type": "string",
+          "enum": ["answer", "plan", "diagnose", "implement", "review", "monitor", "unknown"]
+        },
+        "local_mutation_scope": {
+          "type": "string",
+          "enum": ["none", "project", "host", "unknown"]
+        },
+        "external_actions": {
+          "type": "string",
+          "enum": ["forbidden", "human_gate", "authorized", "unknown"]
+        },
+        "constraints": { "$ref": "#/$defs/stringArray" },
+        "human_gates": { "$ref": "#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "scope_conformance": {
+      "type": "object",
+      "required": ["status", "evidence"],
+      "properties": {
+        "status": { "type": "string", "enum": ["PASS", "FAIL", "UNKNOWN"] },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } }
+      },
+      "additionalProperties": false
+    },
+    "audit_mutation_status": {
       "type": "string",
       "enum": ["NO_FILES_MODIFIED_BY_AUDIT", "MUTATION_DETECTED", "UNKNOWN"]
+    },
+    "run_evidence": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "run-evidence.schema.json" }
+      ]
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "required", "claim_scope", "status", "evidence"],
+        "properties": {
+          "id": { "$ref": "#/$defs/nonemptyString" },
+          "description": { "$ref": "#/$defs/nonemptyString" },
+          "required": { "type": "boolean" },
+          "claim_scope": {
+            "type": "string",
+            "enum": ["functional", "visual", "domain", "integrity", "human_acceptance", "efficiency", "other"]
+          },
+          "status": { "type": "string", "enum": ["PASS", "FAIL", "PARTIAL", "NOT_EVALUATED"] },
+          "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "efficiency_metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "direction", "threshold"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "total_duration_ms",
+              "average_time_to_first_token_ms",
+              "total_tokens",
+              "failed_tool_calls",
+              "turns_aborted"
+            ]
+          },
+          "direction": { "type": "string", "enum": ["lower", "higher"] },
+          "threshold": {
+            "type": "object",
+            "required": ["kind", "value"],
+            "properties": {
+              "kind": { "type": "string", "enum": ["absolute", "relative"] },
+              "value": { "type": "number", "minimum": 0 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
     },
     "capabilities": {
       "type": "array",
@@ -23,32 +121,16 @@
         "type": "object",
         "required": ["name", "relevance", "availability", "discovered", "usage", "impact", "evidence"],
         "properties": {
-          "name": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+          "name": { "$ref": "#/$defs/nonemptyString" },
           "relevance": { "type": "string", "enum": ["required", "useful", "irrelevant"] },
-          "availability": { "type": "string", "enum": ["available", "unavailable", "unknown"] },
+          "availability": {
+            "type": "string",
+            "enum": ["available_in_session", "installed_not_exposed", "disabled", "unavailable", "unknown"]
+          },
           "discovered": { "type": "boolean" },
           "usage": { "type": "string", "enum": ["used", "unused", "misused", "not_applicable"] },
           "impact": { "type": "integer", "minimum": 1, "maximum": 5 },
-          "evidence": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["kind", "status", "summary"],
-              "properties": {
-                "kind": {
-                  "type": "string",
-                  "enum": ["command", "test", "build", "ci", "git", "trace", "runtime", "screenshot", "artifact", "human", "other"]
-                },
-                "status": {
-                  "type": "string",
-                  "enum": ["PASS", "FAIL", "PARTIAL", "NOT_EVALUATED"]
-                },
-                "summary": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
-                "locator": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" }
-              },
-              "additionalProperties": false
-            }
-          }
+          "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } }
         },
         "additionalProperties": false
       }
@@ -58,30 +140,84 @@
       "maxItems": 3,
       "items": {
         "type": "object",
-        "required": ["capability", "gap", "action", "expected_gain", "verification", "human_gate"],
+        "required": [
+          "capability",
+          "gap",
+          "route",
+          "action",
+          "expected_gain",
+          "smallest_useful_check",
+          "human_gate"
+        ],
         "properties": {
-          "capability": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+          "capability": { "$ref": "#/$defs/nonemptyString" },
           "gap": {
             "type": "string",
             "enum": ["UNAVAILABLE", "UNDISCOVERED", "UNUSED", "MISUSED", "UNVERIFIED"]
           },
-          "action": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
-          "expected_gain": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
-          "verification": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+          "route": {
+            "type": "string",
+            "enum": ["REUSE", "NATIVE", "INSTALLED", "BUILD", "DISCOVER_FIRST", "HUMAN_GATE"]
+          },
+          "action": { "$ref": "#/$defs/nonemptyString" },
+          "expected_gain": { "$ref": "#/$defs/nonemptyString" },
+          "smallest_useful_check": { "$ref": "#/$defs/nonemptyString" },
           "human_gate": { "type": "boolean" },
-          "human_gate_reason": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" }
+          "human_gate_reason": { "$ref": "#/$defs/nonemptyString" }
         },
         "allOf": [
           {
-            "if": {
-              "properties": { "human_gate": { "const": true } },
-              "required": ["human_gate"]
-            },
+            "if": { "properties": { "human_gate": { "const": true } }, "required": ["human_gate"] },
             "then": { "required": ["human_gate_reason"] }
+          },
+          {
+            "if": { "properties": { "route": { "const": "HUMAN_GATE" } }, "required": ["route"] },
+            "then": { "properties": { "human_gate": { "const": true } } }
           }
         ],
         "additionalProperties": false
       }
+    },
+    "migration": {
+      "type": "object",
+      "required": ["from_schema", "notes"],
+      "properties": {
+        "from_schema": { "$ref": "#/$defs/nonemptyString" },
+        "notes": { "$ref": "#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "nonemptyString": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+    "stringArray": { "type": "array", "items": { "$ref": "#/$defs/nonemptyString" } },
+    "evidence": {
+      "type": "object",
+      "required": ["kind", "status", "claim_scope", "summary"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["command", "test", "build", "ci", "git", "trace", "runtime", "screenshot", "artifact", "human", "other"]
+        },
+        "status": { "type": "string", "enum": ["PASS", "FAIL", "PARTIAL", "NOT_EVALUATED"] },
+        "claim_scope": {
+          "type": "string",
+          "enum": [
+            "capability_use",
+            "functional",
+            "visual",
+            "domain",
+            "integrity",
+            "human_acceptance",
+            "authorization",
+            "efficiency",
+            "other"
+          ]
+        },
+        "summary": { "$ref": "#/$defs/nonemptyString" },
+        "locator": { "$ref": "#/$defs/nonemptyString" }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
