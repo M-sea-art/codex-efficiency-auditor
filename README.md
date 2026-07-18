@@ -1,8 +1,8 @@
 <div align="center">
-  <img width="100%" alt="Codexcavator — Codex capability miner" src="https://github.com/user-attachments/assets/38c0a4c0-b754-4929-84d2-ce09043cc984" />
+  <img width="100%" alt="Four labeled evidence layers—operation contract, run evidence, capability use, and outcome gain—connected to a verified result" src="assets/codexcavator-evidence-loop-hero-v2.png" />
   <h1>Codexcavator</h1>
   <h3>Evidence-driven capability and execution-efficiency audits for Codex</h3>
-  <p>Find the capability that matters, stay inside the authorized scope, and prove that the upgrade improved the task.</p>
+  <p><strong>Discover the right capability. Keep the authorized boundary. Prove the gain.</strong></p>
   <p>
     <a href="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml"><img alt="Codexcavator Audit" src="https://github.com/M-sea-art/codex-efficiency-auditor/actions/workflows/codexcavator-audit.yml/badge.svg" /></a>
     <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
@@ -10,11 +10,11 @@
   <p><a href="#choose-your-path">English</a> · <a href="#选择你的路径">中文</a></p>
 </div>
 
-> CI checks the code. Codexcavator checks whether Codex used the right capability, respected the operation contract, and produced measurable gain.
+> **One job:** turn a Codex run into a decision you can trust—without mistaking tool volume for evidence.
 
-Codexcavator is an unofficial open-source Codex Skill and deterministic audit toolkit. It audits a thread, repository, worktree, pull request, transcript, or agent run for task-relevant capability that is unavailable, undiscovered, unused, misused, or unverified.
+Codexcavator is an unofficial open-source Codex Skill and deterministic audit toolkit. It checks whether a thread, repository, worktree, pull request, transcript, or agent run used the task-relevant capability, stayed inside the operation contract, and earned its claim of improvement.
 
-It does not reward tool volume. It does not turn an inventory into an install list. If the current Codex stack already does the job, the correct result is `NO_CAPABILITY_UPGRADE_NEEDED`.
+It does not reward tool volume or turn inventory into an install list. If the current Codex stack already does the job, the correct result is `NO_CAPABILITY_UPGRADE_NEEDED`.
 
 ## Choose Your Path
 
@@ -240,7 +240,7 @@ No stable tag is published until CI, migration, privacy, schema, example, and re
 
 ## 中文简介
 
-Codexcavator（Codex 挖掘机）不是让 Codex 使用更多工具，而是判断当前任务真正需要什么能力、该能力是否在本次会话可用、是否在授权范围内正确使用，以及升级后任务结果或成本是否真的改善。
+Codexcavator（Codex 挖掘机）不是让 Codex 使用更多工具，而是把一次执行变成可信决策：先找出当前任务真正需要的能力，再守住授权边界，最后用结果或成本改善证明升级值得发生。
 
 ### 选择你的路径
 
