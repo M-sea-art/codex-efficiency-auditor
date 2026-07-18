@@ -35,6 +35,15 @@ def test_first_success_routes() -> None:
         assert error_code in readme, error_code
 
 
+def test_readme_hero_is_local_and_accessible() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    asset = ROOT / "assets" / "codexcavator-evidence-loop-hero-v2.png"
+    assert 'alt="Four labeled evidence layers—operation contract, run evidence, capability use, and outcome gain—connected to a verified result"' in readme
+    assert 'src="assets/codexcavator-evidence-loop-hero-v2.png"' in readme
+    assert "github.com/user-attachments/assets/38c0a4c0-b754-4929-84d2-ce09043cc984" not in readme
+    assert asset.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+
+
 def test_contract_docs_are_current() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
@@ -59,6 +68,7 @@ def test_quickstart_fixture_is_sanitized() -> None:
 
 def main() -> int:
     test_first_success_routes()
+    test_readme_hero_is_local_and_accessible()
     test_contract_docs_are_current()
     test_quickstart_fixture_is_sanitized()
     print("documentation UX and contract-drift checks passed")
