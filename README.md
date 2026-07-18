@@ -21,6 +21,16 @@ codex-efficiency-auditor is an unofficial open-source Codex Skill and determinis
 
 It does not reward tool volume or turn inventory into an install list. If the current Codex stack already does the job, the correct result is `NO_CAPABILITY_UPGRADE_NEEDED`.
 
+## Why You Might Need This Skill / 为什么你可能需要这个技能
+
+**Plain English.** Codex can look busy and still miss the job. It may use a tool nobody asked for, miss a useful tool that is already available, change files when you only asked for an answer, or call an upgrade successful because a test passed—even though the task result or cost did not improve. A long transcript, a long tool list, or a green check does not tell you which of those happened.
+
+`codex-efficiency-auditor` asks the small set of questions that makes a run trustworthy: What is allowed? What capability actually matters? Was it available and used correctly? Did the result get better, or did the cost go down? If nothing needs upgrading, it says that clearly too.
+
+**大白话中文。** Codex 可能看起来很忙：调了很多工具、跑了一堆测试、写了很长的报告，但任务还是没有变好。它也可能该用的没用、不该改的改了，或者把“工具用得更多”说成“效果变好了”。光看工具数量、绿勾和对话记录，根本看不出来。
+
+`codex-efficiency-auditor` 就是专门问清这几件事：这次允许做什么？真正该用哪个能力？它有没有被正确使用？最后任务结果有没有变好，或者时间和成本有没有下降？如果根本不需要升级，它也会明确说“不需要”。
+
 ## Choose Your Path
 
 ### Use the installed Codex Skill
@@ -77,9 +87,9 @@ Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
 Scope conformance: PASS | FAIL | UNKNOWN
 ```
 
-## Why This Exists
+## How It Makes That Decision / 它怎么判断
 
-Capability availability does not guarantee effective use. A Skill, Plugin, MCP server, CLI, browser, test path, or subagent workflow may be installed but not exposed in the current session, discovered too late, used outside the authorized scope, or credited without evidence.
+The technical version is simple: availability does not guarantee effective use. A Skill, Plugin, MCP server, CLI, browser, test path, or subagent workflow may be installed but not exposed in the current session, discovered too late, used outside the authorized scope, or credited without evidence.
 
 Earlier audit contracts could also prove only that capability utilization improved. That is not enough: a busier agent is not necessarily a better agent.
 
