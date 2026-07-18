@@ -37,7 +37,17 @@ jobs:
           python scripts/test_score_audit.py
           python scripts/test_run_evidence.py
           python scripts/test_migrate_audit.py
+          python scripts/test_cli_ux.py
+          python scripts/test_docs_ux.py
           python scripts/test_examples.py
+
+      - name: Execute documented first-success paths
+        run: |
+          python scripts/codexcavator.py audit examples/real-world/read-only-state-isolation/audit.json
+          python scripts/codexcavator.py collect --input examples/quickstart/minimal-rollout.jsonl
+          python scripts/codexcavator.py compare --before examples/real-world/registered-disabled-fresh-process/before.json --after examples/real-world/registered-disabled-fresh-process/after.json
+          python scripts/codexcavator.py migrate --input examples/migration/v0.2-audit.json
+          python scripts/codexcavator.py inventory --codex-home examples/quickstart --context "first success" --json
 
       - name: Analyze capability audit examples
         run: |

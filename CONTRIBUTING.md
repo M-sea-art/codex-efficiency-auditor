@@ -21,7 +21,11 @@ python scripts/test_capability_scan.py
 python scripts/test_score_audit.py
 python scripts/test_run_evidence.py
 python scripts/test_migrate_audit.py
+python scripts/test_cli_ux.py
+python scripts/test_docs_ux.py
 python scripts/test_examples.py
+python scripts/codexcavator.py audit examples/real-world/read-only-state-isolation/audit.json --json
+python scripts/codexcavator.py collect --input examples/quickstart/minimal-rollout.jsonl
 python scripts/score_audit.py --json examples/run-54-single-thread/audit-scores.json
 python scripts/score_audit.py --json examples/run-82-worktree-review/audit-scores.json
 git diff --check
