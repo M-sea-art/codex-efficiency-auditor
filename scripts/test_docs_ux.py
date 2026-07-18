@@ -59,6 +59,9 @@ def test_public_name_uses_canonical_identifier_and_chinese_display_name() -> Non
         assert "Codex 挖掘机" in document.read_text(encoding="utf-8"), document
     workflow = (ROOT / ".github" / "workflows" / "codexcavator-audit.yml").read_text(encoding="utf-8")
     assert workflow.startswith("name: codex-efficiency-auditor Audit\n")
+    issue_template = (ROOT / ".github" / "ISSUE_TEMPLATE" / "adoption.yml").read_text(encoding="utf-8")
+    assert "Codexcavator" not in issue_template
+    assert "codex-efficiency-auditor (Codex 挖掘机)" in issue_template
 
 
 def test_contract_docs_are_current() -> None:

@@ -1,5 +1,5 @@
 name: Real-world adoption report
-description: Share a reproducible example of Codexcavator used on a real Codex task.
+description: Share a reproducible example of codex-efficiency-auditor (Codex 挖掘机) used on a real Codex task.
 title: "[Adoption] "
 labels:
   - adoption
