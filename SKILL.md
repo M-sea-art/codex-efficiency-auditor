@@ -1,126 +1,131 @@
 ---
 name: codex-efficiency-auditor
-description: "Codexcavator is a Codex capability miner. Use it to audit a Codex thread, repository, worktree, pull request, transcript, or agent run; identify task-relevant Codex capabilities that are unavailable, undiscovered, unused, misused, or unverified; rank at most three evidence-backed upgrades; and verify whether the upgrades improved capability utilization. Trigger for Codex capability audits, Codex efficiency reviews, underused tools or plugins, project capability scans, weak validation, repeated agent failure, or requests to improve how Codex works."
+description: "Codexcavator is an evidence-driven Codex capability and execution-efficiency auditor. Use it to audit a Codex thread, repository, worktree, pull request, transcript, or agent run; collect strict metadata-only run evidence; distinguish session availability from installed or disabled capability; identify unavailable, undiscovered, unused, misused, or unverified capability; choose the shortest safe upgrade route; and prove whether task outcomes or declared efficiency metrics improved. Trigger for Codex capability audits, Codex efficiency reviews, underused tools or plugins, weak validation, repeated failure, scope drift, or requests to improve how Codex works."
 ---
 
 # Codexcavator
 
 ## Purpose
 
-Mine underused Codex capability. Determine which capabilities matter to the current goal, whether Codex used them effectively, and what smallest evidence-backed upgrade would improve the run.
+Determine which Codex capabilities materially affect the current goal, whether Codex used them within the authorized scope, and what smallest evidence-backed upgrade improves the task.
 
-Do not maximize tool count. Do not recommend capabilities merely because they are installed, popular, or novel. If the current Codex stack is sufficient, return `NO_CAPABILITY_UPGRADE_NEEDED`.
+Do not maximize tool count. Do not recommend capabilities because they are installed, popular, or novel. If the current stack already satisfies the goal, return `NO_CAPABILITY_UPGRADE_NEEDED`.
 
-## Capability Mining Loop
+Codexcavator owns Codex execution quality and capability utilization. It does not replace `project-supervisor`, which owns product completion, Definition of Done, and release gates.
+
+## Default v0.3 Workflow
 
 1. **Orient**
-   - Identify the audited target and its goal, constraints, state, and acceptance criteria.
-   - Mark missing information as unknown. Do not invent evidence.
-2. **Discover**
-   - Identify only capabilities relevant to the goal.
-   - Inspect current-session tools first, then project rules, local skills, plugins, MCP servers, CLIs, and existing validation commands.
-   - Run `scripts/audit_codex_capabilities.py` for an explicit local capability inventory when local access is available.
-3. **Observe**
-   - Record whether each relevant capability was available, discovered, used correctly, and supported by evidence.
-   - Record v0.2 evidence as `{kind, status, summary, locator?}` and require at least one `PASS` item for full utilization credit.
-   - Prefer commands, logs, Git state, test output, traces, screenshots, artifacts, and tool calls over narrative claims. A screenshot proves only what is visibly shown.
-4. **Classify**
-   - Assign at most one primary gap to each relevant capability:
-     - `UNAVAILABLE`: required capability is not present.
-     - `UNDISCOVERED`: capability is present but Codex did not find it.
-     - `UNUSED`: capability is relevant and known but not used.
-     - `MISUSED`: capability was used at the wrong time, scope, or method.
-     - `UNVERIFIED`: use or benefit was claimed without sufficient evidence.
-5. **Upgrade**
-   - Rank upgrades by task impact, evidence confidence, and reuse value minus adoption cost, context cost, and risk.
-   - Recommend no more than three upgrades.
-   - Prefer using the current Codex stack better before adding an external dependency.
-   - When an external repository, library, plugin, MCP server, CLI, or workflow is considered, require evidence that it creates material net gain over the current stack.
-   - Tie every upgrade to the exact capability name and computed gap, declare `human_gate: true|false`, and keep no more than three.
-6. **Verify**
-   - Define a concrete check for every recommendation.
-   - Re-audit after the change when evidence is available.
-   - Retain an upgrade only when the relevant capability score or a required acceptance gate improves without unacceptable regression.
+   - Identify the target, goal, task mode, local mutation scope, external-action policy, constraints, Human Gates, and outcome criteria.
+   - Mark missing contract facts `unknown`; do not infer authority.
+2. **Collect**
+   - For a Codex rollout JSONL, run `scripts/collect_run_evidence.py --input <rollout.jsonl>`.
+   - The collector emits only strict metadata, hashes, tool names, counts, timing, token totals, and parse coverage. It never emits messages, reasoning, arguments, output, commands, paths, or raw IDs.
+   - Fail closed on malformed or unknown event structures. `--allow-partial` is diagnostic only and can never support `PROVEN`.
+3. **Discover**
+   - Inspect current-session tools first, then project rules, local skills, plugins, MCP servers, CLIs, and validation commands.
+   - Run `scripts/audit_codex_capabilities.py` for an explicit local inventory when local access is available.
+   - Keep these states distinct: `available_in_session`, `installed_not_exposed`, `disabled`, `unavailable`, and `unknown`.
+4. **Observe**
+   - Record v0.3 evidence as `{kind, status, claim_scope, summary, locator?}`.
+   - Only `capability_use + PASS` earns full capability-utilization credit.
+   - Keep functional, visual, domain, integrity, Human acceptance, authorization, and efficiency claims separate. A screenshot proves only visible state; an Agent cannot self-issue Human acceptance.
+5. **Classify**
+   - Assign at most one primary gap per relevant capability: `UNAVAILABLE`, `UNDISCOVERED`, `UNUSED`, `MISUSED`, or `UNVERIFIED`.
+6. **Upgrade**
+   - Rank no more than three upgrades by task impact, evidence confidence, reuse value, adoption cost, context cost, and risk.
+   - Every upgrade must name the capability and exact gap, select one route, and define one falsifiable `smallest_useful_check`.
+7. **Verify**
+   - Re-audit the same target, normalized goal, operation contract, capability declarations, outcome declarations, and efficiency-metric thresholds.
+   - Return `PROVEN` only when utilization improves, a real gap closes, and either a task outcome reaches `PASS` or a predeclared efficiency metric meets its threshold without regression.
 
-## Relevance Rule
+## Shortest Safe Upgrade Routes
 
-Score only capabilities that materially affect the current goal. Never deduct points for an irrelevant tool, absent parallelism on a tightly coupled task, or a specialized plugin outside its domain.
+Use one route per retained upgrade:
 
-Use `required`, `useful`, or `irrelevant` relevance labels. Exclude `irrelevant` capabilities from scoring and recommendations.
+- `REUSE`: use an existing project helper, command, test, workflow, or pattern.
+- `NATIVE`: use Codex, the platform, standard library, framework, or host-native capability.
+- `INSTALLED`: use an already-installed and appropriately exposed dependency, Skill, Plugin, app, MCP server, or local tool.
+- `BUILD`: make the smallest necessary new implementation after the earlier routes fail.
+- `DISCOVER_FIRST`: gather bounded evidence before choosing implementation.
+- `HUMAN_GATE`: stop before credentials, billing, destructive work, production changes, public release, external-account changes, or outbound messages.
 
-## Native Capability Rule
+No upgrade is the equivalent of `SKIP`: return `NO_CAPABILITY_UPGRADE_NEEDED` instead of manufacturing work.
 
-Treat the current Codex capability stack as the default solution. External additions must earn adoption.
+## Evidence and Comparison Rules
 
-- Prefer `NO_CAPABILITY_UPGRADE_NEEDED` when the current stack already meets the goal reliably.
-- Prefer a focused hybrid improvement over adopting an entire external system.
-- Reject additions whose expected gain does not exceed integration, maintenance, context, permission, or supply-chain cost.
-- Do not install, authenticate, publish, push, deploy, or change external state during a read-only audit.
+Use `references/audit-rubric.md`, `schemas/audit-report.schema.json`, and `scripts/score_audit.py`.
 
-## Evidence and Scoring
+Comparison results:
 
-Use `references/audit-rubric.md` and `scripts/score_audit.py` for structured capability-utilization scoring.
+- `PROVEN`: utilization and a real gap improve, plus outcome or declared cost improves without regression.
+- `UTILIZATION_IMPROVED_OUTCOME_UNPROVEN`: capability use improved, but task benefit did not.
+- `REGRESSION`: capability score, required outcome, declared metric, authorization scope, or audit mutation safety regressed.
+- `INCONCLUSIVE`: declarations differ, scope is unknown, or run evidence is missing or partial.
+- `NO_CHANGE`: comparable evidence shows no effective improvement.
 
-High-quality evidence includes:
-
-- an actual tool call or command and its output;
-- a test, build, CI, trace, screenshot, or runtime result;
-- Git status, diff, commit, or pull-request evidence;
-- an artifact whose provenance is clear;
-- a before-and-after result tied to the same goal and acceptance criteria.
-
-Narrative claims without corroborating evidence classify as `UNVERIFIED`.
-
-The scorer validates the v0.2 declaration structure and internal consistency; it does not replace source investigation or prove that a submitted evidence summary is truthful.
+The scorer validates declarations and internal consistency. It does not independently prove that a submitted summary is truthful.
 
 ## Output Contract
 
 Lead with:
 
 ```text
-Schema version: 0.2
+Schema version: 0.3
 Codex Capability Utilization: NN/100
 Decision: NO_CAPABILITY_UPGRADE_NEEDED | MINOR_CAPABILITY_GAPS | CAPABILITY_UPGRADE_RECOMMENDED | CAPABILITY_REPLAN_NEEDED | NEEDS_HUMAN_DECISION
 Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
+Scope conformance: PASS | FAIL | UNKNOWN
 ```
 
-Then report:
+Then report only:
 
-1. task-relevant capabilities and evidence;
+1. task-relevant capabilities and scoped evidence;
 2. classified gaps;
-3. at most three upgrades, each with expected gain and verification;
-4. one concrete next action.
+3. at most three route-labeled upgrades with one smallest useful check each;
+4. outcome or efficiency verification status;
+5. one concrete next action.
 
-Do not produce generic plugin lists, broad transformation roadmaps, or multiple parallel plans unless the user explicitly asks for full inventory or long-form analysis.
+Do not produce generic plugin lists or broad transformation roadmaps unless the user explicitly asks for a complete inventory.
+
+## CLI
+
+```text
+python scripts/collect_run_evidence.py --input <rollout.jsonl> [--output <run-evidence.json>]
+python scripts/migrate_audit.py --input <v0.2.json> [--output <v0.3.json>]
+python scripts/score_audit.py --json <audit-v0.3.json>
+python scripts/score_audit.py --baseline <before-v0.3.json> --json <after-v0.3.json>
+```
+
+Migrated v0.2 audits preserve their individual score and gaps, but keep scope and run evidence unknown. They cannot inherit a v0.2 `PROVEN` comparison without fresh outcome or efficiency evidence.
 
 ## Read-Only Safety
 
-For a read-only, final, commit, pull-request, or periodic audit, load `references/read-only-audit-guard.md`. Report whether the audit modified files.
+For a read-only, final, commit, pull-request, or periodic audit, load `references/read-only-audit-guard.md`.
 
-Pause at `NEEDS_HUMAN_DECISION` before credentials, billing, destructive work, production changes, public release, external account changes, or outbound comments.
+- Runtime metadata cannot by itself prove that files were unchanged; require Git or protected-file integrity evidence for `scope_conformance: PASS`.
+- If genuine read-only isolation is unavailable, fail closed instead of treating `danger-full-access` as read-only.
+- Do not install, authenticate, publish, push, deploy, comment externally, or modify project files during a read-only audit.
 
 ## Conditional Strategies
 
-Load these only after the mining loop identifies the matching capability gap:
+Load only when the matching gap exists:
 
 - unclear goal or acceptance criteria: `references/goal-mode-contract-template.md`
-- weak task ownership or useful independent work: `references/task-card-template.md` and `references/multi-worktree-orchestration-template.md`
-- stale or repeated failure: `references/stall-and-pivot-rules.md`
-- measurable candidate comparison: `references/evo-style-experiment-lane.md`
+- weak ownership or genuinely independent work: `references/task-card-template.md` and `references/multi-worktree-orchestration-template.md`
+- repeated failure: `references/stall-and-pivot-rules.md`
+- measurable comparison: `references/evo-style-experiment-lane.md`
 - weak completion evidence: `references/goal-mode-evidence-bundle.md` and `references/goal-mode-done-gate.md`
 - handoff failure: `references/goal-mode-handoff-matrix.md`
 - long or resumed run: `references/task-state-pack-template.md`
-- suspicious final claim: `references/agent-run-smells.md`
+- suspicious completion claim: `references/agent-run-smells.md`
 
 These are remediation strategies, not separate product modes.
 
-Codexcavator does not replace `project-supervisor`: the supervisor owns product completion and long-running execution truth, while Codexcavator audits Codex capability use for the current goal.
-
 ## Stop Rules
 
-- Stop discovery when the current Codex stack already satisfies the goal and evidence is sufficient.
+- Stop discovery when the current stack satisfies the goal and evidence is sufficient.
 - Do not recommend more than three upgrades.
-- Do not recommend parallelism when work is small, ambiguous, or tightly coupled.
-- Do not recommend a capability without explaining its task relevance and verification.
-- Do not confuse unavailable evidence with failed implementation.
-- Do not mark an upgrade successful without post-change evidence.
+- Do not recommend parallelism for small, ambiguous, or tightly coupled work.
+- Do not confuse missing evidence with failed implementation.
+- Do not mark utilization improvement as task improvement without outcome or efficiency proof.

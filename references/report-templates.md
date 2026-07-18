@@ -49,7 +49,7 @@ Interpretation:
 ## Upgrade Verification
 
 ```markdown
-Capability Upgrade Verification: PROVEN | NOT_PROVEN | REGRESSION | INCONCLUSIVE
+Capability Upgrade Verification: PROVEN | UTILIZATION_IMPROVED_OUTCOME_UNPROVEN | REGRESSION | INCONCLUSIVE | NO_CHANGE
 
 Goal and acceptance criteria:
 - ...

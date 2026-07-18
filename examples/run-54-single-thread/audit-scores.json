@@ -1,14 +1,28 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "audit_id": "run-54-single-thread",
   "target_type": "agent_run",
   "goal": "Complete the requested code change with validation evidence.",
-  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "operation_contract": {
+    "task_mode": "unknown",
+    "local_mutation_scope": "unknown",
+    "external_actions": "unknown",
+    "constraints": [],
+    "human_gates": []
+  },
+  "scope_conformance": {
+    "status": "UNKNOWN",
+    "evidence": []
+  },
+  "audit_mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "run_evidence": null,
+  "outcomes": [],
+  "efficiency_metrics": [],
   "capabilities": [
     {
       "name": "shell",
       "relevance": "required",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": true,
       "usage": "used",
       "impact": 5,
@@ -16,14 +30,15 @@
         {
           "kind": "command",
           "status": "PASS",
-          "summary": "The implementation command completed successfully."
+          "summary": "The implementation command completed successfully.",
+          "claim_scope": "capability_use"
         }
       ]
     },
     {
       "name": "project tests",
       "relevance": "required",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": true,
       "usage": "used",
       "impact": 5,
@@ -32,7 +47,7 @@
     {
       "name": "Git evidence",
       "relevance": "useful",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": false,
       "usage": "unused",
       "impact": 3,
@@ -43,18 +58,28 @@
     {
       "capability": "project tests",
       "gap": "UNVERIFIED",
+      "route": "DISCOVER_FIRST",
       "action": "Capture the test command and result.",
       "expected_gain": "Verifiable correctness claim.",
-      "verification": "The test exits successfully and its output is included.",
+      "smallest_useful_check": "The test exits successfully and its output is included.",
       "human_gate": false
     },
     {
       "capability": "Git evidence",
       "gap": "UNDISCOVERED",
+      "route": "DISCOVER_FIRST",
       "action": "Inspect branch, status, and diff before handoff.",
       "expected_gain": "Auditable change scope.",
-      "verification": "Git evidence matches the reported files.",
+      "smallest_useful_check": "Git evidence matches the reported files.",
       "human_gate": false
     }
-  ]
+  ],
+  "migration": {
+    "from_schema": "0.2",
+    "notes": [
+      "Operation contract and scope conformance were not present in v0.2 and remain unknown.",
+      "Run evidence, task outcomes, and efficiency metrics require fresh evidence before comparison can be PROVEN.",
+      "Non-Human-Gate upgrade routes were conservatively set to DISCOVER_FIRST."
+    ]
+  }
 }

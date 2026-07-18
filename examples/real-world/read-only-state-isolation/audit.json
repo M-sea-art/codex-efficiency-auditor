@@ -1,14 +1,53 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "audit_id": "read-only-state-isolation",
   "target_type": "worktree",
   "goal": "Audit state through an isolated temporary copy without changing protected files.",
-  "mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "operation_contract": {
+    "task_mode": "review",
+    "local_mutation_scope": "none",
+    "external_actions": "forbidden",
+    "constraints": ["Do not change protected project files."],
+    "human_gates": []
+  },
+  "scope_conformance": {
+    "status": "PASS",
+    "evidence": [
+      {
+        "kind": "artifact",
+        "status": "PASS",
+        "claim_scope": "authorization",
+        "summary": "Pre-audit and post-audit protected-file digests matched.",
+        "locator": "sanitized integrity comparison"
+      }
+    ]
+  },
+  "audit_mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "run_evidence": null,
+  "outcomes": [
+    {
+      "id": "protected-file-integrity",
+      "description": "Protected files remain byte-identical after the read-only audit.",
+      "required": true,
+      "claim_scope": "integrity",
+      "status": "PASS",
+      "evidence": [
+        {
+          "kind": "artifact",
+          "status": "PASS",
+          "claim_scope": "integrity",
+          "summary": "Every protected file retained its pre-audit SHA-256 digest.",
+          "locator": "sanitized integrity comparison"
+        }
+      ]
+    }
+  ],
+  "efficiency_metrics": [],
   "capabilities": [
     {
       "name": "temporary state isolation",
       "relevance": "required",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": true,
       "usage": "used",
       "impact": 5,
@@ -16,6 +55,7 @@
         {
           "kind": "artifact",
           "status": "PASS",
+          "claim_scope": "capability_use",
           "summary": "Inspection ran against a disposable state copy that was removed afterward.",
           "locator": "sanitized temporary-state manifest"
         }
@@ -24,7 +64,7 @@
     {
       "name": "protected file integrity",
       "relevance": "required",
-      "availability": "available",
+      "availability": "available_in_session",
       "discovered": true,
       "usage": "used",
       "impact": 5,
@@ -32,6 +72,7 @@
         {
           "kind": "command",
           "status": "PASS",
+          "claim_scope": "capability_use",
           "summary": "Pre-audit and post-audit SHA-256 values matched for every protected file.",
           "locator": "sanitized integrity comparison"
         }
