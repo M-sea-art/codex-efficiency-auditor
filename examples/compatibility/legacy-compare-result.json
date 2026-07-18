@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.3",
+  "capability_upgrade_verification": "PROVEN",
+  "baseline_score": 0,
+  "candidate_score": 100,
+  "score_delta": 100,
+  "baseline_gaps": 1,
+  "candidate_gaps": 0,
+  "resolved_gap_count": 1,
+  "required_gap_regression": false,
+  "required_outcome_regression": false,
+  "outcome_improvements": [
+    "fresh-process-capability-call"
+  ],
+  "metric_improvements": [],
+  "metric_regressions": [],
+  "comparable_schema": true,
+  "comparable_target_type": true,
+  "comparable_goal": true,
+  "comparable_operation_contract": true,
+  "comparable_capabilities": true,
+  "comparable_outcomes": true,
+  "comparable_metrics": true,
+  "run_evidence_ready": true,
+  "audit_mutation_ready": true
+}

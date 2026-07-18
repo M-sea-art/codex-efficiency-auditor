@@ -4,6 +4,13 @@ All notable user-visible changes will be documented here. This project has not y
 
 ## Unreleased
 
+### v0.3.1 first-success UX
+
+- Added one non-breaking `codexcavator.py` entrypoint for audit, compare, collection, migration, and inventory journeys.
+- Added privacy-bounded error codes, safe recovery commands, visible warnings, comparison blockers, and exactly one next action in human output.
+- Added Codex-first and CLI-first quickstarts, a sanitized rollout fixture, compatibility snapshots, and documentation drift checks.
+- Preserved the v0.3 JSON Schema, proof semantics, original script entrypoints, and machine-readable success output.
+
 ### v0.3 evidence loop
 
 - Added strict metadata-only Codex rollout JSONL collection with fail-closed parsing, source and identifier hashes, timing/token/tool aggregates, and no messages, reasoning, arguments, outputs, commands, paths, or raw IDs.

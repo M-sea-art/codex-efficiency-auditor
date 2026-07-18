@@ -1,0 +1,6 @@
+{"type":"session_meta","payload":{"id":"quickstart-session","cli_version":"codex-cli fixture","originator":"quickstart"}}
+{"type":"turn_context","payload":{"turn_id":"quickstart-turn","collaboration_mode":{"kind":"default"},"approval_policy":"never","sandbox_policy":{"type":"read-only"},"multi_agent_mode":"disabled"}}
+{"type":"event_msg","payload":{"type":"task_started","turn_id":"quickstart-turn"}}
+{"type":"response_item","payload":{"type":"custom_tool_call","call_id":"quickstart-call","name":"exec","status":"completed","input":"fixture input is discarded"}}
+{"type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":100,"cached_input_tokens":20,"output_tokens":40,"reasoning_output_tokens":10,"total_tokens":140}}}}
+{"type":"event_msg","payload":{"type":"task_complete","turn_id":"quickstart-turn","duration_ms":1200,"time_to_first_token_ms":100}}
