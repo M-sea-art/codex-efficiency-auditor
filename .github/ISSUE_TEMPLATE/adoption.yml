@@ -39,7 +39,7 @@ body:
     id: outcome
     attributes:
       label: Outcome
-      description: What changed after the audit? Say clearly if the result was inconclusive.
+      description: What task outcome or predeclared efficiency metric changed after the audit? Say clearly if utilization improved but outcome remained unproven.
     validations:
       required: true
   - type: checkboxes

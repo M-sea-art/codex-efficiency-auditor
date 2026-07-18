@@ -82,6 +82,7 @@ STATUS_DESCRIPTIONS = {
     "enabled": "Explicitly enabled in local config; current-session callable exposure is not confirmed.",
     "available-in-session": "Exposed in the current Codex session as a skill, app, or MCP tool.",
     "installed-not-exposed": "Detected locally in config/cache/skills, but current-session callable exposure is not confirmed.",
+    "disabled": "Explicitly disabled in local config and not callable in the current session.",
     "missing-or-unknown": "Not detected locally, or only inferable from project needs.",
 }
 
@@ -182,7 +183,13 @@ def _add_capability(items: dict[str, Capability], capability: Capability) -> Non
     if existing is None:
         items[key] = capability
         return
-    status_rank = {"available-in-session": 3, "enabled": 2, "installed-not-exposed": 1, "missing-or-unknown": 0}
+    status_rank = {
+        "available-in-session": 4,
+        "enabled": 3,
+        "installed-not-exposed": 2,
+        "disabled": 1,
+        "missing-or-unknown": 0,
+    }
     if status_rank.get(capability.status, 0) > status_rank.get(existing.status, 0):
         existing.status = capability.status
         existing.source = capability.source
@@ -204,8 +211,8 @@ def _scan_config(codex_home: Path, items: dict[str, Capability], config_data: di
     plugins = config_data.get("plugins", {})
     if isinstance(plugins, dict):
         for name, value in plugins.items():
-            enabled = isinstance(value, dict) and value.get("enabled") is True
-            status = "enabled" if enabled else "installed-not-exposed"
+            enabled_value = value.get("enabled") if isinstance(value, dict) else None
+            status = "enabled" if enabled_value is True else "disabled" if enabled_value is False else "installed-not-exposed"
             _add_capability(
                 items,
                 Capability(
@@ -229,7 +236,7 @@ def _scan_config(codex_home: Path, items: dict[str, Capability], config_data: di
                     name=str(name),
                     kind="mcp",
                     source="config.toml",
-                    status="installed-not-exposed" if disabled else "enabled",
+                    status="disabled" if disabled else "enabled",
                     confidence="confirmed",
                     mention=f"mcp:{name}",
                     risk=_risk_for(str(name)),
@@ -496,7 +503,13 @@ def _rank(items: list[Capability], context: str = "") -> list[Capability]:
         item_tokens = _search_tokens(searchable)
         exact_matches = len(context_tokens & item_tokens)
         substring_matches = sum(1 for token in context_tokens if token in searchable)
-        status_bonus = {"available-in-session": 3, "enabled": 2, "installed-not-exposed": 1, "missing-or-unknown": 0}.get(item.status, 0)
+        status_bonus = {
+            "available-in-session": 4,
+            "enabled": 3,
+            "installed-not-exposed": 2,
+            "disabled": 1,
+            "missing-or-unknown": 0,
+        }.get(item.status, 0)
         return (-exact_matches, -substring_matches, -status_bonus, item.name.casefold())
 
     return sorted(items, key=score)
@@ -588,7 +601,7 @@ def _markdown(items: list[Capability], full: bool, context: str) -> str:
         "Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT",
         "Scope: one-time read-only capability inventory",
         f"Scan basis: script-run; context={context or 'generic'}",
-        "Status note: `installed-not-exposed` means detected locally, but current-session callable exposure is not confirmed.",
+        "Status note: `installed-not-exposed` is detected but not session-proven; `disabled` is explicitly off.",
         "",
         "Capabilities most relevant to the supplied context:",
         "| Rank | Capability | Status | Best for | Useful mention | Risk | Notes |",

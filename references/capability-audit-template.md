@@ -22,25 +22,33 @@ Use this template for a focused Codex capability audit. Load `references/capabil
 ## Focused Report
 
 ```markdown
-Schema version: 0.2
+Schema version: 0.3
 Codex Capability Utilization: NN/100
 Decision: NO_CAPABILITY_UPGRADE_NEEDED | MINOR_CAPABILITY_GAPS | CAPABILITY_UPGRADE_RECOMMENDED | CAPABILITY_REPLAN_NEEDED | NEEDS_HUMAN_DECISION
 Audit mutation status: NO_FILES_MODIFIED_BY_AUDIT | MUTATION_DETECTED | UNKNOWN
+Scope conformance: PASS | FAIL | UNKNOWN
 
 Goal:
 - ...
 
+Operation contract:
+- Task mode: answer / plan / diagnose / implement / review / monitor / unknown
+- Local mutation scope: none / project / host / unknown
+- External actions: forbidden / human_gate / authorized / unknown
+- Constraints and Human Gates: ...
+
 Task-relevant capabilities:
 | Capability | Relevance | Availability | Usage | Evidence | Gap |
 |---|---|---|---|---|---|
-|  | required / useful | available / unavailable / unknown | used / unused / misused / not_applicable |  | UNAVAILABLE / UNDISCOVERED / UNUSED / MISUSED / UNVERIFIED / none |
+|  | required / useful | available_in_session / installed_not_exposed / disabled / unavailable / unknown | used / unused / misused / not_applicable | scoped PASS/FAIL/PARTIAL/NOT_EVALUATED | UNAVAILABLE / UNDISCOVERED / UNUSED / MISUSED / UNVERIFIED / none |
 
 Highest-leverage upgrades:
 1. Capability:
    - Gap:
+   - Route: REUSE / NATIVE / INSTALLED / BUILD / DISCOVER_FIRST / HUMAN_GATE
    - Action:
    - Expected gain:
-   - Verification:
+   - Smallest useful check:
    - Human Gate: true / false
    - Human Gate reason: required when true
 
@@ -68,4 +76,4 @@ Create JSON conforming to `schemas/audit-report.schema.json`, then run:
 python scripts/score_audit.py --json <audit.json>
 ```
 
-Every evidence item must contain `kind`, `status`, and a non-empty `summary`; use `locator` for a relative path, command, public URL, or other reproducible location. Do not use a bare string claim as evidence.
+Every evidence item must contain `kind`, `status`, `claim_scope`, and a non-empty `summary`; use `locator` for a reproducible location. Do not use a bare string claim as evidence. For a rollout JSONL, collect strict metadata with `scripts/collect_run_evidence.py` before scoring.

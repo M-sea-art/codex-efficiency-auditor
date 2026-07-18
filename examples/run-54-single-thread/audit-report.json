@@ -1,8 +1,10 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "audit_id": "run-54-single-thread",
   "capability_utilization_score": 53,
   "decision": "CAPABILITY_UPGRADE_RECOMMENDED",
+  "audit_mutation_status": "NO_FILES_MODIFIED_BY_AUDIT",
+  "scope_conformance": "UNKNOWN",
   "relevant_capability_count": 3,
   "gaps": [
     {
@@ -24,18 +26,24 @@
     {
       "capability": "project tests",
       "gap": "UNVERIFIED",
+      "route": "DISCOVER_FIRST",
       "action": "Capture the test command and result.",
       "expected_gain": "Verifiable correctness claim.",
-      "verification": "The test exits successfully and its output is included.",
+      "smallest_useful_check": "The test exits successfully and its output is included.",
       "human_gate": false
     },
     {
       "capability": "Git evidence",
       "gap": "UNDISCOVERED",
+      "route": "DISCOVER_FIRST",
       "action": "Inspect branch, status, and diff before handoff.",
       "expected_gain": "Auditable change scope.",
-      "verification": "Git evidence matches the reported files.",
+      "smallest_useful_check": "Git evidence matches the reported files.",
       "human_gate": false
     }
+  ],
+  "warnings": [
+    "Scope conformance is unknown; before/after verification cannot be PROVEN.",
+    "Run evidence is absent; before/after verification cannot be PROVEN."
   ]
 }
