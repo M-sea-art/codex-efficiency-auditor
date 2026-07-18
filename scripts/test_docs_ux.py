@@ -35,6 +35,18 @@ def test_first_success_routes() -> None:
         assert error_code in readme, error_code
 
 
+def test_readme_explains_why_the_skill_is_needed_in_plain_language() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    for phrase in (
+        "Why You Might Need This Skill / 为什么你可能需要这个技能",
+        "Codex can look busy and still miss the job.",
+        "Codex 可能看起来很忙",
+        "If nothing needs upgrading, it says that clearly too.",
+        "如果根本不需要升级，它也会明确说“不需要”。",
+    ):
+        assert phrase in readme, phrase
+
+
 def test_readme_hero_is_local_and_accessible() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     asset = ROOT / "assets" / "codex-efficiency-auditor-evidence-loop-hero-v2.png"
@@ -88,6 +100,7 @@ def test_quickstart_fixture_is_sanitized() -> None:
 
 def main() -> int:
     test_first_success_routes()
+    test_readme_explains_why_the_skill_is_needed_in_plain_language()
     test_readme_hero_is_local_and_accessible()
     test_public_name_uses_canonical_identifier_and_chinese_display_name()
     test_contract_docs_are_current()
