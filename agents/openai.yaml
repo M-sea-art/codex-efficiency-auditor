@@ -1,4 +1,4 @@
 interface:
   display_name: "Codexcavator"
   short_description: "挖掘当前任务中尚未发挥的 Codex 能力"
-  default_prompt: "使用 $codex-efficiency-auditor 按 v0.3 证据闭环审计当前 Codex 执行：声明操作合同和范围一致性，必要时采集严格脱敏运行元数据，只评估与目标相关的能力，最多给出三个带路线和最小可证伪检查的升级；只有结果门禁或预声明效率指标同时改善时才返回 PROVEN。"
+  default_prompt: "使用 $codex-efficiency-auditor 审计这次执行；除非我已经授权修改，否则保持只读。"
